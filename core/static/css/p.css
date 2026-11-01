@@ -1,0 +1,609 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+/* ================================================================
+   PURCHASE TABLE CSS — Global Design System
+   1. CSS Variables (your file)
+   2. Base
+   3. Card (po-card, po-header, po-body, po-field)
+   4. Toolbar & Search
+   5. Filter Pills
+   6. Table
+   7. Table Elements
+   8. Status Badges
+   9. Action Buttons
+   10. Header Form
+   11. Outstanding Credits Widget
+   12. Empty State
+   13. Footer & Pagination
+   14. Responsive
+   ================================================================ */
+
+
+/* ── 2. BASE ── */
+
+
+/* ── 3. CARD ── */
+.po-card {
+    background: var(--color-paper-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.po-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.po-header {
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+}
+
+.po-header label {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    display: block;
+    margin-bottom: 2px;
+}
+
+
+.po-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.po-section {
+    padding: 14px 18px;
+}
+
+.po-section + .po-section {
+    border-left: 1px solid var(--border);
+}
+
+.po-field {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 4px 8px;
+    align-items: baseline;
+    margin-bottom: 8px;
+}
+
+.po-field:last-child { margin-bottom: 0; }
+
+.po-field-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding-top: 1px;
+}
+
+.po-field-value {
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.po-field-value .sub {
+    font-size: 14px;
+    color: var(--text-secondary);
+    display: block;
+    line-height: 1.4;
+}
+
+
+/* ── 4. TOOLBAR & SEARCH ── */
+.po-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--color-paper-white);
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.po-search-wrap {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+}
+
+.po-search-wrap i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-tertiary);
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.po-search {
+    width: 100%;
+    padding: 8px 12px 8px 34px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-tertiary);
+    background: var(--color-paper-white);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.po-search:focus,
+.po-search:hover,
+.po-filter-btn:hover,
+.po-filter-btn.active {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-lg);
+    background: var(--color-paper-white);
+}
+
+
+/* ── 5. FILTER PILLS ── */
+.po-filters {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.po-filter-btn {
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--color-paper-white);
+    font-size: 12.5px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+}
+
+
+/* ── 6. TABLE ── */
+.po-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-mist);
+    margin-bottom: 10px;
+}
+
+.po-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+
+.po-table thead tr {
+    background: var(--surface-canvas);
+    border-bottom: 1px solid var(--color-mist);
+}
+
+/* covers both th (posted table) and td (draft table) headers */
+.po-table thead th,
+.po-table thead td {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: 11px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    border: none;
+    background: var(--color-paper-white);
+    transition: color 0.15s;
+}
+
+.po-table thead th:hover,
+.po-table thead td:hover { color: var(--text-primary); }
+
+.po-table thead th .sort-icon  { margin-left: 4px; opacity: 0.4; font-size: 10px; }
+.po-table thead th.sorted .sort-icon { opacity: 1; color: var(--accent); }
+
+.po-table tbody tr {
+    transition: background 0.15s;
+}
+
+.po-table tbody tr:last-child { border-bottom: none; }
+
+.po-table tbody tr:hover { background: var(--surface-3); }
+
+.po-table tbody td {
+    padding: 13px 16px;
+    border: none;
+    color: var(--text-primary);
+    vertical-align: middle;
+    transition: all 0.15s;
+}
+
+/* ── TABLE INPUTS (draft form) ── */
+.po-table tbody td input,
+.po-table tbody td select {
+    height: 30px;
+    padding: 0 8px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+    width: 100%;
+}
+
+.po-table tbody td input:focus,
+.po-table tbody td select:focus {
+    outline: none;
+}
+
+.po-table tbody td input[readonly] {
+    background: var(--surface-2);
+    color: var(--text-secondary);
+    cursor: default;
+}
+
+/* ── TFOOT ── */
+.po-table tfoot tr {
+    border-top: 1px solid var(--border);
+    background: var(--surface-2);
+}
+
+.po-table tfoot td {
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+    color: var(--text-primary);
+}
+
+
+
+#invoice-total {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+}
+
+
+/* ── 7. TABLE ELEMENTS ── */
+.po-ref {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--dark);
+    background: var(--surface);
+    padding: 3px 8px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    display: inline-block;
+    transition: border-color 0.15s, transform 0.15s;
+}
+
+.po-ref:hover { transform: scale(1.04); }
+
+.po-total {
+    font-family: 'DM Mono', monospace;
+    font-size: 13.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    display: inline-block;
+    transition: transform 0.15s;
+}
+
+.po-total:hover { transform: scale(1.05); }
+
+.po-supplier {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.po-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: white;
+}
+
+.po-supplier-name {
+    font-weight: 500;
+    font-size: 13.5px;
+    color: var(--text-primary);
+}
+
+.po-date {
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+
+/* ── 8. STATUS BADGES ── */
+.po-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    transition: filter 0.15s, transform 0.15s;
+}
+
+.po-badge:hover {
+    filter: brightness(0.95);
+    transform: scale(1.03);
+}
+
+.po-badge.pending   { color: #c88500; }
+.po-badge.received  { color: #1a9e5e; }
+.po-badge.confirmed { color: #1255c4; }
+.po-badge.partial   { color: #3f2b87; }
+.po-badge.cancelled { color: #c41a1a; }
+
+
+/* ── 9. ACTION BUTTONS ── */
+.po-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    line-height: 1.4;
+    transition: all 0.15s;
+}
+
+.po-action-btn:hover {
+    border-color: rgba(55, 65, 81, 0.8);
+    color: rgb(55, 65, 81);
+    transform: translateY(-1px);
+}
+.po-btn-accent          { background: var(--accent);  color: white; border-color: var(--accent);  }
+.po-btn-accent:hover    { background: #1d4ed8;         color: white; border-color: #1d4ed8;        }
+.po-btn-success         { background: var(--success);  color: white; border-color: var(--success); }
+.po-btn-success:hover   { background: #0a9960;         color: white; border-color: #0a9960;        }
+
+
+
+
+
+/* ── 10. HEADER FORM ── */
+.po-header-form {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 20px; /* Slightly increased padding for the two-column breathing room */
+    margin-bottom: 0;
+}
+
+/* Align the core sections to the top baseline */
+.po-header-form .row {
+    align-items: start;
+}
+
+/* Ensure the internal field rows retain standard block flow alignment */
+.po-header-form .col-md-5 .row {
+    align-items: start;
+}
+
+/* Sleek, muted, readable Odoo-style micro-labels */
+.po-header-form .form-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+/* "New" Action button styling matched precisely to your new label mechanics */
+.po-header-form .po-action-btn {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.15s ease;
+}
+
+.po-header-form .po-action-btn:hover {
+    color: var(--dark, #000); /* Darkens cleanly when hovering over "New" */
+}
+
+/* Odoo-style: Bottom border only, flat background, matching text sizing */
+.po-header-form .form-control,
+.po-header-form select,
+.po-header-form input {
+    width: 100%;
+    height: 32px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    background-color: transparent;
+
+    /* Clean line style setup */
+    border: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    padding: 4px 0px; /* Stripped left padding to align text perfectly with labels above */
+
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Subtle background fill on hover (Odoo signature) */
+.po-header-form .form-control:hover,
+.po-header-form select:hover,
+.po-header-form input:hover {
+    background-color: rgba(0, 0, 0, 0.015);
+    border-color: var(--text-tertiary);
+}
+
+/* Sharp focus line indicator */
+.po-header-form .form-control:focus,
+.po-header-form select:focus,
+.po-header-form input:focus {
+    outline: none;
+    background-color: rgba(0, 0, 0, 0.025);
+    border-color: var(--dark, #000);
+    box-shadow: none;
+}
+
+
+/* ── 12. EMPTY STATE ── */
+.po-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-tertiary);
+}
+
+.po-empty i {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 12px;
+    opacity: 0.3;
+}
+
+.po-empty p { font-size: 14px; margin: 0; }
+
+
+/* ── 13. FOOTER & PAGINATION ── */
+.po-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-3);
+    font-size: 12.5px;
+    color: var(--text-tertiary);
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.po-pagination {
+    display: flex;
+    gap: 4px;
+}
+
+.po-page-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-tertiary);
+    font-size: 12.5px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.15s;
+}
+
+.po-page-btn:hover,
+.po-page-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--text-tertiary);
+    box-shadow: var(--shadow-lg);
+}
+
+.po-page-btn:disabled,
+.po-page-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+
+
+/* ── SELECT2 ODOO-LINE CUSTOM THEME ── */
+/* ── SELECT2 SELECTION VERTICAL FIX ── */
+
+/* 1. Ensure the primary container has absolute control over its layout heights */
+
+
+/* ── INVOICE SIDE-BY-SIDE LAYOUT ── */
+.po-invoice-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    align-items: start;
+}
+
+.po-invoice-left {
+    border-right: 1px solid var(--border);
+}
+
+.po-add-line-wrap {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+}
+
+
+.po-payment-badge {
+        margin-left: auto;
+        font-weight: 600px;
+        font-size: 18px;
+        border-color: var(--border);
+}
+
+.po-payment-wrapper {
+    margin-left: auto;
+}
+
+
+
+
+/* ── 14. RESPONSIVE ── */
+@media (max-width: 768px) {
+    .po-stats       { grid-template-columns: repeat(2, 1fr); }
+    .po-toolbar     { flex-direction: column; align-items: stretch; }
+    .po-search-wrap { max-width: 100%; }
+    .po-filters     { overflow-x: auto; padding-bottom: 4px; }
+    .po-body        { grid-template-columns: 1fr; }
+    .po-section + .po-section { border-left: none; border-top: 1px solid var(--border); }
+}
+
+
+
+
+
+
+
+
+
+
+

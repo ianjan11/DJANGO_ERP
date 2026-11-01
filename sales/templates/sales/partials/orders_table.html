@@ -1,0 +1,264 @@
+{% load humanize %}
+{% load querystring %}
+
+
+
+
+
+
+<div class="main-wrapper">
+
+
+    <div class="inv-card">
+
+{# ── TABLE ────────────────────────────────────── #}
+
+
+<div class="table-wrap">
+
+
+
+ <div class="table-toolbar">
+
+  <h5 class="table-toolbar-title">Orders
+   <span class="badge badge--count">
+    {{ orders.paginator.count }} sales order{{ orders.paginator.count|pluralize }}
+  </span>
+  </h5>
+
+
+      <button class="btn btn-primary btn-sm"
+             hx-get="{% url 'sales:sales_order_create' %}"
+             hx-target="#sales-display"
+             hx-push-url="true">
+            <i class="bi bi-plus-lg"></i> New
+        </button>
+
+<form data-toolbar
+      class="toolbar"
+      id="order-filters"
+      hx-get="{% url 'sales:sales_orders_list' %}"
+      hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
+      hx-target="#sales-display"
+      hx-replace-url="true"
+
+>
+
+
+    {% include "core/date_filters.html" %}
+
+  <div class="toolbar-search-wrap">
+    <i class="ti ti-search toolbar-search-icon"></i>
+    <input type="text" class="toolbar-search"
+           name="search_order" placeholder="Search orders..."
+           value="{{ request.GET.search_order }}">
+    <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+      <i class="ti ti-x"></i>
+    </button>
+  </div>
+
+  <select class="toolbar-select" name="order_status">
+    <option value="">All Orders</option>
+    <option value="DRAFT"     {% if request.GET.order_status == "DRAFT"     %}selected{% endif %}>Draft</option>
+    <option value="CONFIRMED"    {% if request.GET.order_status == "CONFIRMED"    %}selected{% endif %}>Confirmed</option>
+    <option value="DONE" {% if request.GET.order_status == "DONE" %}selected{% endif %}>done</option>
+      <option value="SENT" {% if request.GET.order_status == "SENT" %}selected{% endif %}>Sent</option>
+    <option value="CANCELLED" {% if request.GET.order_status == "CANCELLED" %}selected{% endif %}>Cancelled</option>
+  </select>
+
+  <button type="button" class="toolbar-clear-btn">
+    <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
+  </button>
+
+</form>
+    </div>
+
+
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Order No</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th class="col-right">Amount</th>
+                <th class="col-center">Order Status</th>
+                <th class="col-center">Payment Status</th>
+                <th class="col-center">Delivery Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for order in orders %}
+            <tr hx-get="{% url 'sales:sales_order_create_or_detail' order.id %}"
+                hx-target="#sales-display"
+                hx-push-url="true">
+
+                <td class="td-mono">{{ order.order_number }}</td>
+
+                <td class="td-primary">{{ order.customer }}</td>
+
+                <td>{{ order.created_at|date:'M d, Y H:i:s' }}</td>
+
+                <td class="col-right">
+                 <span class="td-amount">
+                                         {{order.currency.symbol}}  {{ order.total_amount|floatformat:2|intcomma }}
+                 </span>
+                </td>
+
+                <td class="col-center">
+                    {% if order.status == "DRAFT" %}
+                        <span class="badge badge--draft"><i class="bi bi-pencil-square"></i> Draft</span>
+                    {% elif order.status == "POSTED" %}
+                        <span class="badge badge--pending"><i class="bi bi-send-fill"></i> Posted</span>
+                    {% elif order.status == "CONFIRMED" %}
+                        <span class="badge badge--paid"><i class="bi bi-check-circle-fill"></i> Confirmed</span>
+                    {% elif order.status == "CANCELLED" %}
+                        <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
+                    {% else %}
+                        <span class="badge">{{ order.status }}</span>
+                    {% endif %}
+                </td>
+
+                <td class="col-center">
+                    {% if order.payment_state == "paid" %}
+                        <span class="badge badge--paid"><i class="bi bi-shield-check"></i> Reconciled</span>
+                    {% elif order.payment_state == "not_paid" %}
+                        <span class="badge badge--overdue"><i class="bi bi-clock"></i> Awaiting Payment</span>
+                    {% elif order.payment_state == "partial" %}
+                        <span class="badge badge--partial"><i class="bi bi-circle-half"></i> Partial</span>
+                    {% else %}
+                        <span style="color:var(--color-fog);">—</span>
+                    {% endif %}
+                </td>
+
+                <td class="col-center">
+                    {% if order.delivery_status == "DELIVERED" %}
+                        <span class="badge badge--paid"><i class="bi bi-truck"></i> Delivered</span>
+                    {% elif order.delivery_status == "PENDING" %}
+                        <span class="badge badge--draft"><i class="bi bi-hourglass-split"></i> Pending</span>
+                    {% elif order.delivery_status == "PARTIAL" %}
+                        <span class="badge badge--partial"><i class="bi bi-box-seam"></i> Partial</span>
+                    {% elif order.delivery_status == "CANCELLED" %}
+                        <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
+                    {% else %}
+                        <span style="color:var(--color-fog);">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="table-empty">
+                    <div class="table-empty-icon">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                    <div class="table-empty-title">No orders found</div>
+                    <div class="table-empty-desc">There are no records matching your current filter criteria.</div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{# ── Pagination (only when more than one page) ────────────── #}
+{% if orders.paginator.num_pages > 1 %}
+<div class="table-footer">
+
+  <small class="table-footer-count">
+    Showing {{ orders.start_index }}–{{ orders.end_index }}
+    of {{ orders.paginator.count }} order{{ orders.paginator.count|pluralize }}
+  </small>
+
+
+
+<div class="table-pagination">
+
+  {# First Page #}
+  {% if orders.has_previous %}
+    <a class="page-btn page-btn--arrow"
+       hx-get="?{% replace_query page=1 %}"
+       hx-target="#sales-display"
+       hx-swap="innerHTML"
+       hx-push-url="true">
+      <i class="bi bi-chevron-double-left"></i>
+    </a>
+  {% else %}
+    <span class="page-btn page-btn--arrow" aria-disabled="true">
+      <i class="bi bi-chevron-double-left"></i>
+    </span>
+  {% endif %}
+
+  {# Previous Page #}
+  {% if orders.has_previous %}
+    <a class="page-btn page-btn--arrow"
+       hx-get="?{% replace_query page=orders.previous_page_number %}"
+       hx-target="#sales-display"
+       hx-swap="innerHTML"
+       hx-push-url="true">
+      <i class="bi bi-chevron-left"></i>
+    </a>
+  {% else %}
+    <span class="page-btn page-btn--arrow" aria-disabled="true">
+      <i class="bi bi-chevron-left"></i>
+    </span>
+  {% endif %}
+
+  {# Page Numbers #}
+  {% for num in orders.paginator.page_range %}
+    {% if orders.number == num %}
+      <span class="page-btn active">{{ num }}</span>
+    {% elif num > orders.number|add:'-3' and num < orders.number|add:'3' %}
+      <a class="page-btn"
+         hx-get="?{% replace_query page=num %}"
+         hx-target="#sales-display"
+         hx-swap="innerHTML"
+         hx-push-url="true">{{ num }}</a>
+    {% endif %}
+  {% endfor %}
+
+  {# Next Page #}
+  {% if orders.has_next %}
+    <a class="page-btn page-btn--arrow"
+       hx-get="?{% replace_query page=orders.next_page_number %}"
+       hx-target="#sales-display"
+       hx-swap="innerHTML"
+       hx-push-url="true">
+      <i class="bi bi-chevron-right"></i>
+    </a>
+  {% else %}
+    <span class="page-btn page-btn--arrow" aria-disabled="true">
+      <i class="bi bi-chevron-right"></i>
+    </span>
+  {% endif %}
+
+  {# Last Page #}
+  {% if orders.has_next %}
+    <a class="page-btn page-btn--arrow"
+       hx-get="?{% replace_query page=orders.paginator.num_pages %}"
+       hx-target="#sales-display"
+       hx-swap="innerHTML"
+       hx-push-url="true">
+      <i class="bi bi-chevron-double-right"></i>
+    </a>
+  {% else %}
+    <span class="page-btn page-btn--arrow" aria-disabled="true">
+      <i class="bi bi-chevron-double-right"></i>
+    </span>
+  {% endif %}
+
+</div>
+</div>
+{% endif %}
+
+</div>
+
+    {# ── PAGINATION ───────────────────────────────── #}
+
+
+</div>
+
+
+</div>{# end po-wrapper #}
+
+

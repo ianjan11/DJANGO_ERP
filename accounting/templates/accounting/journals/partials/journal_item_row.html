@@ -1,0 +1,68 @@
+<tr id="line-row-{{ form.prefix }}"
+    class="invoice-row {% if form.errors or form.non_field_errors %}table-danger{% endif %}"
+    hx-post="{% url 'accounting:journal_update' %}"
+    hx-include="#line-row-{{ form.prefix }}, .move-header-field"
+    hx-vals='{"row_prefix": "{{ form.prefix }}"}'
+    hx-swap="none"
+    hx-sync="closest form:queue last"
+    data-row-type="journal"
+    hx-trigger=" save-row, change[rowReady(event, false)], keyup[rowReady(event, true)] changed delay:600ms"
+>
+  <td style="display:none">
+    {{ form.id }}
+  </td>
+
+  <td class="td-editable">
+    {{ form.account }}
+    {% if form.account.errors %}
+      <div class="invalid-feedback d-block">{{ form.account.errors.0 }}</div>
+    {% endif %}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger py-1 px-2 mt-2 mb-0 small">{{ form.non_field_errors.0 }}</div>
+    {% endif %}
+  </td>
+
+  <td class="td-editable">
+    {{ form.partner }}
+    {% if form.partner.errors %}
+      <div class="invalid-feedback d-block">{{ form.partner.errors.0 }}</div>
+    {% endif %}
+  </td>
+
+  <td class="td-editable">
+    {{ form.memo }}
+    {% if form.memo.errors %}
+      <div class="invalid-feedback d-block">{{ form.memo.errors.0 }}</div>
+    {% endif %}
+  </td>
+
+  <td class="td-editable col-right">
+    {{ form.debit }}
+    {% if form.debit.errors %}
+      <div class="invalid-feedback d-block mt-1">{{ form.debit.errors.0 }}</div>
+    {% endif %}
+  </td>
+
+  <td class="td-editable col-right">
+    {{ form.credit }}
+    {% if form.credit.errors %}
+      <div class="invalid-feedback d-block mt-1">{{ form.credit.errors.0 }}</div>
+    {% endif %}
+  </td>
+
+  <td class="col-center">
+      <button
+        type="button"
+        class="page-btn text-danger"
+        hx-post="{% url 'accounting:journal_update' %}"
+        hx-include="#line-row-{{ form.prefix }}, .move-header-field"
+        hx-vals='{"row_prefix": "{{ form.prefix }}", "{{ form.prefix }}-DELETE": "on"}'
+        hx-swap="none"
+        hx-sync="closest form:queue last"
+        hx-confirm="Remove this line?"
+        aria-label="Remove line"
+      >
+        <i class="bi bi-trash"></i>
+      </button>
+  </td>
+</tr>

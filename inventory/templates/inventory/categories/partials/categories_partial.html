@@ -1,0 +1,145 @@
+{% load humanize %}
+
+<div class="main-wrapper">
+  <div class="invoice-card">
+
+    <div class="table-wrap">
+
+      <div class="table-toolbar">
+        <div>
+          <button class="btn btn-primary btn-sm"
+                  hx-get="{% url 'inventory:new_category' %}"
+                  hx-disable-elt="this"
+                  hx-target="#inventory-display"
+                  hx-push-url="true">
+            <i class="bi bi-plus-lg"></i> New Category
+          </button>
+        </div>
+
+        <form data-toolbar
+              class="toolbar"
+              id="category-filters"
+              hx-get="{% url 'inventory:view_categories' %}"
+              hx-trigger="input changed delay:400ms from:.toolbar-search,
+                    change from:.toolbar-select,
+                    filters:changed"
+              hx-replace-url="true"
+              hx-target="#inventory-display">
+
+          <div class="toolbar-search-wrap">
+            <i class="ti ti-search toolbar-search-icon"></i>
+            <input type="text" class="toolbar-search"
+                   name="search_category"
+                   placeholder="Search category name..."
+                   value="{{ request.GET.search_category }}">
+            <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+              <i class="ti ti-x"></i>
+            </button>
+          </div>
+
+          <button type="button" class="toolbar-clear-btn">
+            <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
+          </button>
+
+        </form>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width:300px">Category Name</th>
+            <th style="width:250px">Parent Category</th>
+            <th style="width:140px" class="col-center">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cat in categories %}
+          <tr hx-get="{% url 'inventory:category_detail' cat.id %}"
+              hx-target="#inventory-display"
+              hx-push-url="true">
+
+            <td class="td-primary">{{ cat.name }}</td>
+            <td style="color:var(--color-slate)">{{ cat.parent.name|default:"—" }}</td>
+            <td class="col-center">
+              {% if cat.is_active %}
+                <span class="badge badge--paid"><span class="badge-dot"></span>Active</span>
+              {% else %}
+                <span class="badge badge--cancelled"><span class="badge-dot"></span>Inactive</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3" class="table-empty">
+              <div class="table-empty-icon"><i class="bi bi-inbox"></i></div>
+              <div class="table-empty-title">No categories found</div>
+              <div class="table-empty-desc">No categories match your current filter criteria.</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if categories.paginator.num_pages > 1 %}
+    <div class="table-footer">
+      <small class="table-footer-count">
+        Showing {{ categories.start_index }}–{{ categories.end_index }}
+        of {{ categories.paginator.count}} categor{{ categories.paginator.count|pluralize:"y,ies" }}
+      </small>
+
+      <div class="table-pagination" hx-include="#category-filters">
+
+        {% if categories.has_previous %}
+          <a class="page-btn page-btn--arrow"
+             hx-get="?page=1"
+             hx-target="#inventory-display"
+             hx-push-url="true">
+            <i class="bi bi-chevron-double-left"></i>
+          </a>
+          <a class="page-btn page-btn--arrow"
+             hx-get="?page={{ categories.previous_page_number }}"
+             hx-target="#inventory-display"
+             hx-push-url="true">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        {% else %}
+          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-double-left"></i></span>
+          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-left"></i></span>
+        {% endif %}
+
+        {% for num in categories.paginator.page_range %}
+          {% if categories.number == num %}
+            <span class="page-btn active">{{ num }}</span>
+          {% elif num > categories.number|add:'-3' and num < categories.number|add:'3' %}
+            <a class="page-btn"
+               hx-get="?page={{ num }}"
+               hx-target="#inventory-display"
+               hx-push-url="true">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if categories.has_next %}
+          <a class="page-btn page-btn--arrow"
+             hx-get="?page={{ categories.next_page_number }}"
+             hx-target="#inventory-display"
+             hx-push-url="true">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+          <a class="page-btn page-btn--arrow"
+             hx-get="?page={{ categories.paginator.num_pages }}"
+             hx-target="#inventory-display"
+             hx-push-url="true">
+            <i class="bi bi-chevron-double-right"></i>
+          </a>
+        {% else %}
+          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-right"></i></span>
+          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-double-right"></i></span>
+        {% endif %}
+
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>

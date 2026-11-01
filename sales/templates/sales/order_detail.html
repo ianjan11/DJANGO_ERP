@@ -1,0 +1,18 @@
+{% extends 'sales/base.html' %}
+{% load humanize %}
+{% load static %}
+
+{# ============================================================
+   CREATE INVOICE PAGE
+   Depends on: css/purchase_table.css
+   Scripts:    js/invoice/startinvoice.js
+   ============================================================ #}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+  {% include "sales/partials/order_detail_partial.html" %}
+{% endblock %}
+
+

@@ -1,0 +1,145 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div id="company-display">
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="row w-100 justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="text-center mb-4">
+                        <h4 class="fw-semibold mb-2">
+                            Select Company
+                        </h4>
+
+                        <p class="text-muted mb-0">
+                            Choose the company you want to work with.
+                        </p>
+                    </div>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                                 role="alert">
+                                {{ message }}
+                                <button type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if memberships %}
+
+                        <div class="list-group">
+
+                            {% for membership in memberships %}
+
+                                <form method="post"
+                                      action="{% url 'users:select-company-set' %}"
+                                      class="list-group-item list-group-item-action p-0 border-0 mb-2">
+
+                                    {% csrf_token %}
+
+                                    <input type="hidden"
+                                           name="company_id"
+                                           value="{{ membership.company_id }}">
+
+                                    <button type="submit"
+                                            class="btn btn-outline-secondary w-100 text-start p-3">
+
+                                        <div class="d-flex align-items-center">
+
+                                            <div class="me-3">
+                                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center"
+                                                     style="width: 44px; height: 44px;">
+                                                    <i class="bi bi-building fs-5"></i>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex-grow-1">
+                                                <div class="fw-semibold">
+                                                    {{ membership.company.name }}
+                                                </div>
+
+                                                {% if membership.company.code %}
+                                                    <small class="text-muted">
+                                                        {{ membership.company.code }}
+                                                    </small>
+                                                {% endif %}
+                                            </div>
+
+                                            <div>
+                                                <i class="bi bi-chevron-right text-muted"></i>
+                                            </div>
+
+                                        </div>
+
+                                    </button>
+
+                                </form>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="text-center py-4">
+
+                            <div class="mb-3">
+                                <i class="bi bi-building-exclamation fs-1 text-muted"></i>
+                            </div>
+
+                            <h6 class="fw-semibold">
+                                No companies available
+                            </h6>
+
+                            <p class="text-muted mb-4">
+                                Your account has not been assigned to a company.
+                                Please contact an administrator.
+                            </p>
+
+                            <form method="post"
+                                  action="{% url 'users:logout' %}">
+                                {% csrf_token %}
+
+                                <button type="submit"
+                                        class="btn btn-outline-secondary">
+                                    <i class="bi bi-box-arrow-right me-1"></i>
+                                    Logout
+                                </button>
+                                
+                            </form>
+                            
+                                    <button type="button"
+                class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm"
+                hx-get="{% url 'users:create-first-company' %}"
+                hx-target="#company-display"
+                hx-push-url="true">
+          <i class="bi bi-plus-circle"></i>
+          <span> New </span>
+        </button>
+                        
+                        </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    Signed in as {{ request.user.email }}
+                </small>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,180 @@
+<div
+    class="modal fade"
+    id="ReturnModal"
+    tabindex="-1"
+    aria-labelledby="ReturnModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            
+            <!-- ================================================= -->
+            <!-- Header -->
+            <!-- ================================================= -->
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="ReturnModalLabel">
+                    Create Return
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- Body -->
+            <!-- ================================================= -->
+
+            <div class="modal-body">
+
+                <!-- Error Box -->
+                <div
+                    id="form-error"
+                    style="
+                        display:none;
+                        padding:10px 14px;
+                        background:var(--color-card-white);
+                        color:#b91c1c;
+                        border:1px solid #b91c1c;
+                        border-radius:10px;
+                        font-size:13px;
+                        margin-bottom:12px;
+                    "
+                ></div>
+
+                <form id="return-form" method="post">
+                    {% csrf_token %}
+
+                    <!-- Original Picking -->
+                    <input
+                        type="hidden"
+                        name="picking"
+                        value="{{ picking.id }}"
+                    >
+
+                    <!-- ================================================= -->
+                    <!-- Product Selector Toolbar -->
+                    <!-- ================================================= -->
+
+                    <div style="margin-bottom:var(--spacing-12);">
+                        <div
+                            class="toolbar"
+                            style="
+                                border-bottom:1px solid var(--color-mist);
+                                padding-bottom:var(--spacing-12);
+                            "
+                        >
+                            <div class="toolbar-search-wrap" style="flex:1;">
+                                <select
+                                    id="product-select"
+                                    class="toolbar-search"
+                                    style="padding-left:var(--spacing-12);"
+                                >
+                                    <option value="">
+                                        — Select a picking line to return —
+                                    </option>
+
+                                    {% for line in return_lines %}
+                                        <option
+                                            value="{{ line.move.id }}"
+                                            data-product-name="{{ line.move.product.name }}"
+                                            data-quantity="{{ line.delivered }}"
+                                            data-available-quantity="{{ line.remaining }}"
+                                            data-returned-quantity="{{ line.returned }}"
+                                            data-product-id="{{ line.move.product.id }}"
+                                            data-line-id="{{ line.move.id }}"
+                                        >
+                                            {{ line.move.product.name }} (Uom: {{ line.uom }}) — Qty: {{ line.delivered }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                id="add-product-btn"
+                            >
+                                <i class="bi bi-plus"></i>
+                                Add Line
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- Return Items Table -->
+                    <!-- ================================================= -->
+
+                    <div class="inv-table-wrap">
+                        <table class="inv-table" id="returns-items-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:220px;">
+                                        Product
+                                    </th>
+                                    <th style="width:110px;" class="col-left">
+                                        Return Qty
+                                    </th>
+                                    <th style="width:80px;" class="col-center">
+                                        Remove
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="returns-items-body">
+                                <tr id="no-items-row">
+                                    <td colspan="3" class="table-empty">
+                                        <div class="table-empty-icon">
+                                            <i class="bi bi-inbox"></i>
+                                        </div>
+                                        <div class="table-empty-title">
+                                            No products added yet
+                                        </div>
+                                        <div class="table-empty-desc">
+                                            Select a picking line above and click Add Line.
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- Footer -->
+            <!-- ================================================= -->
+
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="submit-credit"
+                    hx-post="{% url 'inventory:issue_return' picking.id %}"
+                    hx-include="#return-form"
+                    hx-disabled-elt="this"
+                    hx-swap="none"
+                >
+                    <i class="bi bi-check-circle"></i>
+                    Process Return
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

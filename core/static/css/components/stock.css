@@ -1,0 +1,172 @@
+/* ═══════════════════════════════════════════
+   STOCK — Two-panel layout
+   stock.css
+   Depends on: invoice.css (design tokens)
+   ═══════════════════════════════════════════ */
+
+
+/* ── Outer shell ─────────────────────────── */
+/*
+  Full-height flex row.
+  Sits inside .main-wrapper or .invoice-card.
+  min-height: 100vh keeps it tall on sparse pages.
+*/
+.stock-layout {
+  display: flex;
+  flex-direction: row;
+  min-height: calc(100vh - 60px);  /* subtract top nav height */
+  width: 100%;
+  overflow: hidden;
+}
+
+
+/* ── Left nav panel ──────────────────────── */
+/*
+  Fixed width. Scrolls independently.
+  Mirrors Odoo's left sub-menu — locations,
+  warehouses, categories, operation types.
+*/
+.stock-nav {
+  width: 200px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--color-mist);
+  background: var(--surface-card);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.stock-nav-section {
+  padding: var(--spacing-12) 0;
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.stock-nav-section:last-child {
+  border-bottom: none;
+}
+
+.stock-nav-label {
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-fog);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 0 var(--spacing-16) var(--spacing-8);
+}
+
+.stock-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-slate);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.1s ease, color 0.1s ease;
+  border-left: 5px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stock-nav-item:hover {
+  background: var(--color-paper-white);
+  color: var(--color-deep-indigo);
+}
+
+.stock-nav-item.active {
+  background: var(--color-paper-white);
+  color: var(--color-deep-indigo);
+  font-weight: var(--font-weight-semibold);
+  border-left-color: var(--color-deep-indigo);
+}
+
+.stock-nav-item i {
+  font-size: 14px;
+  flex-shrink: 0;
+  color: var(--color-fog);
+}
+
+.stock-nav-item.active i,
+.stock-nav-item:hover i {
+  color: var(--color-deep-indigo);
+}
+
+/* badge on nav items — e.g. pending count */
+.stock-nav-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-slate);
+  background: var(--color-mist);
+  border-radius: var(--radius-badges);
+  padding: 1px 6px;
+  flex-shrink: 0;
+}
+
+
+/* ── Right content panel ─────────────────── */
+/*
+  Fills remaining space.
+  Scrolls independently from the nav.
+  All page content renders here.
+*/
+.stock-content {
+  flex: 1;
+  min-width: 0;              /* prevents flex overflow */
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--color-paper-white);
+  display: flex;
+  flex-direction: column;
+}
+
+/* inner padding so content doesn't touch the panel edges */
+.stock-content-inner {
+  padding: var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  flex: 1;
+}
+
+
+/* ── Responsive — collapse nav on narrow screens ── */
+@media (max-width: 768px) {
+  .stock-layout {
+    flex-direction: column;
+  }
+
+  .stock-nav {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-right: none;
+    border-bottom: 1px solid var(--color-mist);
+  }
+
+  .stock-nav-section {
+    display: flex;
+    flex-direction: row;
+    border-bottom: none;
+    border-right: 1px solid var(--color-mist);
+    padding: var(--spacing-8) 0;
+  }
+
+  .stock-nav-label { display: none; }
+
+  .stock-nav-item {
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+
+  .stock-nav-item.active {
+    border-left: none;
+    border-bottom-color: var(--color-deep-indigo);
+  }
+}

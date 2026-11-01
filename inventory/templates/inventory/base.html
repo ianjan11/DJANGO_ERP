@@ -1,0 +1,35 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block app_wrapper %}
+<div class="main-container  inventory-container">
+
+
+
+    <div id="inventory-display"  hx-history-elt>
+        {% block content %}{% endblock %}
+    </div>
+
+
+</div>
+{% endblock %}
+
+
+
+
+{% block scripts %}
+
+{{ block.super }}
+    <script src="{% static 'js/general/select2.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/clear_buton.js' %}?t={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/button-sync.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/row_listener.js' %}?t={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/pickings/autofill_row.js' %}?t={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/check_box_all.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/pickings/return.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/taxes.js' %}?v={{ now|date:'U' }}"></script>
+
+
+
+
+{% endblock %}

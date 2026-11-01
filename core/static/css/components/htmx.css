@@ -1,0 +1,37 @@
+/* ── 1. Enable smooth morphing for the layout structure ── */
+::view-transition-group(root) {
+  animation-duration: 0.25s;
+}
+
+/* ── 2. Table Row Structural Morphing (The Key Part) ── */
+/* When a row disappears, we want it to gracefully fade out and shrink */
+@keyframes row-fade-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.95); }
+}
+
+/* When data is refreshed or replaced, fade the whole container */
+@keyframes content-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── 3. Target Classes for Page States ── */
+
+/* Active CSS state when a row is flagged for deletion */
+.htmx-swapping-transition {
+  view-transition-name: active-deleted-row;
+}
+
+/* Customize how the specific designated row removes itself */
+::view-transition-old(active-deleted-row) {
+  animation: row-fade-out 0.2s ease forward;
+}
+::view-transition-new(active-deleted-row) {
+  display: none; /* No new element replaces it directly inside this slot */
+}
+
+/* Smooth list entry animations for added rows */
+.htmx-added-row {
+  animation: content-fade-in 0.25s ease-out;
+}

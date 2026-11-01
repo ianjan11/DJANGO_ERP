@@ -1,0 +1,132 @@
+{% load humanize %}
+<div class="main-wrapper">
+
+        {# ── TOOLBAR & FILTERS ───────────────────────────────── #}
+
+        {# ── DYNAMIC INJECT ZONE ─────────────────────────────── #}
+            <div class="table-wrap">
+                        <div class="table-toolbar">
+            <h5 class="table-toolbar-title">Customers
+                <span class="badge badge--count">
+                    {{ customers.paginator.count }} Customer{{ customers.paginator.count|pluralize }}
+                </span>
+            </h5>
+
+
+ <form data-toolbar
+        class="toolbar"
+        hx-get="{% url 'sales:customer_search_ajax' %}"
+        hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
+        hx-target="#sales-display">
+
+    {# Search #}
+    <div class="toolbar-search-wrap">
+      <i class="ti ti-search toolbar-search-icon" aria-hidden="true"></i>
+      <input type="text"
+             class="toolbar-search"
+             name="search_customer"
+             placeholder="Search customer..."
+             value="{{ request.GET.search_customer }}">
+      <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+
+    {# Clear all #}
+    <button type="button" class="toolbar-clear-btn">
+      <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i>
+      Clear
+    </button>
+
+  </form>
+
+
+        </div>
+
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th class="col-right">Total Balance</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr>
+
+                            <td class="td-primary">{{ customer.name }}</td>
+                            <td style="font-weight: 500;">{{ customer.phone|default:"—" }}</td>
+                            <td>{{ customer.email|default:"—" }}</td>
+
+                            <td class="col-right td-amount">
+                                {{ customer.total_sales|floatformat:2|intcomma|default:"0.00" }}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="table-empty">
+                                <div class="table-empty-icon">
+                                    <i class="bi bi-receipt"></i>
+                                </div>
+                                <div class="table-empty-title">No customers found</div>
+                                <div class="table-empty-desc">There are no records matching your current filter criteria.</div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                {# ── PAGINATION PANEL ────────────────────────────── #}
+                {% if customers.paginator.num_pages > 1 %}
+                <div class="table-footer">
+                    <small class="table-footer-count">
+                        Showing {{ customers.start_index }}–{{ customers.end_index }} of {{ customers.paginator.count }} customers
+                    </small>
+
+                    <div class="table-pagination">
+                        {# First #}
+                        {% if customers.has_previous %}
+                            <a class="page-btn page-btn--arrow" hx-get="?page=1" hx-target="#customer-table-container" hx-push-url="true"><i class="bi bi-chevron-double-left"></i></a>
+                        {% else %}
+                            <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-double-left"></i></span>
+                        {% endif %}
+
+                        {# Prev #}
+                        {% if customers.has_previous %}
+                            <a class="page-btn page-btn--arrow" hx-get="?page={{ customers.previous_page_number }}" hx-target="#customer-table-container" hx-push-url="true"><i class="bi bi-chevron-left"></i></a>
+                        {% else %}
+                            <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-left"></i></span>
+                        {% endif %}
+
+                        {# Page numbers #}
+                        {% for num in customers.paginator.page_range %}
+                            {% if customers.number == num %}
+                                <span class="page-btn active">{{ num }}</span>
+                            {% elif num > customers.number|add:'-3' and num < customers.number|add:'3' %}
+                                <a class="page-btn" hx-get="?page={{ num }}" hx-target="#customer-table-container" hx-push-url="true">{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {# Next #}
+                        {% if customers.has_next %}
+                            <a class="page-btn page-btn--arrow" hx-get="?page={{ customers.next_page_number }}" hx-target="#customer-table-container" hx-push-url="true"><i class="bi bi-chevron-right"></i></a>
+                        {% else %}
+                            <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-right"></i></span>
+                        {% endif %}
+
+                        {# Last #}
+                        {% if customers.has_next %}
+                            <a class="page-btn page-btn--arrow" hx-get="?page={{ customers.paginator.num_pages }}" hx-target="#customer-table-container" hx-push-url="true"><i class="bi bi-chevron-double-right"></i></a>
+                        {% else %}
+                            <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-double-right"></i></span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div> {# End dynamic inject zone #}
+

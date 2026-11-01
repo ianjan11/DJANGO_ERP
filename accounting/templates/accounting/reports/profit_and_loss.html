@@ -1,0 +1,13 @@
+{% extends 'accounting/base.html' %}
+{% load humanize %}
+{% load static %}
+
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+  {% include "accounting/reports/partials/profit_and_loss_partial.html" %}
+{% endblock %}
+
+

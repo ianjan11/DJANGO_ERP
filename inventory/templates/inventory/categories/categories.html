@@ -1,0 +1,18 @@
+{% extends 'inventory/base.html' %}
+{% load humanize %}
+{% load static %}
+
+
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+  {% include "inventory/categories/partials/categories_partial.html" %}
+{% endblock %}
+
+
+{% block scripts %}
+{{ block.super }}
+
+{% endblock %}

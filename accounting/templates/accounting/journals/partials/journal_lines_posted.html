@@ -1,0 +1,58 @@
+{% load humanize %}
+
+{% if reconciled_invoices %}
+        <div class="table-toolbar">
+            <h5 class="table-toolbar-title">
+                Reconciled
+                {% if payment.partner_type == 'customer' %}Invoices{% else %}Bills{% endif %}
+                <span class="badge badge--count">
+          {{ reconciled_invoices|length }} document{{ reconciled_invoices|length|pluralize }}
+        </span>
+            </h5>
+        </div>
+
+        <div class="inv-table-wrap">
+            <table class="inv-table">
+                <thead>
+                <tr>
+                    <th style="width:180px">Reference</th>
+                    <th style="width:140px">Date</th>
+                    <th style="width:140px" class="col-right">Invoice Amount</th>
+                    <th style="width:140px" class="col-right">Amount Applied</th>
+                    <th style="width:140px" class="col-right">Remaining</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for rec in reconciled_invoices %}
+                <tr
+                        {% if rec.source %}
+                        hx-get="{{ rec.source.url }}"
+                        hx-target="#accounting-display"
+                        hx-push-url="true"
+                        {% endif %}
+                >
+
+                    <td class="td-mono">
+                        {{ rec.reference }}
+
+                    </td>
+                    <td style="color:var(--color-slate);">{{ rec.date|date:"M d, Y" }}</td>
+                    <td class="col-right">
+                        <span class="td-amount"> {{ rec.company.currency.symbol }} {{ rec.amount_total|floatformat:2|intcomma }} </span>
+                    </td>
+                    <td class="col-right">
+                        <span class="td-amount">{{ rec.company.currency.symbol }} {{ rec.amount_applied|floatformat:2|intcomma }} </span>
+                    </td>
+                    <td class="col-right">
+              <span class="td-amount {% if rec.amount_residual > 0 %}td-amount--overdue{% endif %}">
+               {{ rec.company.currency.symbol }} {{ rec.amount_residual|floatformat:2|intcomma }}
+              </span>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+

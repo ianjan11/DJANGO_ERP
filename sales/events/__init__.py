@@ -1,0 +1,1 @@
+from sales.events.types import SalesEventType

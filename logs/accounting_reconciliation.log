@@ -1,0 +1,1469 @@
+[INFO] 2026-08-12 14:00:34,260 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-12 14:00:34,261 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 101 | Ref: CSH01-PAY-000045 | Type: INCOMING
+[DEBUG] 2026-08-12 14:00:34,262 accounting.reconciliation reconcile_payment: Payment amount: 1000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-12 14:00:34,268 accounting.reconciliation reconcile_payment: Found 0 invoice allocation(s)
+[INFO] 2026-08-12 14:00:34,268 accounting.reconciliation reconcile_payment: No allocations found. Recomputing payment core only.
+[INFO] 2026-08-12 14:00:34,286 accounting.reconciliation reconcile_payment: Payment core after recompute: not_paid
+[INFO] 2026-08-12 14:05:38,928 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-12 14:05:38,929 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 102 | Ref: CSH01-PAY-000046 | Type: INCOMING
+[DEBUG] 2026-08-12 14:05:38,929 accounting.reconciliation reconcile_payment: Payment amount: 120.00 | Currency: CNY - Chinese Yuan
+[INFO] 2026-08-12 14:05:38,933 accounting.reconciliation reconcile_payment: Found 0 invoice allocation(s)
+[INFO] 2026-08-12 14:05:38,934 accounting.reconciliation reconcile_payment: No allocations found. Recomputing payment core only.
+[INFO] 2026-08-12 14:05:38,940 accounting.reconciliation reconcile_payment: Payment core after recompute: not_paid
+[ERROR] 2026-08-24 15:01:57,141 accounting.reconciliation reconcile_pre_payments: unexpected error occurred during payment reconciliation
+Traceback (most recent call last):
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\views\recocniliation\reconcile_pre_payments.py", line 65, in reconcile_pre_payments
+    swap_move_prepayments(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        payment_locked, request.user,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        amt_company_currency=new_chunk,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\services\reconciliation_service.py", line 183, in swap_move_prepayments
+    lines.append(AccountMoveLine(
+                 ~~~~~~~~~~~~~~~^
+        move=move, account=adv_account, partner=payment.partner,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        debit=amt_ccy, credit=Decimal('0'),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        amount_currency=Decimal('0'),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^
+  File "C:\Users\IAN\SHOP PROJECT\.venv\Lib\site-packages\django\db\models\base.py", line 590, in __init__
+    raise TypeError(
+    ...<2 lines>...
+    )
+TypeError: AccountMoveLine() got unexpected keyword arguments: 'amount_currency'
+[INFO] 2026-08-24 17:41:50,820 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-24 17:41:50,821 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 103 | Ref: CSH01-PAY-000047 | Type: INCOMING
+[DEBUG] 2026-08-24 17:41:50,821 accounting.reconciliation reconcile_payment: Payment amount: 7000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-24 17:41:50,826 accounting.reconciliation reconcile_payment: Found 0 invoice allocation(s)
+[INFO] 2026-08-24 17:41:50,827 accounting.reconciliation reconcile_payment: No allocations found. Recomputing payment core only.
+[INFO] 2026-08-24 17:41:50,864 accounting.reconciliation reconcile_payment: Payment core after recompute: not_paid
+[ERROR] 2026-08-24 17:42:12,149 accounting.reconciliation reconcile_pre_payments: unexpected error occurred during payment reconciliation
+Traceback (most recent call last):
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\views\recocniliation\reconcile_pre_payments.py", line 65, in reconcile_pre_payments
+    swap_move_prepayments(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        payment_locked, request.user,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        amt_company_currency=new_chunk,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\services\reconciliation_service.py", line 183, in swap_move_prepayments
+    lines.append(AccountMoveLine(
+                 ~~~~~~~~~~~~~~~^
+        move=move, account=adv_account, partner=payment.partner,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        debit=amt_ccy, credit=Decimal('0'),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        amount_currency=Decimal('0'),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^
+  File "C:\Users\IAN\SHOP PROJECT\.venv\Lib\site-packages\django\db\models\base.py", line 590, in __init__
+    raise TypeError(
+    ...<2 lines>...
+    )
+TypeError: AccountMoveLine() got unexpected keyword arguments: 'amount_currency'
+[ERROR] 2026-08-24 18:10:57,531 accounting.reconciliation save_pre_payments: Unexpected error occurred during payment creation
+Traceback (most recent call last):
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\views\payments\pre_payments.py", line 49, in save_pre_payments
+    payment.save()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\models\payment.py", line 616, in save
+    rate = _get_rate(
+        company=self.company,
+        currency=self.currency,
+        date=self.date,
+    )
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\core\services\currency_exchange_service.py", line 22, in _get_rate
+    raise CurrencyConversionError(
+        f"No exchange rate for {code} on or before {date}."
+    )
+core.services.currency_exchange_service.CurrencyConversionError: No exchange rate for KES on or before 2026-08-24.
+[ERROR] 2026-08-24 18:11:00,287 accounting.reconciliation save_pre_payments: Unexpected error occurred during payment creation
+Traceback (most recent call last):
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\views\payments\pre_payments.py", line 49, in save_pre_payments
+    payment.save()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\models\payment.py", line 616, in save
+    rate = _get_rate(
+        company=self.company,
+        currency=self.currency,
+        date=self.date,
+    )
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\core\services\currency_exchange_service.py", line 22, in _get_rate
+    raise CurrencyConversionError(
+        f"No exchange rate for {code} on or before {date}."
+    )
+core.services.currency_exchange_service.CurrencyConversionError: No exchange rate for KES on or before 2026-08-24.
+[INFO] 2026-08-24 18:50:10,513 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-24 18:50:10,514 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 110 | Ref: CSH01-PAY-000048 | Type: INCOMING
+[DEBUG] 2026-08-24 18:50:10,515 accounting.reconciliation reconcile_payment: Payment amount: 35000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-24 18:50:10,522 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-24 18:50:10,525 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-24 18:50:10,525 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-24 18:50:10,538 accounting.reconciliation reconcile_payment: Payment lines: [1864] on moves ['CSH01-003106'] | Total liquidity: 35000.00
+[INFO] 2026-08-24 18:50:10,559 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-24 18:50:10,560 accounting.reconciliation reconcile_payment: Allocation ID: 110 | Amount: 35000.00
+[DEBUG] 2026-08-24 18:50:10,567 accounting.reconciliation reconcile_payment: Invoice move ID: 543 | Name: SAJ01-001363 | Type: out_invoice
+[DEBUG] 2026-08-24 18:50:10,568 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 35000.00 | State: not_paid
+[DEBUG] 2026-08-24 18:50:10,569 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-24 18:50:10,576 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-24 18:50:10,577 accounting.reconciliation reconcile_payment: Amount to process (delta): 35000.00 = 35000.00 - 0.00
+[DEBUG] 2026-08-24 18:50:10,579 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 35000.00
+[DEBUG] 2026-08-24 18:50:10,580 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-24 18:50:10,595 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 35000.00
+[DEBUG] 2026-08-24 18:50:10,596 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-24 18:50:10,597 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-24 18:50:10,605 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1857 | Debit: 35000.00 | Credit: 0.00
+[DEBUG] 2026-08-24 18:50:10,606 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-24 18:50:10,612 accounting.reconciliation reconcile_payment: Consuming 35000.00 from payment line 1864 (move CSH01-003106, remaining before: 35000.00)
+[DEBUG] 2026-08-24 18:50:10,618 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 75
+[DEBUG] 2026-08-24 18:50:10,639 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-24 18:50:10,647 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-24 18:50:10,648 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-24 18:50:10,662 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-24 18:50:10,663 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-24 18:50:10,704 accounting.reconciliation reconcile_payment: Final payment core: paid
+[INFO] 2026-08-24 18:50:10,707 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-24 18:50:10,708 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-24 18:50:17,183 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-24 18:50:17,184 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 110 | Ref: CSH01-PAY-000048 | Type: INCOMING
+[DEBUG] 2026-08-24 18:50:17,185 accounting.reconciliation reconcile_payment: Payment amount: 35000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-24 18:50:17,188 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-24 18:50:17,189 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-24 18:50:17,189 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-24 18:50:17,196 accounting.reconciliation reconcile_payment: Payment lines: [1864] on moves ['CSH01-003106'] | Total liquidity: 35000.00
+[INFO] 2026-08-24 18:50:17,204 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-24 18:50:17,204 accounting.reconciliation reconcile_payment: Allocation ID: 110 | Amount: 35000.00
+[DEBUG] 2026-08-24 18:50:17,209 accounting.reconciliation reconcile_payment: Invoice move ID: 543 | Name: SAJ01-001363 | Type: out_invoice
+[DEBUG] 2026-08-24 18:50:17,210 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 35000.00 | State: not_paid
+[DEBUG] 2026-08-24 18:50:17,210 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-24 18:50:17,214 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-24 18:50:17,215 accounting.reconciliation reconcile_payment: Amount to process (delta): 35000.00 = 35000.00 - 0.00
+[DEBUG] 2026-08-24 18:50:17,215 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 35000.00
+[DEBUG] 2026-08-24 18:50:17,216 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-24 18:50:17,221 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 35000.00
+[DEBUG] 2026-08-24 18:50:17,222 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-24 18:50:17,223 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-24 18:50:17,228 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1857 | Debit: 35000.00 | Credit: 0.00
+[DEBUG] 2026-08-24 18:50:17,228 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-24 18:50:17,232 accounting.reconciliation reconcile_payment: Consuming 35000.00 from payment line 1864 (move CSH01-003106, remaining before: 35000.00)
+[DEBUG] 2026-08-24 18:50:17,236 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 75
+[DEBUG] 2026-08-24 18:50:17,254 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-24 18:50:17,261 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-24 18:50:17,262 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-24 18:50:17,277 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-24 18:50:17,278 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-24 18:50:17,295 accounting.reconciliation reconcile_payment: Final payment core: paid
+[INFO] 2026-08-24 18:50:17,298 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-24 18:50:17,298 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 12:25:54,357 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 12:25:54,358 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 107 | Ref: CSH02-PAY-000011 | Type: INCOMING
+[DEBUG] 2026-08-25 12:25:54,359 accounting.reconciliation reconcile_payment: Payment amount: 132342.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 12:25:54,362 accounting.reconciliation reconcile_payment: Found 0 invoice allocation(s)
+[INFO] 2026-08-25 12:25:54,363 accounting.reconciliation reconcile_payment: No allocations found. Recomputing payment core only.
+[INFO] 2026-08-25 12:25:54,369 accounting.reconciliation reconcile_payment: Payment core after recompute: not_paid
+[INFO] 2026-08-25 12:55:07,657 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 12:55:07,658 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 112 | Ref: CSH01-PAY-000048 | Type: INCOMING
+[DEBUG] 2026-08-25 12:55:07,658 accounting.reconciliation reconcile_payment: Payment amount: 3000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 12:55:07,662 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-25 12:55:07,663 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 12:55:07,664 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 12:55:07,671 accounting.reconciliation reconcile_payment: Payment lines: [1866] on moves ['CSH01-003106'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 12:55:07,680 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-25 12:55:07,681 accounting.reconciliation reconcile_payment: Allocation ID: 112 | Amount: 3000.00
+[DEBUG] 2026-08-25 12:55:07,685 accounting.reconciliation reconcile_payment: Invoice move ID: 497 | Name: SAJ01-001331 | Type: out_invoice
+[DEBUG] 2026-08-25 12:55:07,686 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 3000.00 | State: not_paid
+[DEBUG] 2026-08-25 12:55:07,686 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 12:55:07,690 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 12:55:07,690 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 12:55:07,691 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 3000.00
+[DEBUG] 2026-08-25 12:55:07,691 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 12:55:07,700 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 3000.00
+[DEBUG] 2026-08-25 12:55:07,700 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 12:55:07,701 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 12:55:07,708 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1666 | Debit: 3000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 12:55:07,709 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 12:55:07,713 accounting.reconciliation reconcile_payment: Consuming 3000.00 from payment line 1866 (move CSH01-003106, remaining before: 3000.00)
+[DEBUG] 2026-08-25 12:55:07,718 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 75
+[DEBUG] 2026-08-25 12:55:07,732 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 12:55:07,737 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-25 12:55:07,737 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 12:55:07,750 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-25 12:55:07,750 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-25 12:55:07,778 accounting.reconciliation reconcile_payment: Final payment core: paid
+[INFO] 2026-08-25 12:55:07,780 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-25 12:55:07,781 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:00:09,985 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:00:09,986 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 112 | Ref: CSH01-PAY-000048 | Type: INCOMING
+[DEBUG] 2026-08-25 13:00:09,987 accounting.reconciliation reconcile_payment: Payment amount: 3000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:00:09,994 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-25 13:00:09,996 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:00:09,997 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:00:10,006 accounting.reconciliation reconcile_payment: Payment lines: [1866] on moves ['CSH01-003106'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 13:00:10,015 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-25 13:00:10,016 accounting.reconciliation reconcile_payment: Allocation ID: 112 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:00:10,022 accounting.reconciliation reconcile_payment: Invoice move ID: 497 | Name: SAJ01-001331 | Type: out_invoice
+[DEBUG] 2026-08-25 13:00:10,022 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 3000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:00:10,023 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:00:10,029 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:00:10,030 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:00:10,031 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 3000.00
+[DEBUG] 2026-08-25 13:00:10,032 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:00:10,040 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 3000.00
+[DEBUG] 2026-08-25 13:00:10,040 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:00:10,041 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:00:10,048 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1666 | Debit: 3000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:00:10,049 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:00:10,052 accounting.reconciliation reconcile_payment: Consuming 3000.00 from payment line 1866 (move CSH01-003106, remaining before: 3000.00)
+[DEBUG] 2026-08-25 13:00:10,058 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 75
+[DEBUG] 2026-08-25 13:00:10,070 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:00:10,075 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-25 13:00:10,076 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:00:10,088 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-25 13:00:10,089 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-25 13:00:10,113 accounting.reconciliation reconcile_payment: Final payment core: paid
+[INFO] 2026-08-25 13:00:10,115 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-25 13:00:10,116 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:07:39,829 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:07:39,830 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 112 | Ref: CSH01-PAY-000048 | Type: INCOMING
+[DEBUG] 2026-08-25 13:07:39,830 accounting.reconciliation reconcile_payment: Payment amount: 3000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:07:39,833 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-25 13:07:39,835 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:07:39,835 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:07:39,846 accounting.reconciliation reconcile_payment: Payment lines: [1866] on moves ['CSH01-003106'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 13:07:39,853 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-25 13:07:39,854 accounting.reconciliation reconcile_payment: Allocation ID: 112 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:07:39,858 accounting.reconciliation reconcile_payment: Invoice move ID: 497 | Name: SAJ01-001331 | Type: out_invoice
+[DEBUG] 2026-08-25 13:07:39,858 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 3000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:07:39,859 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:07:39,865 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:07:39,865 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:07:39,866 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 3000.00
+[DEBUG] 2026-08-25 13:07:39,867 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:07:39,872 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 3000.00
+[DEBUG] 2026-08-25 13:07:39,873 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:07:39,873 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:07:39,878 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1666 | Debit: 3000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:07:39,879 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:07:39,883 accounting.reconciliation reconcile_payment: Consuming 3000.00 from payment line 1866 (move CSH01-003106, remaining before: 3000.00)
+[DEBUG] 2026-08-25 13:07:39,888 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 75
+[DEBUG] 2026-08-25 13:07:39,900 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:07:39,905 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-25 13:07:39,905 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:07:39,916 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-25 13:07:39,916 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-25 13:07:39,925 accounting.reconciliation reconcile_payment: Final payment core: paid
+[INFO] 2026-08-25 13:07:39,926 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-25 13:07:39,927 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:08:12,836 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:08:12,837 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:08:12,837 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:08:12,841 accounting.reconciliation reconcile_payment: Found 0 invoice allocation(s)
+[INFO] 2026-08-25 13:08:12,841 accounting.reconciliation reconcile_payment: No allocations found. Recomputing payment core only.
+[INFO] 2026-08-25 13:08:12,850 accounting.reconciliation reconcile_payment: Payment core after recompute: not_paid
+[INFO] 2026-08-25 13:08:27,343 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:08:27,344 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 109 | Ref: CSH01-PAY-000050 | Type: INCOMING
+[DEBUG] 2026-08-25 13:08:27,344 accounting.reconciliation reconcile_payment: Payment amount: 40000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:08:27,347 accounting.reconciliation reconcile_payment: Found 0 invoice allocation(s)
+[INFO] 2026-08-25 13:08:27,347 accounting.reconciliation reconcile_payment: No allocations found. Recomputing payment core only.
+[INFO] 2026-08-25 13:08:27,353 accounting.reconciliation reconcile_payment: Payment core after recompute: not_paid
+[INFO] 2026-08-25 13:09:26,236 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:09:26,237 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 110 | Ref: CSH01-PAY-000051 | Type: INCOMING
+[DEBUG] 2026-08-25 13:09:26,238 accounting.reconciliation reconcile_payment: Payment amount: 35000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:09:26,240 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-25 13:09:26,241 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:09:26,242 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:09:26,248 accounting.reconciliation reconcile_payment: Payment lines: [1872] on moves ['CSH01-003109'] | Total liquidity: 35000.00
+[INFO] 2026-08-25 13:09:26,255 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-25 13:09:26,256 accounting.reconciliation reconcile_payment: Allocation ID: 110 | Amount: 35000.00
+[DEBUG] 2026-08-25 13:09:26,259 accounting.reconciliation reconcile_payment: Invoice move ID: 543 | Name: SAJ01-001363 | Type: out_invoice
+[DEBUG] 2026-08-25 13:09:26,259 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 35000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:09:26,260 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:09:26,263 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:09:26,263 accounting.reconciliation reconcile_payment: Amount to process (delta): 35000.00 = 35000.00 - 0.00
+[DEBUG] 2026-08-25 13:09:26,264 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 35000.00
+[DEBUG] 2026-08-25 13:09:26,264 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:09:26,269 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 35000.00
+[DEBUG] 2026-08-25 13:09:26,270 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:09:26,270 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:09:26,274 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1857 | Debit: 35000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:09:26,275 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:09:26,278 accounting.reconciliation reconcile_payment: Consuming 35000.00 from payment line 1872 (move CSH01-003109, remaining before: 35000.00)
+[DEBUG] 2026-08-25 13:09:26,282 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 76
+[DEBUG] 2026-08-25 13:09:26,294 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:09:26,297 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-25 13:09:26,297 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:09:26,308 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-25 13:09:26,308 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-25 13:09:26,315 accounting.reconciliation reconcile_payment: Final payment core: paid
+[INFO] 2026-08-25 13:09:26,316 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-25 13:09:26,317 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:09:48,553 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:09:48,553 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 105 | Ref: CSH01-PAY-000052 | Type: INCOMING
+[DEBUG] 2026-08-25 13:09:48,554 accounting.reconciliation reconcile_payment: Payment amount: 14000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:09:48,557 accounting.reconciliation reconcile_payment: Found 0 invoice allocation(s)
+[INFO] 2026-08-25 13:09:48,557 accounting.reconciliation reconcile_payment: No allocations found. Recomputing payment core only.
+[INFO] 2026-08-25 13:09:48,566 accounting.reconciliation reconcile_payment: Payment core after recompute: not_paid
+[INFO] 2026-08-25 13:10:55,907 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:10:55,907 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 113 | Ref: CSH01-PAY-000053 | Type: INCOMING
+[DEBUG] 2026-08-25 13:10:55,908 accounting.reconciliation reconcile_payment: Payment amount: 10000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:10:55,912 accounting.reconciliation reconcile_payment: Found 0 invoice allocation(s)
+[INFO] 2026-08-25 13:10:55,912 accounting.reconciliation reconcile_payment: No allocations found. Recomputing payment core only.
+[INFO] 2026-08-25 13:10:55,922 accounting.reconciliation reconcile_payment: Payment core after recompute: not_paid
+[INFO] 2026-08-25 13:11:17,987 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:11:17,988 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 113 | Ref: CSH01-PAY-000053 | Type: INCOMING
+[DEBUG] 2026-08-25 13:11:17,988 accounting.reconciliation reconcile_payment: Payment amount: 10000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:11:17,992 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-25 13:11:17,993 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:11:17,994 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:11:18,010 accounting.reconciliation reconcile_payment: Payment lines: [1878] on moves ['CSH01-003112'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 13:11:18,017 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-25 13:11:18,018 accounting.reconciliation reconcile_payment: Allocation ID: 113 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:11:18,023 accounting.reconciliation reconcile_payment: Invoice move ID: 404 | Name: SAJ01-001317 | Type: out_invoice
+[DEBUG] 2026-08-25 13:11:18,023 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 3000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:11:18,024 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:11:18,028 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:11:18,028 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:11:18,029 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 3000.00
+[DEBUG] 2026-08-25 13:11:18,029 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:11:18,044 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 3000.00
+[DEBUG] 2026-08-25 13:11:18,044 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:11:18,045 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:11:18,049 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1438 | Debit: 3000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:11:18,050 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:11:18,054 accounting.reconciliation reconcile_payment: Consuming 3000.00 from payment line 1878 (move CSH01-003112, remaining before: 3000.00)
+[DEBUG] 2026-08-25 13:11:18,059 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 77
+[DEBUG] 2026-08-25 13:11:18,067 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:11:18,072 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-25 13:11:18,073 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:11:18,081 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-25 13:11:18,081 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-25 13:11:18,105 accounting.reconciliation reconcile_payment: Final payment core: partial
+[INFO] 2026-08-25 13:11:18,107 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-25 13:11:18,107 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:11:18,111 accounting.reconciliation reconcile_pre_payments: Reconciled payment 113 against invoice AccountMove object (404): 0 -> 3000.00 by user 1
+[INFO] 2026-08-25 13:27:39,478 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:27:39,479 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 113 | Ref: CSH01-PAY-000053 | Type: INCOMING
+[DEBUG] 2026-08-25 13:27:39,479 accounting.reconciliation reconcile_payment: Payment amount: 10000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:27:39,483 accounting.reconciliation reconcile_payment: Found 2 invoice allocation(s)
+[DEBUG] 2026-08-25 13:27:39,485 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:27:39,486 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:27:39,506 accounting.reconciliation reconcile_payment: Payment lines: [1880] on moves ['CSH01-003113'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 13:27:39,519 accounting.reconciliation reconcile_payment: --- Processing allocation 1/2 ---
+[DEBUG] 2026-08-25 13:27:39,520 accounting.reconciliation reconcile_payment: Allocation ID: 113 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:27:39,525 accounting.reconciliation reconcile_payment: Invoice move ID: 404 | Name: SAJ01-001317 | Type: out_invoice
+[DEBUG] 2026-08-25 13:27:39,525 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 0.00 | State: paid
+[DEBUG] 2026-08-25 13:27:39,526 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:27:39,533 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:27:39,535 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:27:39,536 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 0.00
+[ERROR] 2026-08-25 13:27:39,537 accounting.reconciliation reconcile_payment: Validation failed: New allocation (3000.00) exceeds invoice residual (0.00)
+[INFO] 2026-08-25 13:28:01,903 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:28:01,903 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 113 | Ref: CSH01-PAY-000053 | Type: INCOMING
+[DEBUG] 2026-08-25 13:28:01,904 accounting.reconciliation reconcile_payment: Payment amount: 10000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:28:01,906 accounting.reconciliation reconcile_payment: Found 2 invoice allocation(s)
+[DEBUG] 2026-08-25 13:28:01,908 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:28:01,908 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:28:01,925 accounting.reconciliation reconcile_payment: Payment lines: [1880] on moves ['CSH01-003113'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 13:28:01,932 accounting.reconciliation reconcile_payment: --- Processing allocation 1/2 ---
+[DEBUG] 2026-08-25 13:28:01,933 accounting.reconciliation reconcile_payment: Allocation ID: 113 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:28:01,937 accounting.reconciliation reconcile_payment: Invoice move ID: 404 | Name: SAJ01-001317 | Type: out_invoice
+[DEBUG] 2026-08-25 13:28:01,937 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 0.00 | State: paid
+[DEBUG] 2026-08-25 13:28:01,938 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:28:01,943 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:28:01,944 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:28:01,944 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 0.00
+[ERROR] 2026-08-25 13:28:01,945 accounting.reconciliation reconcile_payment: Validation failed: New allocation (3000.00) exceeds invoice residual (0.00)
+[INFO] 2026-08-25 13:29:18,302 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:29:18,303 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:29:18,304 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:29:18,308 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-25 13:29:18,310 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:29:18,311 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:29:18,336 accounting.reconciliation reconcile_payment: Payment lines: [1880] on moves ['CSH01-003113'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 13:29:18,348 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-25 13:29:18,348 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:29:18,354 accounting.reconciliation reconcile_payment: Invoice move ID: 403 | Name: SAJ01-001316 | Type: out_invoice
+[DEBUG] 2026-08-25 13:29:18,354 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 3000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:29:18,355 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:29:18,362 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:29:18,363 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:29:18,364 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 3000.00
+[DEBUG] 2026-08-25 13:29:18,364 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:29:18,384 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 3000.00
+[DEBUG] 2026-08-25 13:29:18,385 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:29:18,385 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:29:18,395 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1435 | Debit: 3000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:29:18,396 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:29:18,403 accounting.reconciliation reconcile_payment: Consuming 3000.00 from payment line 1880 (move CSH01-003113, remaining before: 3000.00)
+[DEBUG] 2026-08-25 13:29:18,412 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 78
+[DEBUG] 2026-08-25 13:29:18,432 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:29:18,437 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-25 13:29:18,438 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:29:18,448 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-25 13:29:18,449 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-25 13:29:18,464 accounting.reconciliation reconcile_payment: Final payment core: partial
+[INFO] 2026-08-25 13:29:18,466 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-25 13:29:18,466 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:29:18,470 accounting.reconciliation reconcile_pre_payments: Reconciled payment 108 against invoice AccountMove object (403): 0 -> 3000.00 by user 1
+[INFO] 2026-08-25 13:29:38,387 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:29:38,388 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:29:38,388 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:29:38,391 accounting.reconciliation reconcile_payment: Found 2 invoice allocation(s)
+[DEBUG] 2026-08-25 13:29:38,393 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:29:38,393 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:29:38,413 accounting.reconciliation reconcile_payment: Payment lines: [1882] on moves ['CSH01-003114'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 13:29:38,421 accounting.reconciliation reconcile_payment: --- Processing allocation 1/2 ---
+[DEBUG] 2026-08-25 13:29:38,421 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:29:38,426 accounting.reconciliation reconcile_payment: Invoice move ID: 403 | Name: SAJ01-001316 | Type: out_invoice
+[DEBUG] 2026-08-25 13:29:38,426 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 0.00 | State: paid
+[DEBUG] 2026-08-25 13:29:38,427 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:29:38,432 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:29:38,432 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:29:38,433 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 0.00
+[ERROR] 2026-08-25 13:29:38,433 accounting.reconciliation reconcile_payment: Validation failed: New allocation (3000.00) exceeds invoice residual (0.00)
+[INFO] 2026-08-25 13:33:12,809 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:33:12,810 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:33:12,810 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:33:12,812 accounting.reconciliation reconcile_payment: Found 2 invoice allocation(s)
+[DEBUG] 2026-08-25 13:33:12,813 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:33:12,814 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:33:12,830 accounting.reconciliation reconcile_payment: Payment lines: [1882] on moves ['CSH01-003114'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 13:33:12,840 accounting.reconciliation reconcile_payment: --- Processing allocation 1/2 ---
+[DEBUG] 2026-08-25 13:33:12,841 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:33:12,846 accounting.reconciliation reconcile_payment: Invoice move ID: 403 | Name: SAJ01-001316 | Type: out_invoice
+[DEBUG] 2026-08-25 13:33:12,846 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 0.00 | State: paid
+[DEBUG] 2026-08-25 13:33:12,847 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:33:12,852 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:33:12,853 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:33:12,854 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 0.00
+[ERROR] 2026-08-25 13:33:12,854 accounting.reconciliation reconcile_payment: Validation failed: New allocation (3000.00) exceeds invoice residual (0.00)
+[INFO] 2026-08-25 13:34:13,126 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:34:13,126 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:34:13,127 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:34:13,129 accounting.reconciliation reconcile_payment: Found 2 invoice allocation(s)
+[DEBUG] 2026-08-25 13:34:13,131 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:34:13,132 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:34:13,150 accounting.reconciliation reconcile_payment: Payment lines: [1887] on moves ['CSH01-003114'] | Total liquidity: 7000.00
+[INFO] 2026-08-25 13:34:13,159 accounting.reconciliation reconcile_payment: --- Processing allocation 1/2 ---
+[DEBUG] 2026-08-25 13:34:13,159 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:34:13,162 accounting.reconciliation reconcile_payment: Invoice move ID: 403 | Name: SAJ01-001316 | Type: out_invoice
+[DEBUG] 2026-08-25 13:34:13,162 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 0.00 | State: paid
+[DEBUG] 2026-08-25 13:34:13,163 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:34:13,166 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:34:13,166 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:34:13,169 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 0.00
+[ERROR] 2026-08-25 13:34:13,169 accounting.reconciliation reconcile_payment: Validation failed: New allocation (3000.00) exceeds invoice residual (0.00)
+[INFO] 2026-08-25 13:45:22,504 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:45:22,505 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:45:22,505 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:45:22,508 accounting.reconciliation reconcile_payment: Found 2 invoice allocation(s)
+[DEBUG] 2026-08-25 13:45:22,509 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:45:22,509 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:45:22,527 accounting.reconciliation reconcile_payment: Payment lines: [1887] on moves ['CSH01-003114'] | Total liquidity: 1000.00
+[INFO] 2026-08-25 13:45:22,535 accounting.reconciliation reconcile_payment: --- Processing allocation 1/2 ---
+[DEBUG] 2026-08-25 13:45:22,536 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:45:22,539 accounting.reconciliation reconcile_payment: Invoice move ID: 403 | Name: SAJ01-001316 | Type: out_invoice
+[DEBUG] 2026-08-25 13:45:22,539 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 0.00 | State: paid
+[DEBUG] 2026-08-25 13:45:22,540 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:45:22,543 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:45:22,543 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:45:22,544 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 0.00
+[ERROR] 2026-08-25 13:45:22,544 accounting.reconciliation reconcile_payment: Validation failed: New allocation (3000.00) exceeds invoice residual (0.00)
+[INFO] 2026-08-25 13:46:04,694 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:46:04,695 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:46:04,695 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:46:04,697 accounting.reconciliation reconcile_payment: Found 2 invoice allocation(s)
+[DEBUG] 2026-08-25 13:46:04,698 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:46:04,699 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:46:04,715 accounting.reconciliation reconcile_payment: Payment lines: [1887] on moves ['CSH01-003114'] | Total liquidity: 1000.00
+[INFO] 2026-08-25 13:46:04,723 accounting.reconciliation reconcile_payment: --- Processing allocation 1/2 ---
+[DEBUG] 2026-08-25 13:46:04,723 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 13:46:04,728 accounting.reconciliation reconcile_payment: --- Processing allocation 2/2 ---
+[DEBUG] 2026-08-25 13:46:04,728 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 13:46:04,733 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 13:46:04,733 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 140000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:46:04,734 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:46:04,739 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:46:04,740 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 13:46:04,740 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 140000.00
+[DEBUG] 2026-08-25 13:46:04,741 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:46:04,756 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 1000.00
+[DEBUG] 2026-08-25 13:46:04,756 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:46:04,757 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:46:04,764 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:46:04,765 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:46:04,771 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1887 (move CSH01-003114, remaining before: 1000.00)
+[DEBUG] 2026-08-25 13:46:04,779 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 79
+[DEBUG] 2026-08-25 13:46:04,799 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:46:04,809 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 13:46:04,810 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:46:04,822 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 13:46:04,822 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-25 13:46:04,838 accounting.reconciliation reconcile_payment: Final payment core: partial
+[INFO] 2026-08-25 13:46:04,839 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-25 13:46:04,840 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:46:04,843 accounting.reconciliation reconcile_pre_payments: Reconciled payment 108 against invoice AccountMove object (555): 0 -> 1000.00 by user 1
+[INFO] 2026-08-25 13:46:19,497 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:46:19,498 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:46:19,498 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:46:19,501 accounting.reconciliation reconcile_payment: Found 2 invoice allocation(s)
+[DEBUG] 2026-08-25 13:46:19,503 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:46:19,504 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:46:19,524 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 1000.00
+[INFO] 2026-08-25 13:46:19,536 accounting.reconciliation reconcile_payment: --- Processing allocation 1/2 ---
+[DEBUG] 2026-08-25 13:46:19,537 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 13:46:19,542 accounting.reconciliation reconcile_payment: --- Processing allocation 2/2 ---
+[DEBUG] 2026-08-25 13:46:19,543 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 2000.00
+[DEBUG] 2026-08-25 13:46:19,547 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 13:46:19,547 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 13:46:19,548 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:46:19,552 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:46:19,553 accounting.reconciliation reconcile_payment: Amount to process (delta): 2000.00 = 2000.00 - 0.00
+[DEBUG] 2026-08-25 13:46:19,554 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 13:46:19,554 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:46:19,578 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 1000.00
+[ERROR] 2026-08-25 13:46:19,579 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 1000.00
+[INFO] 2026-08-25 13:46:26,100 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:46:26,100 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:46:26,101 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:46:26,104 accounting.reconciliation reconcile_payment: Found 2 invoice allocation(s)
+[DEBUG] 2026-08-25 13:46:26,105 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:46:26,105 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:46:26,125 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 1000.00
+[INFO] 2026-08-25 13:46:26,133 accounting.reconciliation reconcile_payment: --- Processing allocation 1/2 ---
+[DEBUG] 2026-08-25 13:46:26,133 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 13:46:26,137 accounting.reconciliation reconcile_payment: --- Processing allocation 2/2 ---
+[DEBUG] 2026-08-25 13:46:26,137 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 2000.00
+[DEBUG] 2026-08-25 13:46:26,140 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 13:46:26,140 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 13:46:26,141 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:46:26,146 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:46:26,146 accounting.reconciliation reconcile_payment: Amount to process (delta): 2000.00 = 2000.00 - 0.00
+[DEBUG] 2026-08-25 13:46:26,147 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 13:46:26,147 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:46:26,169 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 1000.00
+[ERROR] 2026-08-25 13:46:26,170 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 1000.00
+[INFO] 2026-08-25 13:46:45,514 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:46:45,515 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:46:45,515 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:46:45,518 accounting.reconciliation reconcile_payment: Found 2 invoice allocation(s)
+[DEBUG] 2026-08-25 13:46:45,521 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:46:45,521 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:46:45,545 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 1000.00
+[INFO] 2026-08-25 13:46:45,553 accounting.reconciliation reconcile_payment: --- Processing allocation 1/2 ---
+[DEBUG] 2026-08-25 13:46:45,554 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 13:46:45,557 accounting.reconciliation reconcile_payment: --- Processing allocation 2/2 ---
+[DEBUG] 2026-08-25 13:46:45,558 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 2000.00
+[DEBUG] 2026-08-25 13:46:45,561 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 13:46:45,561 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 13:46:45,562 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:46:45,565 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:46:45,566 accounting.reconciliation reconcile_payment: Amount to process (delta): 2000.00 = 2000.00 - 0.00
+[DEBUG] 2026-08-25 13:46:45,566 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 13:46:45,566 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:46:45,585 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 1000.00
+[ERROR] 2026-08-25 13:46:45,586 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 1000.00
+[INFO] 2026-08-25 13:49:44,412 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:49:44,414 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:49:44,414 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:49:44,420 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 13:49:44,422 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:49:44,423 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:49:44,451 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 1000.00
+[INFO] 2026-08-25 13:49:44,469 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 13:49:44,470 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 13:49:44,478 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 13:49:44,479 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 13:49:44,489 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 13:49:44,490 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 13:49:44,491 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:49:44,498 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:49:44,499 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 13:49:44,500 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 13:49:44,501 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:49:44,534 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 1000.00
+[DEBUG] 2026-08-25 13:49:44,535 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:49:44,536 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:49:44,540 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:49:44,540 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:49:44,543 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 1000.00)
+[DEBUG] 2026-08-25 13:49:44,548 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 13:49:44,559 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:49:44,563 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 13:49:44,564 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:49:44,573 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 13:49:44,574 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 13:49:44,574 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 1000.00
+[DEBUG] 2026-08-25 13:49:44,578 accounting.reconciliation reconcile_payment: Invoice move ID: 525 | Name: SAJ01-001346 | Type: out_invoice
+[DEBUG] 2026-08-25 13:49:44,578 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 35000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:49:44,579 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:49:44,583 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:49:44,584 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 13:49:44,585 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 35000.00
+[DEBUG] 2026-08-25 13:49:44,585 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:49:44,603 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 0
+[ERROR] 2026-08-25 13:49:44,604 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 0
+[INFO] 2026-08-25 13:52:22,498 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:52:22,499 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:52:22,500 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:52:22,507 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 13:52:22,510 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:52:22,511 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:52:22,679 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 13:52:22,695 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 13:52:22,696 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 13:52:22,705 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 13:52:22,706 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 13:52:22,713 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 13:52:22,714 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 13:52:22,715 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:52:22,724 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:52:22,725 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 13:52:22,726 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 13:52:22,727 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:52:22,809 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 3000.00
+[DEBUG] 2026-08-25 13:52:22,810 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:52:22,810 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:52:22,817 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:52:22,818 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:52:22,822 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 3000.00)
+[DEBUG] 2026-08-25 13:52:22,830 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 13:52:22,843 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:52:22,849 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 13:52:22,849 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:52:22,860 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 13:52:22,861 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 13:52:22,861 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:52:22,866 accounting.reconciliation reconcile_payment: Invoice move ID: 409 | Name: SAJ01-001322 | Type: out_invoice
+[DEBUG] 2026-08-25 13:52:22,867 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 38000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:52:22,868 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:52:22,873 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:52:22,873 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:52:22,874 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 38000.00
+[DEBUG] 2026-08-25 13:52:22,875 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:52:22,942 accounting.reconciliation reconcile_payment: Used on payment total: 1000 | Remaining liquidity: 2000.00
+[ERROR] 2026-08-25 13:52:22,943 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 2000.00
+[INFO] 2026-08-25 13:52:23,183 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:52:23,184 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:52:23,185 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:52:23,188 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 13:52:23,190 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:52:23,191 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:52:23,259 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 13:52:23,270 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 13:52:23,271 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 13:52:23,276 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 13:52:23,276 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 13:52:23,281 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 13:52:23,282 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 13:52:23,282 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:52:23,288 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:52:23,288 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 13:52:23,289 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 13:52:23,290 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:52:23,352 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 3000.00
+[DEBUG] 2026-08-25 13:52:23,353 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:52:23,354 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:52:23,360 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:52:23,360 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:52:23,364 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 3000.00)
+[DEBUG] 2026-08-25 13:52:23,369 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 13:52:23,381 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:52:23,386 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 13:52:23,387 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:52:23,397 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 13:52:23,398 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 13:52:23,399 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:52:23,402 accounting.reconciliation reconcile_payment: Invoice move ID: 409 | Name: SAJ01-001322 | Type: out_invoice
+[DEBUG] 2026-08-25 13:52:23,403 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 38000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:52:23,403 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:52:23,408 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:52:23,409 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:52:23,410 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 38000.00
+[DEBUG] 2026-08-25 13:52:23,410 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:52:23,472 accounting.reconciliation reconcile_payment: Used on payment total: 1000 | Remaining liquidity: 2000.00
+[ERROR] 2026-08-25 13:52:23,472 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 2000.00
+[INFO] 2026-08-25 13:53:07,055 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:53:07,055 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:53:07,056 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:53:07,058 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 13:53:07,059 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:53:07,060 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:53:07,082 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 2000.00
+[INFO] 2026-08-25 13:53:07,090 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 13:53:07,090 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 13:53:07,094 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 13:53:07,094 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 13:53:07,097 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 13:53:07,098 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 13:53:07,098 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:53:07,104 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:53:07,104 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 13:53:07,105 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 13:53:07,105 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:53:07,126 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 2000.00
+[DEBUG] 2026-08-25 13:53:07,127 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:53:07,127 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:53:07,131 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:53:07,132 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:53:07,136 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 2000.00)
+[DEBUG] 2026-08-25 13:53:07,141 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 13:53:07,152 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:53:07,156 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 13:53:07,156 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:53:07,164 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 13:53:07,165 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 13:53:07,165 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 2000.00
+[DEBUG] 2026-08-25 13:53:07,169 accounting.reconciliation reconcile_payment: Invoice move ID: 409 | Name: SAJ01-001322 | Type: out_invoice
+[DEBUG] 2026-08-25 13:53:07,169 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 38000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:53:07,170 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:53:07,173 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:53:07,174 accounting.reconciliation reconcile_payment: Amount to process (delta): 2000.00 = 2000.00 - 0.00
+[DEBUG] 2026-08-25 13:53:07,174 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 38000.00
+[DEBUG] 2026-08-25 13:53:07,175 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:53:07,197 accounting.reconciliation reconcile_payment: Used on payment total: 1000 | Remaining liquidity: 1000.00
+[ERROR] 2026-08-25 13:53:07,198 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 1000.00
+[INFO] 2026-08-25 13:53:07,843 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:53:07,843 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:53:07,844 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:53:07,847 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 13:53:07,849 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:53:07,850 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:53:07,875 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 2000.00
+[INFO] 2026-08-25 13:53:07,888 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 13:53:07,889 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 13:53:07,894 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 13:53:07,895 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 13:53:07,899 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 13:53:07,899 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 13:53:07,900 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:53:07,905 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:53:07,906 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 13:53:07,907 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 13:53:07,907 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:53:07,934 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 2000.00
+[DEBUG] 2026-08-25 13:53:07,935 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:53:07,936 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:53:07,941 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:53:07,942 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:53:07,945 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 2000.00)
+[DEBUG] 2026-08-25 13:53:07,951 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 13:53:07,965 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:53:07,970 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 13:53:07,971 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:53:07,980 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 13:53:07,981 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 13:53:07,982 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 2000.00
+[DEBUG] 2026-08-25 13:53:07,987 accounting.reconciliation reconcile_payment: Invoice move ID: 409 | Name: SAJ01-001322 | Type: out_invoice
+[DEBUG] 2026-08-25 13:53:07,987 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 38000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:53:07,988 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:53:07,993 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:53:07,994 accounting.reconciliation reconcile_payment: Amount to process (delta): 2000.00 = 2000.00 - 0.00
+[DEBUG] 2026-08-25 13:53:07,994 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 38000.00
+[DEBUG] 2026-08-25 13:53:07,995 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:53:08,021 accounting.reconciliation reconcile_payment: Used on payment total: 1000 | Remaining liquidity: 1000.00
+[ERROR] 2026-08-25 13:53:08,022 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 1000.00
+[INFO] 2026-08-25 13:57:57,681 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:57:57,682 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:57:57,683 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:57:57,686 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 13:57:57,687 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:57:57,688 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:57:57,711 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 13:57:57,720 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 13:57:57,721 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 13:57:57,726 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 13:57:57,727 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 13:57:57,731 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 13:57:57,731 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 13:57:57,732 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:57:57,736 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:57:57,737 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 13:57:57,738 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 13:57:57,738 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:57:57,759 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 3000.00
+[DEBUG] 2026-08-25 13:57:57,760 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:57:57,761 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:57:57,766 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:57:57,767 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:57:57,770 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 3000.00)
+[DEBUG] 2026-08-25 13:57:57,777 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 13:57:57,787 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:57:57,792 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 13:57:57,793 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:57:57,802 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 13:57:57,803 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 13:57:57,804 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:57:57,808 accounting.reconciliation reconcile_payment: Invoice move ID: 479 | Name: SAJ01-001325 | Type: out_invoice
+[DEBUG] 2026-08-25 13:57:57,809 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 3000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:57:57,810 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:57:57,814 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:57:57,814 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:57:57,815 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 3000.00
+[DEBUG] 2026-08-25 13:57:57,816 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:57:57,836 accounting.reconciliation reconcile_payment: Used on payment total: 1000 | Remaining liquidity: 2000.00
+[ERROR] 2026-08-25 13:57:57,837 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 2000.00
+[INFO] 2026-08-25 13:57:58,197 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 13:57:58,198 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 13:57:58,199 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 13:57:58,204 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 13:57:58,207 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 13:57:58,209 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 13:57:58,259 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 13:57:58,279 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 13:57:58,281 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 13:57:58,291 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 13:57:58,292 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 13:57:58,301 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 13:57:58,302 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 13:57:58,303 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:57:58,313 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:57:58,314 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 13:57:58,316 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 13:57:58,317 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:57:58,353 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 3000.00
+[DEBUG] 2026-08-25 13:57:58,354 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 13:57:58,355 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 13:57:58,365 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 13:57:58,366 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 13:57:58,373 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 3000.00)
+[DEBUG] 2026-08-25 13:57:58,382 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 13:57:58,401 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 13:57:58,411 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 13:57:58,412 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 13:57:58,428 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 13:57:58,430 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 13:57:58,431 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 3000.00
+[DEBUG] 2026-08-25 13:57:58,440 accounting.reconciliation reconcile_payment: Invoice move ID: 479 | Name: SAJ01-001325 | Type: out_invoice
+[DEBUG] 2026-08-25 13:57:58,441 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 3000.00 | State: not_paid
+[DEBUG] 2026-08-25 13:57:58,442 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 13:57:58,452 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 13:57:58,453 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 13:57:58,454 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 3000.00
+[DEBUG] 2026-08-25 13:57:58,456 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 13:57:58,486 accounting.reconciliation reconcile_payment: Used on payment total: 1000 | Remaining liquidity: 2000.00
+[ERROR] 2026-08-25 13:57:58,487 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 2000.00
+[INFO] 2026-08-25 14:00:21,714 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:00:21,715 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 14:00:21,715 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 14:00:21,719 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 14:00:21,721 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 14:00:21,721 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[ERROR] 2026-08-25 14:00:21,748 accounting.reconciliation reconcile_pre_payments: unexpected error occurred during payment reconciliation
+Traceback (most recent call last):
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\views\recocniliation\reconcile_pre_payments.py", line 73, in reconcile_pre_payments
+    reconcile_payment(payment_locked, request.user)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\services\reconciliation_service.py", line 265, in reconcile_payment
+    payment_ar_lines, payment_line_total, _, _ = _payment_liquidity_summary(payment)
+                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\services\reconciliation_service.py", line 153, in _payment_liquidity_summary
+    print('payment_residual =', payment.amount_residual)
+                                ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Payment' object has no attribute 'amount_residual'
+[INFO] 2026-08-25 14:00:22,435 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:00:22,436 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 14:00:22,436 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 14:00:22,439 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 14:00:22,440 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 14:00:22,440 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[ERROR] 2026-08-25 14:00:22,484 accounting.reconciliation reconcile_pre_payments: unexpected error occurred during payment reconciliation
+Traceback (most recent call last):
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\views\recocniliation\reconcile_pre_payments.py", line 73, in reconcile_pre_payments
+    reconcile_payment(payment_locked, request.user)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\services\reconciliation_service.py", line 265, in reconcile_payment
+    payment_ar_lines, payment_line_total, _, _ = _payment_liquidity_summary(payment)
+                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\services\reconciliation_service.py", line 153, in _payment_liquidity_summary
+    print('payment_residual =', payment.amount_residual)
+                                ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Payment' object has no attribute 'amount_residual'
+[INFO] 2026-08-25 14:01:50,089 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:01:50,090 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 14:01:50,091 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 14:01:50,094 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 14:01:50,095 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 14:01:50,096 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 14:01:50,177 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 2000.00
+[INFO] 2026-08-25 14:01:50,198 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 14:01:50,199 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 14:01:50,206 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 14:01:50,207 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 14:01:50,214 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 14:01:50,215 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 14:01:50,216 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:01:50,224 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:01:50,226 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 14:01:50,227 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 14:01:50,228 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:01:50,292 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 2000.00
+[DEBUG] 2026-08-25 14:01:50,293 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 14:01:50,294 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 14:01:50,300 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 14:01:50,300 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 14:01:50,304 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 2000.00)
+[DEBUG] 2026-08-25 14:01:50,312 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 14:01:50,324 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 14:01:50,330 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 14:01:50,331 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 14:01:50,341 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 14:01:50,342 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 14:01:50,342 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 2000.00
+[DEBUG] 2026-08-25 14:01:50,347 accounting.reconciliation reconcile_payment: Invoice move ID: 409 | Name: SAJ01-001322 | Type: out_invoice
+[DEBUG] 2026-08-25 14:01:50,347 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 38000.00 | State: not_paid
+[DEBUG] 2026-08-25 14:01:50,348 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:01:50,353 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:01:50,354 accounting.reconciliation reconcile_payment: Amount to process (delta): 2000.00 = 2000.00 - 0.00
+[DEBUG] 2026-08-25 14:01:50,354 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 38000.00
+[DEBUG] 2026-08-25 14:01:50,355 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:01:50,399 accounting.reconciliation reconcile_payment: Used on payment total: 1000 | Remaining liquidity: 1000.00
+[ERROR] 2026-08-25 14:01:50,400 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 1000.00
+[INFO] 2026-08-25 14:06:56,608 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:06:56,609 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 14:06:56,610 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 14:06:56,612 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 14:06:56,613 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 14:06:56,613 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 14:06:56,650 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 14:06:56,659 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 14:06:56,660 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 14:06:56,663 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 14:06:56,663 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 14:06:56,666 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 14:06:56,667 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 14:06:56,667 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:06:56,670 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:06:56,671 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 14:06:56,671 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 14:06:56,672 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:06:56,717 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 3000.00
+[DEBUG] 2026-08-25 14:06:56,718 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 14:06:56,719 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 14:06:56,725 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 14:06:56,726 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 14:06:56,731 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 3000.00)
+[DEBUG] 2026-08-25 14:06:56,739 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 14:06:56,760 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 14:06:56,766 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 14:06:56,767 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 14:06:56,780 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 14:06:56,781 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 14:06:56,781 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 3000.00
+[DEBUG] 2026-08-25 14:06:56,788 accounting.reconciliation reconcile_payment: Invoice move ID: 495 | Name: SAJ01-001330 | Type: out_invoice
+[DEBUG] 2026-08-25 14:06:56,789 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 3000.00 | State: not_paid
+[DEBUG] 2026-08-25 14:06:56,790 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:06:56,799 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:06:56,801 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 14:06:56,801 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 3000.00
+[DEBUG] 2026-08-25 14:06:56,802 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:06:56,872 accounting.reconciliation reconcile_payment: Used on payment total: 1000 | Remaining liquidity: 2000.00
+[ERROR] 2026-08-25 14:06:56,873 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 2000.00
+[INFO] 2026-08-25 14:07:04,498 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:07:04,499 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 14:07:04,500 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 14:07:04,504 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 14:07:04,507 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 14:07:04,508 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 14:07:04,562 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 1000.00
+[INFO] 2026-08-25 14:07:04,570 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 14:07:04,571 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 14:07:04,575 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 14:07:04,575 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 14:07:04,580 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 14:07:04,580 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 14:07:04,581 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:07:04,584 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:07:04,585 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 14:07:04,585 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 14:07:04,586 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:07:04,638 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 1000.00
+[DEBUG] 2026-08-25 14:07:04,639 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 14:07:04,640 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 14:07:04,646 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 14:07:04,647 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 14:07:04,653 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 1000.00)
+[DEBUG] 2026-08-25 14:07:04,662 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 14:07:04,683 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 14:07:04,691 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 14:07:04,692 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 14:07:04,709 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 14:07:04,711 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 14:07:04,712 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 1000.00
+[DEBUG] 2026-08-25 14:07:04,719 accounting.reconciliation reconcile_payment: Invoice move ID: 507 | Name: SAJ01-001333 | Type: out_invoice
+[DEBUG] 2026-08-25 14:07:04,719 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 3000.00 | State: not_paid
+[DEBUG] 2026-08-25 14:07:04,720 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:07:04,725 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:07:04,726 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 14:07:04,726 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 3000.00
+[DEBUG] 2026-08-25 14:07:04,727 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:07:04,743 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 0
+[ERROR] 2026-08-25 14:07:04,744 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 0
+[INFO] 2026-08-25 14:07:13,733 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:07:13,734 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 14:07:13,735 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 14:07:13,737 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 14:07:13,739 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 14:07:13,739 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 14:07:13,778 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 1000.00
+[INFO] 2026-08-25 14:07:13,790 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 14:07:13,790 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 14:07:13,794 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 14:07:13,794 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 14:07:13,797 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 14:07:13,798 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 14:07:13,798 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:07:13,802 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:07:13,803 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 14:07:13,803 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 14:07:13,804 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:07:13,852 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 1000.00
+[DEBUG] 2026-08-25 14:07:13,853 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 14:07:13,853 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 14:07:13,860 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 14:07:13,861 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 14:07:13,866 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 1000.00)
+[DEBUG] 2026-08-25 14:07:13,873 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 14:07:13,890 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 14:07:13,899 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 14:07:13,900 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 14:07:13,912 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 14:07:13,912 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 14:07:13,913 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 1000.00
+[DEBUG] 2026-08-25 14:07:13,916 accounting.reconciliation reconcile_payment: Invoice move ID: 495 | Name: SAJ01-001330 | Type: out_invoice
+[DEBUG] 2026-08-25 14:07:13,917 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 3000.00 | State: not_paid
+[DEBUG] 2026-08-25 14:07:13,918 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:07:13,922 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:07:13,922 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 14:07:13,923 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 3000.00
+[DEBUG] 2026-08-25 14:07:13,923 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:07:13,937 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 0
+[ERROR] 2026-08-25 14:07:13,938 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 0
+[INFO] 2026-08-25 14:08:44,060 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:08:44,061 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 14:08:44,062 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 14:08:44,065 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 14:08:44,066 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 14:08:44,067 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 14:08:44,101 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 1000.00
+[INFO] 2026-08-25 14:08:44,109 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 14:08:44,109 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 14:08:44,113 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 14:08:44,114 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 14:08:44,118 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 14:08:44,119 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 14:08:44,119 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:08:44,123 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:08:44,123 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 14:08:44,123 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 14:08:44,124 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:08:44,158 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 1000.00
+[DEBUG] 2026-08-25 14:08:44,159 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 14:08:44,160 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 14:08:44,168 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 14:08:44,168 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 14:08:44,173 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 1000.00)
+[DEBUG] 2026-08-25 14:08:44,181 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 14:08:44,196 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 14:08:44,204 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 14:08:44,205 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 14:08:44,218 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 14:08:44,219 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 14:08:44,219 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 1000.00
+[DEBUG] 2026-08-25 14:08:44,226 accounting.reconciliation reconcile_payment: Invoice move ID: 482 | Name: SAJ01-001326 | Type: out_invoice
+[DEBUG] 2026-08-25 14:08:44,227 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 38000.00 | State: not_paid
+[DEBUG] 2026-08-25 14:08:44,228 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:08:44,234 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:08:44,235 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 14:08:44,236 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 38000.00
+[DEBUG] 2026-08-25 14:08:44,236 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:08:44,260 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 0
+[ERROR] 2026-08-25 14:08:44,260 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 0
+[INFO] 2026-08-25 14:10:24,535 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:10:24,536 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 108 | Ref: CSH01-PAY-000049 | Type: INCOMING
+[DEBUG] 2026-08-25 14:10:24,536 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 14:10:24,539 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 14:10:24,540 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 14:10:24,541 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 14:10:24,580 accounting.reconciliation reconcile_payment: Payment lines: [1889] on moves ['CSH01-003115'] | Total liquidity: 1000.00
+[INFO] 2026-08-25 14:10:24,591 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 14:10:24,592 accounting.reconciliation reconcile_payment: Allocation ID: 114 | Amount: 3000.00
+[INFO] 2026-08-25 14:10:24,596 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 14:10:24,597 accounting.reconciliation reconcile_payment: Allocation ID: 115 | Amount: 1000.00
+[DEBUG] 2026-08-25 14:10:24,601 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 14:10:24,602 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 14:10:24,603 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:10:24,609 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:10:24,610 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 14:10:24,610 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 14:10:24,611 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:10:24,657 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 1000.00
+[DEBUG] 2026-08-25 14:10:24,658 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 14:10:24,659 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 14:10:24,665 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 14:10:24,665 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 14:10:24,668 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1889 (move CSH01-003115, remaining before: 1000.00)
+[DEBUG] 2026-08-25 14:10:24,675 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 14:10:24,685 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 14:10:24,692 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 14:10:24,692 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 14:10:24,700 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[INFO] 2026-08-25 14:10:24,700 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 14:10:24,701 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 1000.00
+[DEBUG] 2026-08-25 14:10:24,707 accounting.reconciliation reconcile_payment: Invoice move ID: 405 | Name: SAJ01-001318 | Type: out_invoice
+[DEBUG] 2026-08-25 14:10:24,708 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 3000.00 | State: not_paid
+[DEBUG] 2026-08-25 14:10:24,708 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:10:24,712 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:10:24,713 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 14:10:24,714 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 3000.00
+[DEBUG] 2026-08-25 14:10:24,715 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:10:24,735 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 0
+[ERROR] 2026-08-25 14:10:24,736 accounting.reconciliation reconcile_payment: Validation failed: Allocation exceeds payment balance. Remaining: 0
+[INFO] 2026-08-25 14:23:01,596 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:23:01,598 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 114 | Ref: CSH01-PAY-000054 | Type: INCOMING
+[DEBUG] 2026-08-25 14:23:01,599 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 14:23:01,606 accounting.reconciliation reconcile_payment: Found 0 invoice allocation(s)
+[INFO] 2026-08-25 14:23:01,607 accounting.reconciliation reconcile_payment: No allocations found. Recomputing payment core only.
+[INFO] 2026-08-25 14:23:01,651 accounting.reconciliation reconcile_payment: Payment core after recompute: not_paid
+[INFO] 2026-08-25 14:23:43,724 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:23:43,725 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 114 | Ref: CSH01-PAY-000054 | Type: INCOMING
+[DEBUG] 2026-08-25 14:23:43,725 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 14:23:43,728 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-25 14:23:43,729 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 14:23:43,730 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 14:23:43,746 accounting.reconciliation reconcile_payment: Payment lines: [1891] on moves ['CSH01-003116'] | Total liquidity: 3000.00
+[INFO] 2026-08-25 14:23:43,754 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-25 14:23:43,754 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 3000.00
+[DEBUG] 2026-08-25 14:23:43,758 accounting.reconciliation reconcile_payment: Invoice move ID: 405 | Name: SAJ01-001318 | Type: out_invoice
+[DEBUG] 2026-08-25 14:23:43,758 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 3000.00 | State: not_paid
+[DEBUG] 2026-08-25 14:23:43,759 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:23:43,763 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:23:43,763 accounting.reconciliation reconcile_payment: Amount to process (delta): 3000.00 = 3000.00 - 0.00
+[DEBUG] 2026-08-25 14:23:43,764 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 3000.00
+[DEBUG] 2026-08-25 14:23:43,764 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:23:43,776 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 3000.00
+[DEBUG] 2026-08-25 14:23:43,777 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 14:23:43,777 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 14:23:43,781 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1441 | Debit: 3000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 14:23:43,782 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 14:23:43,785 accounting.reconciliation reconcile_payment: Consuming 3000.00 from payment line 1891 (move CSH01-003116, remaining before: 3000.00)
+[DEBUG] 2026-08-25 14:23:43,797 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 80
+[DEBUG] 2026-08-25 14:23:43,819 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 14:23:43,829 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-25 14:23:43,830 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 14:23:43,846 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-25 14:23:43,847 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-25 14:23:43,875 accounting.reconciliation reconcile_payment: Final payment core: partial
+[INFO] 2026-08-25 14:23:43,878 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-25 14:23:43,879 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:23:43,884 accounting.reconciliation reconcile_pre_payments: Reconciled payment 114 against invoice AccountMove object (405): 0 -> 3000.00 by user 1
+[INFO] 2026-08-25 14:24:29,256 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:24:29,256 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 114 | Ref: CSH01-PAY-000054 | Type: INCOMING
+[DEBUG] 2026-08-25 14:24:29,257 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 14:24:29,259 accounting.reconciliation reconcile_payment: Found 2 invoice allocation(s)
+[DEBUG] 2026-08-25 14:24:29,261 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 14:24:29,261 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 14:24:29,283 accounting.reconciliation reconcile_payment: Payment lines: [1893] on moves ['CSH01-003117'] | Total liquidity: 8000.00
+[INFO] 2026-08-25 14:24:29,291 accounting.reconciliation reconcile_payment: --- Processing allocation 1/2 ---
+[DEBUG] 2026-08-25 14:24:29,292 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 3000.00
+[INFO] 2026-08-25 14:24:29,295 accounting.reconciliation reconcile_payment: --- Processing allocation 2/2 ---
+[DEBUG] 2026-08-25 14:24:29,296 accounting.reconciliation reconcile_payment: Allocation ID: 117 | Amount: 8000.00
+[DEBUG] 2026-08-25 14:24:29,300 accounting.reconciliation reconcile_payment: Invoice move ID: 478 | Name: SAJ01-001324 | Type: out_invoice
+[DEBUG] 2026-08-25 14:24:29,301 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 8000.00 | State: not_paid
+[DEBUG] 2026-08-25 14:24:29,301 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:24:29,305 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:24:29,306 accounting.reconciliation reconcile_payment: Amount to process (delta): 8000.00 = 8000.00 - 0.00
+[DEBUG] 2026-08-25 14:24:29,306 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 8000.00
+[DEBUG] 2026-08-25 14:24:29,307 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:24:29,332 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 8000.00
+[DEBUG] 2026-08-25 14:24:29,333 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 14:24:29,334 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 14:24:29,342 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1596 | Debit: 8000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 14:24:29,343 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 14:24:29,347 accounting.reconciliation reconcile_payment: Consuming 8000.00 from payment line 1893 (move CSH01-003117, remaining before: 8000.00)
+[DEBUG] 2026-08-25 14:24:29,351 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 81
+[DEBUG] 2026-08-25 14:24:29,360 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 14:24:29,365 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-25 14:24:29,365 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 14:24:29,373 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-25 14:24:29,374 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-25 14:24:29,403 accounting.reconciliation reconcile_payment: Final payment core: partial
+[INFO] 2026-08-25 14:24:29,405 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-25 14:24:29,406 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:24:29,414 accounting.reconciliation reconcile_pre_payments: Reconciled payment 114 against invoice AccountMove object (478): 0 -> 8000.00 by user 1
+[INFO] 2026-08-25 14:24:58,706 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:24:58,707 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 114 | Ref: CSH01-PAY-000054 | Type: INCOMING
+[DEBUG] 2026-08-25 14:24:58,707 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-25 14:24:58,710 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-25 14:24:58,711 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-25 14:24:58,712 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-25 14:24:58,731 accounting.reconciliation reconcile_payment: Payment lines: [1895] on moves ['CSH01-003118'] | Total liquidity: 1000.00
+[INFO] 2026-08-25 14:24:58,743 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-25 14:24:58,744 accounting.reconciliation reconcile_payment: Allocation ID: 116 | Amount: 3000.00
+[INFO] 2026-08-25 14:24:58,749 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-25 14:24:58,750 accounting.reconciliation reconcile_payment: Allocation ID: 117 | Amount: 8000.00
+[INFO] 2026-08-25 14:24:58,756 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-25 14:24:58,756 accounting.reconciliation reconcile_payment: Allocation ID: 118 | Amount: 1000.00
+[DEBUG] 2026-08-25 14:24:58,762 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-25 14:24:58,763 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 139000.00 | State: partial
+[DEBUG] 2026-08-25 14:24:58,763 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-25 14:24:58,774 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-25 14:24:58,775 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-25 14:24:58,776 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 139000.00
+[DEBUG] 2026-08-25 14:24:58,777 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-25 14:24:58,815 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 1000.00
+[DEBUG] 2026-08-25 14:24:58,816 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-25 14:24:58,817 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-25 14:24:58,830 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-25 14:24:58,831 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-25 14:24:58,837 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1895 (move CSH01-003118, remaining before: 1000.00)
+[DEBUG] 2026-08-25 14:24:58,849 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 82
+[DEBUG] 2026-08-25 14:24:58,874 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-25 14:24:58,883 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-25 14:24:58,884 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-25 14:24:58,904 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 138000.00 | State: partial
+[DEBUG] 2026-08-25 14:24:58,905 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-25 14:24:58,953 accounting.reconciliation reconcile_payment: Final payment core: paid
+[INFO] 2026-08-25 14:24:58,955 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-25 14:24:58,956 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-25 14:24:58,963 accounting.reconciliation reconcile_pre_payments: Reconciled payment 114 against invoice AccountMove object (555): 0 -> 1000.00 by user 1
+[ERROR] 2026-08-26 09:12:55,497 accounting.reconciliation save_pre_payments: Unexpected error occurred during payment creation
+Traceback (most recent call last):
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\views\payments\pre_payments.py", line 48, in save_pre_payments
+    payment.save()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\accounting\models\payment.py", line 616, in save
+    rate = _get_rate(
+        company=self.company,
+        currency=self.currency,
+        date=self.date,
+    )
+  File "C:\Users\IAN\SHOP PROJECT\SM_SYSTEM\core\services\currency_exchange_service.py", line 22, in _get_rate
+    raise CurrencyConversionError(
+        f"No exchange rate for {code} on or before {date}."
+    )
+core.services.currency_exchange_service.CurrencyConversionError: No exchange rate for USD on or before 2026-08-26.
+[INFO] 2026-08-26 09:13:17,750 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-26 09:13:17,753 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 115 | Ref: CSH01-PAY-000055 | Type: INCOMING
+[DEBUG] 2026-08-26 09:13:17,755 accounting.reconciliation reconcile_payment: Payment amount: 3000.00 | Currency: CNY - Chinese Yuan
+[INFO] 2026-08-26 09:13:17,810 accounting.reconciliation reconcile_payment: Found 0 invoice allocation(s)
+[INFO] 2026-08-26 09:13:17,813 accounting.reconciliation reconcile_payment: No allocations found. Recomputing payment core only.
+[INFO] 2026-08-26 09:13:17,914 accounting.reconciliation reconcile_payment: Payment core after recompute: not_paid
+[INFO] 2026-08-26 09:14:03,327 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-26 09:14:03,327 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 115 | Ref: CSH01-PAY-000055 | Type: INCOMING
+[DEBUG] 2026-08-26 09:14:03,328 accounting.reconciliation reconcile_payment: Payment amount: 3000.00 | Currency: CNY - Chinese Yuan
+[INFO] 2026-08-26 09:14:03,334 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-26 09:14:03,337 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-26 09:14:03,338 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-26 09:14:03,368 accounting.reconciliation reconcile_payment: Payment lines: [1904] on moves ['CSH01-003120'] | Total liquidity: 138000.00
+[INFO] 2026-08-26 09:14:03,400 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-26 09:14:03,402 accounting.reconciliation reconcile_payment: Allocation ID: 119 | Amount: 138000.00
+[DEBUG] 2026-08-26 09:14:03,418 accounting.reconciliation reconcile_payment: Invoice move ID: 555 | Name: SAJ01-001365 | Type: out_invoice
+[DEBUG] 2026-08-26 09:14:03,420 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 138000.00 | State: partial
+[DEBUG] 2026-08-26 09:14:03,422 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-26 09:14:03,437 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-26 09:14:03,439 accounting.reconciliation reconcile_payment: Amount to process (delta): 138000.00 = 138000.00 - 0.00
+[DEBUG] 2026-08-26 09:14:03,442 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 138000.00
+[DEBUG] 2026-08-26 09:14:03,444 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-26 09:14:03,493 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 138000.00
+[DEBUG] 2026-08-26 09:14:03,495 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-26 09:14:03,496 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-26 09:14:03,516 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1885 | Debit: 140000.00 | Credit: 0.00
+[DEBUG] 2026-08-26 09:14:03,517 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-26 09:14:03,531 accounting.reconciliation reconcile_payment: Consuming 138000.00 from payment line 1904 (move CSH01-003120, remaining before: 138000.00)
+[DEBUG] 2026-08-26 09:14:03,551 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 83
+[DEBUG] 2026-08-26 09:14:03,590 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-26 09:14:03,612 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-26 09:14:03,614 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-26 09:14:03,655 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-26 09:14:03,657 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-26 09:14:03,719 accounting.reconciliation reconcile_payment: Final payment core: partial
+[INFO] 2026-08-26 09:14:03,724 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-26 09:14:03,726 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-26 09:14:03,742 accounting.reconciliation reconcile_pre_payments: Reconciled payment 115 against invoice AccountMove object (555): 0 -> 138000.00 by user 1
+[INFO] 2026-08-26 09:14:42,598 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-26 09:14:42,599 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 115 | Ref: CSH01-PAY-000055 | Type: INCOMING
+[DEBUG] 2026-08-26 09:14:42,599 accounting.reconciliation reconcile_payment: Payment amount: 3000.00 | Currency: CNY - Chinese Yuan
+[INFO] 2026-08-26 09:14:42,602 accounting.reconciliation reconcile_payment: Found 2 invoice allocation(s)
+[DEBUG] 2026-08-26 09:14:42,603 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-26 09:14:42,604 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-26 09:14:42,631 accounting.reconciliation reconcile_payment: Payment lines: [1906] on moves ['CSH01-003121'] | Total liquidity: 35000.00
+[INFO] 2026-08-26 09:14:42,649 accounting.reconciliation reconcile_payment: --- Processing allocation 1/2 ---
+[DEBUG] 2026-08-26 09:14:42,650 accounting.reconciliation reconcile_payment: Allocation ID: 119 | Amount: 138000.00
+[INFO] 2026-08-26 09:14:42,658 accounting.reconciliation reconcile_payment: --- Processing allocation 2/2 ---
+[DEBUG] 2026-08-26 09:14:42,659 accounting.reconciliation reconcile_payment: Allocation ID: 120 | Amount: 35000.00
+[DEBUG] 2026-08-26 09:14:42,666 accounting.reconciliation reconcile_payment: Invoice move ID: 561 | Name: SAJ01-001366 | Type: out_invoice
+[DEBUG] 2026-08-26 09:14:42,667 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 35000.00 | State: not_paid
+[DEBUG] 2026-08-26 09:14:42,667 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-26 09:14:42,674 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-26 09:14:42,675 accounting.reconciliation reconcile_payment: Amount to process (delta): 35000.00 = 35000.00 - 0.00
+[DEBUG] 2026-08-26 09:14:42,676 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 35000.00
+[DEBUG] 2026-08-26 09:14:42,677 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-26 09:14:42,702 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 35000.00
+[DEBUG] 2026-08-26 09:14:42,703 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-26 09:14:42,704 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-26 09:14:42,709 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1900 | Debit: 35000.00 | Credit: 0.00
+[DEBUG] 2026-08-26 09:14:42,709 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-26 09:14:42,713 accounting.reconciliation reconcile_payment: Consuming 35000.00 from payment line 1906 (move CSH01-003121, remaining before: 35000.00)
+[DEBUG] 2026-08-26 09:14:42,719 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 84
+[DEBUG] 2026-08-26 09:14:42,727 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-26 09:14:42,731 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-26 09:14:42,732 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-26 09:14:42,741 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-26 09:14:42,741 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-26 09:14:42,758 accounting.reconciliation reconcile_payment: Final payment core: partial
+[INFO] 2026-08-26 09:14:42,759 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-26 09:14:42,759 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-26 09:14:42,762 accounting.reconciliation reconcile_pre_payments: Reconciled payment 115 against invoice AccountMove object (561): 0 -> 35000.00 by user 1
+[INFO] 2026-08-26 09:17:31,616 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-26 09:17:31,618 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 101 | Ref: CSH01-PAY-000045 | Type: INCOMING
+[DEBUG] 2026-08-26 09:17:31,619 accounting.reconciliation reconcile_payment: Payment amount: 1000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-26 09:17:31,625 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-26 09:17:31,628 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-26 09:17:31,629 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-26 09:17:31,680 accounting.reconciliation reconcile_payment: Payment lines: [1908] on moves ['CSH01-003122'] | Total liquidity: 1000.00
+[INFO] 2026-08-26 09:17:31,697 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-26 09:17:31,698 accounting.reconciliation reconcile_payment: Allocation ID: 121 | Amount: 1000.00
+[DEBUG] 2026-08-26 09:17:31,703 accounting.reconciliation reconcile_payment: Invoice move ID: 512 | Name: SAJ01-001336 | Type: out_invoice
+[DEBUG] 2026-08-26 09:17:31,704 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 105000.00 | State: not_paid
+[DEBUG] 2026-08-26 09:17:31,705 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-26 09:17:31,711 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-26 09:17:31,711 accounting.reconciliation reconcile_payment: Amount to process (delta): 1000.00 = 1000.00 - 0.00
+[DEBUG] 2026-08-26 09:17:31,712 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 105000.00
+[DEBUG] 2026-08-26 09:17:31,713 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-26 09:17:31,730 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 1000.00
+[DEBUG] 2026-08-26 09:17:31,730 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-26 09:17:31,731 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-26 09:17:31,738 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1715 | Debit: 105000.00 | Credit: 0.00
+[DEBUG] 2026-08-26 09:17:31,739 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-26 09:17:31,743 accounting.reconciliation reconcile_payment: Consuming 1000.00 from payment line 1908 (move CSH01-003122, remaining before: 1000.00)
+[DEBUG] 2026-08-26 09:17:31,749 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 85
+[DEBUG] 2026-08-26 09:17:31,762 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-26 09:17:31,766 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: False
+[DEBUG] 2026-08-26 09:17:31,767 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-26 09:17:31,777 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 104000.00 | State: partial
+[DEBUG] 2026-08-26 09:17:31,777 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-26 09:17:31,793 accounting.reconciliation reconcile_payment: Final payment core: paid
+[INFO] 2026-08-26 09:17:31,795 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-26 09:17:31,795 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-26 09:17:31,799 accounting.reconciliation reconcile_pre_payments: Reconciled payment 101 against invoice AccountMove object (512): 0 -> 1000.00 by user 1
+[INFO] 2026-08-26 09:18:29,119 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-26 09:18:29,120 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 115 | Ref: CSH01-PAY-000055 | Type: INCOMING
+[DEBUG] 2026-08-26 09:18:29,121 accounting.reconciliation reconcile_payment: Payment amount: 3000.00 | Currency: CNY - Chinese Yuan
+[INFO] 2026-08-26 09:18:29,126 accounting.reconciliation reconcile_payment: Found 3 invoice allocation(s)
+[DEBUG] 2026-08-26 09:18:29,128 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-26 09:18:29,129 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-26 09:18:29,157 accounting.reconciliation reconcile_payment: Payment lines: [1910] on moves ['CSH01-003123'] | Total liquidity: 104000.00
+[INFO] 2026-08-26 09:18:29,173 accounting.reconciliation reconcile_payment: --- Processing allocation 1/3 ---
+[DEBUG] 2026-08-26 09:18:29,174 accounting.reconciliation reconcile_payment: Allocation ID: 119 | Amount: 138000.00
+[INFO] 2026-08-26 09:18:29,181 accounting.reconciliation reconcile_payment: --- Processing allocation 2/3 ---
+[DEBUG] 2026-08-26 09:18:29,181 accounting.reconciliation reconcile_payment: Allocation ID: 120 | Amount: 35000.00
+[INFO] 2026-08-26 09:18:29,188 accounting.reconciliation reconcile_payment: --- Processing allocation 3/3 ---
+[DEBUG] 2026-08-26 09:18:29,189 accounting.reconciliation reconcile_payment: Allocation ID: 122 | Amount: 104000.00
+[DEBUG] 2026-08-26 09:18:29,195 accounting.reconciliation reconcile_payment: Invoice move ID: 512 | Name: SAJ01-001336 | Type: out_invoice
+[DEBUG] 2026-08-26 09:18:29,196 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 104000.00 | State: partial
+[DEBUG] 2026-08-26 09:18:29,197 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-26 09:18:29,205 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-26 09:18:29,206 accounting.reconciliation reconcile_payment: Amount to process (delta): 104000.00 = 104000.00 - 0.00
+[DEBUG] 2026-08-26 09:18:29,207 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 104000.00
+[DEBUG] 2026-08-26 09:18:29,207 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-26 09:18:29,236 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 104000.00
+[DEBUG] 2026-08-26 09:18:29,236 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-26 09:18:29,237 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-26 09:18:29,241 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1715 | Debit: 105000.00 | Credit: 0.00
+[DEBUG] 2026-08-26 09:18:29,242 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-26 09:18:29,244 accounting.reconciliation reconcile_payment: Consuming 104000.00 from payment line 1910 (move CSH01-003123, remaining before: 104000.00)
+[DEBUG] 2026-08-26 09:18:29,267 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 86
+[DEBUG] 2026-08-26 09:18:29,278 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-26 09:18:29,284 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-26 09:18:29,284 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-26 09:18:29,294 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-26 09:18:29,295 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-26 09:18:29,320 accounting.reconciliation reconcile_payment: Final payment core: partial
+[INFO] 2026-08-26 09:18:29,322 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-26 09:18:29,322 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-26 09:18:29,327 accounting.reconciliation reconcile_pre_payments: Reconciled payment 115 against invoice AccountMove object (512): 0 -> 104000.00 by user 1
+[INFO] 2026-08-26 14:22:15,805 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-26 14:22:15,806 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 106 | Ref: CSH02-PAY-000012 | Type: INCOMING
+[DEBUG] 2026-08-26 14:22:15,808 accounting.reconciliation reconcile_payment: Payment amount: 40000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-26 14:22:15,817 accounting.reconciliation reconcile_payment: Found 0 invoice allocation(s)
+[INFO] 2026-08-26 14:22:15,819 accounting.reconciliation reconcile_payment: No allocations found. Recomputing payment core only.
+[INFO] 2026-08-26 14:22:15,858 accounting.reconciliation reconcile_payment: Payment core after recompute: not_paid
+[INFO] 2026-08-26 14:35:58,056 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-26 14:35:58,057 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 106 | Ref: CSH02-PAY-000012 | Type: INCOMING
+[DEBUG] 2026-08-26 14:35:58,058 accounting.reconciliation reconcile_payment: Payment amount: 40000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-26 14:35:58,060 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-26 14:35:58,061 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-26 14:35:58,062 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-26 14:35:58,074 accounting.reconciliation reconcile_payment: Payment lines: [1914] on moves ['CSH02-003014'] | Total liquidity: 38000.00
+[INFO] 2026-08-26 14:35:58,082 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-26 14:35:58,083 accounting.reconciliation reconcile_payment: Allocation ID: 123 | Amount: 38000.00
+[DEBUG] 2026-08-26 14:35:58,088 accounting.reconciliation reconcile_payment: Invoice move ID: 488 | Name: SAJ01-001327 | Type: out_invoice
+[DEBUG] 2026-08-26 14:35:58,088 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 38000.00 | State: not_paid
+[DEBUG] 2026-08-26 14:35:58,088 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-26 14:35:58,091 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-26 14:35:58,092 accounting.reconciliation reconcile_payment: Amount to process (delta): 38000.00 = 38000.00 - 0.00
+[DEBUG] 2026-08-26 14:35:58,093 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 38000.00
+[DEBUG] 2026-08-26 14:35:58,093 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-26 14:35:58,105 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 38000.00
+[DEBUG] 2026-08-26 14:35:58,105 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-26 14:35:58,106 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-26 14:35:58,112 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1633 | Debit: 38000.00 | Credit: 0.00
+[DEBUG] 2026-08-26 14:35:58,112 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-26 14:35:58,115 accounting.reconciliation reconcile_payment: Consuming 38000.00 from payment line 1914 (move CSH02-003014, remaining before: 38000.00)
+[DEBUG] 2026-08-26 14:35:58,121 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 87
+[DEBUG] 2026-08-26 14:35:58,133 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-26 14:35:58,139 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-26 14:35:58,140 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-26 14:35:58,149 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-26 14:35:58,150 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-26 14:35:58,167 accounting.reconciliation reconcile_payment: Final payment core: partial
+[INFO] 2026-08-26 14:35:58,169 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-26 14:35:58,169 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-26 14:35:58,174 accounting.reconciliation reconcile_pre_payments: Reconciled payment 106 against invoice AccountMove object (488): 0 -> 38000.00 by user 1
+[INFO] 2026-08-27 15:34:53,201 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-08-27 15:34:53,203 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 120 | Ref: CSH01-PAY-000056 | Type: INCOMING
+[DEBUG] 2026-08-27 15:34:53,204 accounting.reconciliation reconcile_payment: Payment amount: 35000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-08-27 15:34:53,208 accounting.reconciliation reconcile_payment: Found 1 invoice allocation(s)
+[DEBUG] 2026-08-27 15:34:53,209 accounting.reconciliation reconcile_payment: --- Transaction started ---
+[DEBUG] 2026-08-27 15:34:53,210 accounting.reconciliation reconcile_payment: Step 1: Identifying payment AR/AP line(s)
+[DEBUG] 2026-08-27 15:34:53,217 accounting.reconciliation reconcile_payment: Payment lines: [1921] on moves ['CSH01-003124'] | Total liquidity: 35000.00
+[INFO] 2026-08-27 15:34:53,225 accounting.reconciliation reconcile_payment: --- Processing allocation 1/1 ---
+[DEBUG] 2026-08-27 15:34:53,226 accounting.reconciliation reconcile_payment: Allocation ID: 124 | Amount: 35000.00
+[DEBUG] 2026-08-27 15:34:53,233 accounting.reconciliation reconcile_payment: Invoice move ID: 569 | Name: SAJ01-001367 | Type: out_invoice
+[DEBUG] 2026-08-27 15:34:53,233 accounting.reconciliation reconcile_payment: Invoice residual BEFORE reconciliation: 35000.00 | State: not_paid
+[DEBUG] 2026-08-27 15:34:53,234 accounting.reconciliation reconcile_payment: Step 2: Calculating already matched amount for this invoice
+[DEBUG] 2026-08-27 15:34:53,238 accounting.reconciliation reconcile_payment: Already matched amount: 0.00
+[DEBUG] 2026-08-27 15:34:53,239 accounting.reconciliation reconcile_payment: Amount to process (delta): 35000.00 = 35000.00 - 0.00
+[DEBUG] 2026-08-27 15:34:53,239 accounting.reconciliation reconcile_payment: Step 3: Validation - Invoice residual: 35000.00
+[DEBUG] 2026-08-27 15:34:53,240 accounting.reconciliation reconcile_payment: Step 4: Validation - Payment remaining balance
+[DEBUG] 2026-08-27 15:34:53,248 accounting.reconciliation reconcile_payment: Used on payment total: 0 | Remaining liquidity: 35000.00
+[DEBUG] 2026-08-27 15:34:53,249 accounting.reconciliation reconcile_payment: Step 5: Determining invoice AR line
+[DEBUG] 2026-08-27 15:34:53,250 accounting.reconciliation reconcile_payment: Invoice move_type: out_invoice -> side: debit
+[DEBUG] 2026-08-27 15:34:53,254 accounting.reconciliation reconcile_payment: Invoice AR line ID: 1919 | Debit: 35000.00 | Credit: 0.00
+[DEBUG] 2026-08-27 15:34:53,255 accounting.reconciliation reconcile_payment: Step 6: Creating PartialReconcile record(s), splitting across payment lines as needed
+[DEBUG] 2026-08-27 15:34:53,258 accounting.reconciliation reconcile_payment: Consuming 35000.00 from payment line 1921 (move CSH01-003124, remaining before: 35000.00)
+[DEBUG] 2026-08-27 15:34:53,262 accounting.reconciliation reconcile_payment: PartialReconcile created with ID: 88
+[DEBUG] 2026-08-27 15:34:53,271 accounting.reconciliation reconcile_payment: Step 7: Updating reconciled flag on invoice line
+[DEBUG] 2026-08-27 15:34:53,275 accounting.reconciliation reconcile_payment: Invoice line reconciled flag: True
+[DEBUG] 2026-08-27 15:34:53,276 accounting.reconciliation reconcile_payment: Step 8: Syncing invoice core
+[DEBUG] 2026-08-27 15:34:53,286 accounting.reconciliation reconcile_payment: Invoice residual AFTER this allocation: 0.00 | State: paid
+[DEBUG] 2026-08-27 15:34:53,287 accounting.reconciliation reconcile_payment: --- All allocations processed ---
+[INFO] 2026-08-27 15:34:53,311 accounting.reconciliation reconcile_payment: Final payment core: paid
+[INFO] 2026-08-27 15:34:53,312 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT COMPLETED SUCCESSFULLY
+[INFO] 2026-08-27 15:34:53,313 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-09-06 11:33:53,666 accounting.reconciliation reconcile_payment: ======================================================================
+[INFO] 2026-09-06 11:33:53,668 accounting.reconciliation reconcile_payment: RECONCILE PAYMENT START - Payment ID: 119 | Ref: CSH01-PAY-000057 | Type: INCOMING
+[DEBUG] 2026-09-06 11:33:53,669 accounting.reconciliation reconcile_payment: Payment amount: 12000.00 | Currency: TZS - Tanzanian Shilling
+[INFO] 2026-09-06 11:33:53,674 accounting.reconciliation reconcile_payment: Found 0 invoice allocation(s)
+[INFO] 2026-09-06 11:33:53,675 accounting.reconciliation reconcile_payment: No allocations found. Recomputing payment core only.
+[INFO] 2026-09-06 11:33:53,706 accounting.reconciliation reconcile_payment: Payment core after recompute: not_paid

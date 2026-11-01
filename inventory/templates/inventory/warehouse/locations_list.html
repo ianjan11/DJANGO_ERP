@@ -1,0 +1,14 @@
+{% extends 'inventory/base.html' %}
+{% load humanize %}
+{% load static %}
+
+
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+  {% include "inventory/warehouse/partials/locations_list_partial.html" %}
+{% endblock %}
+
+

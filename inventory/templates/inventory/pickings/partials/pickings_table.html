@@ -1,0 +1,238 @@
+{% load humanize %}
+
+<div class="main-wrapper">
+  <div class="inv-card">
+
+    {# ── Table ── #}
+    <div class="table-wrap">
+    
+      <div class="table-toolbar">
+        <h5 class="table-toolbar-title">
+          {% if picking_type == 'incoming' %} Receipts
+          {% elif picking_type == 'outgoing' %} Deliveries
+          {% elif picking_type == 'return' %} Customer/Vendor Returns
+          {% elif picking_type == 'internal' %} Internal Transfers
+            {% else %} Order Pickings
+          {% endif %}
+          
+          <span class="badge badge--count">
+            {{ pickings.paginator.count }} Picking{{ pickings.paginator.count|pluralize }}
+          </span>
+        </h5>
+          
+          <button class="btn btn-primary btn-sm"
+             hx-get="{% url 'inventory:picking_create' %}"
+             hx-target="#inventory-display"
+             hx-include="#picking_type"
+             hx-push-url="true">
+            <i class="bi bi-plus-lg"></i> New
+        </button>
+
+
+        <form data-toolbar
+              class="toolbar"
+              id="picking-filters"
+              hx-get="{{ filter_url }}"
+               hx-trigger="input changed delay:400ms from:.toolbar-search,
+                  change from:.toolbar-select,
+                  change from:.date-select-input,
+                  filters:changed"
+              hx-target="#inventory-display"
+              hx-replace-url="true">
+
+          <input type="hidden" name="picking_type" id="picking_type" value="{{ picking_type }}">
+
+          {# ── Date Filters Inclusion ── #}
+          {% include "core/date_filters.html" %}
+
+            <div class="toolbar-search-wrap">
+    <i class="ti ti-search toolbar-search-icon"></i>
+    <input type="text" class="toolbar-search"
+           name="search_pickings" placeholder="Search pickings..."
+           value="{{ request.GET.search_pickings }}">
+    <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+      <i class="ti ti-x"></i>
+    </button>
+  </div>
+            
+            <select class="toolbar-select" name="picking_status" data-toolbar>
+  <option value="">All Statuses</option>
+  <option value="DRAFT"     {% if request.GET.picking_status == "DRAFT"     %}selected{% endif %}>Draft</option>
+  <option value="WAITING"   {% if request.GET.picking_status == "WAITING"   %}selected{% endif %}>Waiting Another Operation</option>
+  <option value="CONFIRMED" {% if request.GET.picking_status == "CONFIRMED" %}selected{% endif %}>Waiting</option>
+  <option value="ASSIGNED"  {% if request.GET.picking_status == "ASSIGNED"  %}selected{% endif %}>Ready</option>
+  <option value="COMPLETED" {% if request.GET.picking_status == "COMPLETED" %}selected{% endif %}>Completed</option>
+  <option value="CANCELLED" {% if request.GET.picking_status == "CANCELLED" %}selected{% endif %}>Cancelled</option>
+</select>
+
+          <button type="button" class="toolbar-clear-btn">
+          <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
+          </button>
+
+
+        </form>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width:160px">Reference</th>
+            <th style="width:120px">Type</th>
+            <th style="width:180px">Partner</th>
+            <th style="width:150px">Source Doc</th>
+            <th style="width:140px">Date</th>
+            <th style="width:120px" class="col-center">Status</th>
+            <th style="width:90px" class="col-center">Backorders</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in pickings %}
+          <tr hx-get="{% url 'inventory:picking_detail' item.id %}"
+              hx-target="#inventory-display"
+              hx-push-url="true">
+            <td class="td-primary">{{ item.name }}</td>
+            <td>
+              {% if item.picking_type.code == "incoming" %}
+                <span class="badge badge--info"><i class="bi bi-box-arrow-in-down"></i> Receipt</span>
+              {% elif item.picking_type.code == "outgoing" %}
+                <span class="badge badge--primary"><i class="bi bi-truck"></i> Delivery</span>
+              {% elif item.picking_type.code == "return" %}
+                <span class="badge badge--warning"><i class="bi bi-arrow-counterclockwise"></i> Return</span>
+              {% else %}
+                <span class="badge badge--secondary"><i class="bi bi-arrow-left-right"></i> Internal</span>
+              {% endif %}
+            </td>
+            <td class="td-primary">
+              {{ item.partner.name|default:"—" }}
+            </td>
+            <td>
+              <span class="td-mono">
+                {{ item.origin|default:"—" }}
+              </span>
+            </td>
+            <td style="color:var(--color-slate)">{{ item.created_at|date:"M d, Y" }}</td>
+              
+              <td class="col-center">
+  {% if item.status == "DRAFT" %}
+    <span class="badge badge--draft"><i class="bi bi-pencil"></i> Draft</span>
+  {% elif item.status == "WAITING" or item.status == "CONFIRMED" %}
+    <span class="badge badge--pending"><i class="bi bi-hourglass-top"></i> {{ item.get_status_display }}</span>
+  {% elif item.status == "ASSIGNED" %}
+    <span class="badge badge--partial"><i class="bi bi-box-seam"></i> {{ item.get_status_display }}</span>
+  {% elif item.status == "COMPLETED" %}
+    <span class="badge badge--paid"><i class="bi bi-check-circle-fill"></i> Completed</span>
+  {% elif item.status == "CANCELLED" %}
+    <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
+  {% else %}
+    <span class="badge badge--draft">{{ item.get_status_display|default:item.status }}</span>
+  {% endif %}
+</td>
+            
+            
+            <td class="col-center">
+              {% if item.backorders.count > 0 %}
+                <span class="badge badge--overdue">{{ item.backorders.count }}</span>
+              {% else %}
+                <span class="td-dash">—</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="table-empty">
+              <div class="table-empty-icon"><i class="bi bi-boxes"></i></div>
+              <div class="table-empty-title">No pickings found</div>
+              <div class="table-empty-desc">There are no transfer records matching your current filter criteria.</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {# ── Pagination ── #}
+      {% if pickings.paginator.num_pages > 1 %}
+      <div class="table-footer">
+        <small class="table-footer-count">
+          Showing {{ pickings.start_index }}–{{ pickings.end_index }}
+          of {{ pickings.paginator.count }} picking{{ pickings.paginator.count|pluralize }}
+        </small>
+
+        <div class="table-pagination" hx-include="#picking-filters">
+
+          {% if pickings.has_previous %}
+            <a class="page-btn page-btn--arrow"
+               hx-get="?page=1"
+               hx-target="#inventory-display"
+               hx-swap="innerHTML"
+               hx-push-url="true">
+              <i class="bi bi-chevron-double-left"></i>
+            </a>
+          {% else %}
+            <span class="page-btn page-btn--arrow" aria-disabled="true">
+              <i class="bi bi-chevron-double-left"></i>
+            </span>
+          {% endif %}
+
+          {% if pickings.has_previous %}
+            <a class="page-btn page-btn--arrow"
+               hx-get="?page={{ pickings.previous_page_number }}"
+               hx-target="#inventory-display"
+               hx-swap="innerHTML"
+               hx-push-url="true">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          {% else %}
+            <span class="page-btn page-btn--arrow" aria-disabled="true">
+              <i class="bi bi-chevron-left"></i>
+            </span>
+          {% endif %}
+
+          {% for num in pickings.paginator.page_range %}
+            {% if pickings.number == num %}
+              <span class="page-btn active">{{ num }}</span>
+            {% elif num > pickings.number|add:'-3' and num < pickings.number|add:'3' %}
+              <a class="page-btn"
+                 hx-get="?page={{ num }}"
+                 hx-target="#inventory-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">{{ num }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {% if pickings.has_next %}
+            <a class="page-btn page-btn--arrow"
+               hx-get="?page={{ pickings.next_page_number }}"
+               hx-target="#inventory-display"
+               hx-swap="innerHTML"
+               hx-push-url="true">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          {% else %}
+            <span class="page-btn page-btn--arrow" aria-disabled="true">
+              <i class="bi bi-chevron-right"></i>
+            </span>
+          {% endif %}
+
+          {% if pickings.has_next %}
+            <a class="page-btn page-btn--arrow"
+               hx-get="?page={{ pickings.paginator.num_pages }}"
+               hx-target="#inventory-display"
+               hx-swap="innerHTML"
+               hx-push-url="true">
+              <i class="bi bi-chevron-double-right"></i>
+            </a>
+          {% else %}
+            <span class="page-btn page-btn--arrow" aria-disabled="true">
+              <i class="bi bi-chevron-double-right"></i>
+            </span>
+          {% endif %}
+
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+  </div>
+</div>
+

@@ -1,0 +1,27 @@
+<payment_terms>
+    <payment_term name="Due on Receipt" note="Full amount due immediately upon invoice.">
+        <line sequence="10" computation_type="BALANCE" days="0"/>
+    </payment_term>
+
+    <payment_term name="Net 15" note="Full amount due within 15 days.">
+        <line sequence="10" computation_type="BALANCE" days="15"/>
+    </payment_term>
+
+    <payment_term name="Net 30" note="Full amount due within 30 days.">
+        <line sequence="10" computation_type="BALANCE" days="30"/>
+    </payment_term>
+
+    <payment_term name="Net 60" note="Full amount due within 60 days.">
+        <line sequence="10" computation_type="BALANCE" days="60"/>
+    </payment_term>
+
+    <payment_term name="2/10 Net 30" note="2% discount if paid within 10 days, otherwise full balance due in 30 days.">
+        <line sequence="10" computation_type="BALANCE" days="30" discount_days="10" discount_percent="2.0"/>
+    </payment_term>
+
+    <payment_term name="50% Deposit, Balance on Delivery"
+                  note="50% deposit due immediately, remaining balance due within 30 days.">
+        <line sequence="10" computation_type="PERCENT" value="50.0" days="0"/>
+        <line sequence="20" computation_type="BALANCE" days="30"/>
+    </payment_term>
+</payment_terms>

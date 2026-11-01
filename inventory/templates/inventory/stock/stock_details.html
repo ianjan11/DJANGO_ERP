@@ -1,0 +1,48 @@
+{% extends 'inventory/base.html' %}
+{% load humanize %}
+{% load static %}
+
+
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+  {% include "inventory/stock/partials/stock_details_partial.html" %}
+{% endblock %}
+
+
+{% block scripts %}
+{{ block.super }}
+<script>
+    const PRODUCT_ID = {{ product.id }};
+    const PRODUCT_SALES_DATASET_URL = "{% url 'inventory:product_sales_chart' 0 %}".replace("0", PRODUCT_ID);
+    const GET_PRODUCT_BASE   = "{% url 'inventory:get_product_stock_by_location' 0 %}";
+    const GET_LOCATIONS_BASE = "{% url 'inventory:get_locations_by_warehouse' 0 %}";
+</script>
+
+<!-- Tab switching logic -->
+<script>
+    document.querySelectorAll('.product-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update button states
+            document.querySelectorAll('.product-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Show / hide panels
+            const target = btn.dataset.tab;
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.toggle('d-none', !panel.id.endsWith(target));
+            });
+        });
+    });
+</script>
+
+<script src="{% static 'js/stock/stock_adjustment.js' %}?t={{ now | date:'U' }}"></script>
+<script src="{% static 'js/stock/progresive_select.js' %}?t={{ now | date:'U' }}"></script>
+<script src="{% static 'js/stock/product_graphs_and_charts/product_trend_graph.js' %}?t={{ now | date:'U' }}"></script>
+<script src="{% static 'js/stock/product_graphs_and_charts/product_trend_graph_per_location.js' %}?t={{ now | date:'U' }}"></script>
+<script src="{% static 'js/stock/Price_adjustment.js' %}?t={{ now | date:'U' }}"></script>
+
+
+{% endblock %}

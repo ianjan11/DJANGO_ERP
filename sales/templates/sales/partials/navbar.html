@@ -1,0 +1,73 @@
+
+
+<nav class="app-navbar">
+
+    {# ── LEFT: Home + Navigation ── #}
+    <div class="nav-group">
+        <div hx-get="{% url 'users:home' %}"
+                hx-target="body"
+                hx-push-url="true"
+                class="app-nav-toggle">
+            <i class="bi bi-house "></i> <span>Home</span>
+        </div>
+
+            <div class="nav-divider"></div>
+
+
+          <div class="app-nav-link"
+             hx-get="{% url 'sales:sales_dashboard' %}"
+             hx-target="#sales-display"
+             hx-push-url="true">
+            <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+        </div>
+
+        <div class="app-nav-link"
+             hx-get="{% url 'sales:sales_orders_list' %}"
+             hx-target="#sales-display"
+             hx-push-url="true">
+            <i class="bi bi-receipt"></i> <span>Sales Orders</span>
+        </div>
+
+        <div class="app-nav-link"
+             hx-get="{% url 'accounting:customers' %}"
+             hx-target="#sales-display"
+             hx-push-url="true">
+            <i class="bi bi-people"></i> <span>Customers</span>
+        </div>
+
+
+    </div>
+
+    {# ── RIGHT: User + Logout ── #}
+    <div class="nav-group">
+        <div class="app-user-pill">
+            <div class="app-user-avatar">{{ request.user.username|first|upper }}</div>
+            <span>{{ request.user.username }}
+
+            </span>
+        </div>
+
+
+        <form method="POST" action="{% url 'users:logout' %}" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="app-logout-btn">
+                <i class="bi bi-box-arrow-right"></i> <span>Log Out</span>
+            </button>
+        </form>
+    </div>
+
+</nav>
+
+
+
+<script>
+    const targets = document.querySelectorAll(".app-nav-link, .app-nav-toggle");
+
+    targets.forEach(e => {
+        e.addEventListener("click", () => {
+            targets.forEach(nav => nav.classList.remove('selected'));
+
+            e.classList.add('selected');
+        });
+    });
+</script>

@@ -1,0 +1,88 @@
+<div class="modal fade" id="RelocateModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-3">
+      
+      <!-- Modal Header -->
+      <div class="modal-header bg-light">
+        <h5 class="modal-title fw-semibold">Relocate Stock</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Form -->
+      <form id="RelocateForm"
+            hx-post="{% url 'inventory:stock_relocation' %}"
+            hx-target="#inventory-display"
+            hx-push-url="true"
+            hx-include="[name='quant_ids']:checked"
+            method="post"
+            style="padding: var(--spacing-16); display: flex; flex-direction: column; gap: var(--spacing-16);">
+        {% csrf_token %}
+
+        {# ── Global Error Alerts ── #}
+        {% if errors %}
+          <div class="alert alert-danger" id="relocate-errors">
+            <strong>Please fix the following errors:</strong>
+            <ul class="mb-0 mt-1">
+              {% for field, error_list in errors.items %}
+                {% if error_list %}
+                  <li><strong>{{ field|title }}</strong>: {{ error_list.0 }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <div class="inv-header-section" style="border: none;">
+          <div class="inv-header-col">
+            <div class="chart-card-header" style="border-bottom: none; padding: 0 0 var(--spacing-8);">
+              <span class="chart-eyebrow">Relocate Selected Quants</span>
+            </div>
+
+            {# Destination Location Field #}
+            <div class="inv-field">
+              <label class="inv-field-label" for="{{ relocation_form.destination_location.id_for_label }}">
+                Destination Location <span style="color:#b91c1c">*</span>
+              </label>
+              <div style="flex:1;">
+                {{ relocation_form.destination_location }}
+                {% if relocation_form.destination_location.errors %}
+                  <div class="inv-field-sub" style="color:#9b2626;">
+                    {{ relocation_form.destination_location.errors.0 }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+
+            {# Reason Field #}
+            <div class="inv-field">
+              <label class="inv-field-label" for="{{ relocation_form.reason.id_for_label }}">
+                Reason <span style="color:#b91c1c">*</span>
+              </label>
+              <div style="flex:1;">
+                {{ relocation_form.reason }}
+                {% if relocation_form.reason.errors %}
+                  <div class="inv-field-sub" style="color:#9b2626;">
+                    {{ relocation_form.reason.errors.0 }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+
+          </div>{# /.inv-header-col #}
+        </div>{# /.inv-header-section #}
+
+        <!-- Modal Footer Actions -->
+        <div class="modal-footer px-0 pb-0 pt-3 border-top-0 d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-lg me-1"></i> Cancel
+          </button>
+          
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle me-1"></i> Relocate Stock
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

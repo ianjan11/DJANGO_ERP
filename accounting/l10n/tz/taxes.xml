@@ -1,0 +1,72 @@
+<taxes>
+    <!-- ═══ VAT ═══ -->
+    <tax name="VAT 18% (Sales)" type_tax_use="SALE" computation="PERCENT" rate="18.0"
+         tax_group="VAT" account_code="210000" account_refund_code="210000"/>
+    <tax name="VAT 18% (Purchases)" type_tax_use="PURCHASE" computation="PERCENT" rate="18.0"
+         tax_group="VAT" account_code="111000" account_refund_code="111000"/>
+    <tax name="VAT 0% (Zero-Rated)" type_tax_use="SALE" computation="PERCENT" rate="0.0"
+         tax_group="VAT" account_code="210000"/>
+    <tax name="VAT Exempt" type_tax_use="NONE" computation="PERCENT" rate="0.0"
+         tax_group="VAT" account_code="210000"/>
+
+    <!-- ═══ WITHHOLDING TAX - Services ═══ -->
+    <tax name="WHT 5% - Resident Services" type_tax_use="PURCHASE" computation="PERCENT" rate="5.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 15% - Non-Resident Services" type_tax_use="PURCHASE" computation="PERCENT" rate="15.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 10% - Rent (Resident)" type_tax_use="PURCHASE" computation="PERCENT" rate="10.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 15% - Rent (Non-Resident)" type_tax_use="PURCHASE" computation="PERCENT" rate="15.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+
+    <!-- ═══ WHT - Investment Income ═══ -->
+    <tax name="WHT 10% - Dividends (Resident, listed co.)" type_tax_use="PURCHASE" computation="PERCENT" rate="10.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 5% - Dividends (Resident, DSE-listed co.)" type_tax_use="PURCHASE" computation="PERCENT" rate="5.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 10% - Interest (Resident)" type_tax_use="PURCHASE" computation="PERCENT" rate="10.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 10% - Interest (Non-Resident)" type_tax_use="PURCHASE" computation="PERCENT" rate="10.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 15% - Royalties (Resident)" type_tax_use="PURCHASE" computation="PERCENT" rate="15.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 15% - Royalties (Non-Resident)" type_tax_use="PURCHASE" computation="PERCENT" rate="15.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+
+    <!-- ═══ WHT - Commissions & Fees ═══ -->
+    <tax name="WHT 5% - Insurance Commission (Resident)" type_tax_use="PURCHASE" computation="PERCENT" rate="5.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 15% - Insurance Commission (Non-Resident)" type_tax_use="PURCHASE" computation="PERCENT" rate="15.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 5% - Agency/Brokerage Commission" type_tax_use="PURCHASE" computation="PERCENT" rate="5.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 10% - Technical/Management Service Fee (Non-Resident)" type_tax_use="PURCHASE" computation="PERCENT" rate="10.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+
+    <!-- ═══ WHT - Goods & Contracts ═══ -->
+    <tax name="WHT 2% - Goods Supplied to Government" type_tax_use="PURCHASE" computation="PERCENT" rate="2.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 3% - Transport (Non-Resident, Cargo)" type_tax_use="PURCHASE" computation="PERCENT" rate="3.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+    <tax name="WHT 5% - Construction/Mining Subcontractor" type_tax_use="PURCHASE" computation="PERCENT" rate="5.0"
+         tax_group="Withholding Tax" account_code="112000"/>
+
+    <!-- ═══ Statutory Levies ═══ -->
+    <tax name="SDL 3.5%" type_tax_use="PURCHASE" computation="PERCENT" rate="3.5"
+         tax_group="Statutory Levy" account_code="214000"/>
+
+    <!-- ═══ Cross-border / Export ═══ -->
+    <tax name="VAT 18% (EAC Cross-Border, Standard)" type_tax_use="SALE" computation="PERCENT" rate="18.0"
+         tax_group="VAT" account_code="210000"/>
+    <tax name="VAT 0% (Export)" type_tax_use="SALE" computation="PERCENT" rate="0.0"
+         tax_group="VAT" account_code="210000"/>
+
+    <!-- ═══ Example compound/group tax: VAT charged on top of a price that ═══
+         already includes WHT-adjusted base — illustrates parent_tax usage.
+         Remove if TZ has no real compound scenario; kept as a template. -->
+    <tax name="VAT 18% incl. WHT 5% (Compound Example)" type_tax_use="PURCHASE" computation="GROUP"
+         rate="0.0" tax_group="VAT">
+        <component tax="WHT 5% - Resident Services" sequence="10" include_base_amount="true"/>
+        <component tax="VAT 18% (Purchases)" sequence="20"/>
+    </tax>
+</taxes>

@@ -1,0 +1,13 @@
+{% load humanize %}
+
+<div id="move-total">
+    <label>Total Debit:</label>
+    <span>{{ move.currency.symbol }} {{ move.total_debit|intcomma }}</span>
+
+    <label>Total Credit:</label>
+    <span>{{ move.currency.symbol }} {{ move.total_credit|intcomma }}</span>
+
+    {% if move.total_debit != move.total_credit %}
+      <span class="text-danger small ms-2">Unbalanced</span>
+    {% endif %}
+</div>

@@ -1,0 +1,226 @@
+{% load humanize %}
+
+<div id="currency-display"
+     hx-get="{% url 'accounting:journals_list' %}"
+     hx-trigger="JournalSuccess from:body">
+
+<div class="main-wrapper">
+  <div class="inv-card">
+    {# ── TABLE WRAPPER ────────────────────────────────────── #}
+    <div class="table-wrap">
+
+      <div class="table-toolbar">
+        <h5 class="table-toolbar-title">
+          Journals
+          <span class="badge badge--count">
+            {{ journals.paginator.count }} Journal{{ journals.paginator.count|pluralize }}
+          </span>
+        </h5>
+  
+        <div>
+          <button class="btn btn-primary btn-sm"
+                  hx-get="{% url 'accounting:get_empty_journal_form' %}"
+                  hx-disable-elt="this"
+                  hx-target="#accounting-display"
+                  hx-push-url="true"
+               >
+            <i class="bi bi-plus-lg"></i> New
+          </button>
+    
+          <button type="button"
+                  class="btn btn-danger btn-sm"
+                  hx-post="{% url 'accounting:journals_delete' %}"
+                  hx-include="[name='journal_ids']:checked"
+                  hx-confirm="Are you sure you want to delete the selected journals?"
+                  hx-target="#accounting-display">
+            <i class="ti ti-trash me-1"></i> Delete
+          </button>
+    
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <form data-toolbar
+              class="toolbar"
+              id="journal-filters"
+              hx-get="{% url 'accounting:journals_list' %}"
+              hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
+              hx-target="#accounting-display"
+              hx-replace-url="true">
+            
+          <div class="toolbar-search-wrap">
+            <i class="ti ti-search toolbar-search-icon"></i>
+            <input type="text"
+                   id="toolbar-search-input"
+                   class="toolbar-search"
+                   name="search_journal"
+                   placeholder="Search journal..."
+                   value="{{ request.GET.search_journal }}">
+            <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+              <i class="ti ti-x"></i>
+            </button>
+          </div>
+  
+          <button type="button" class="toolbar-clear-btn">
+            <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
+          </button>
+        </form>
+      </div>
+
+      <table class="data-table" data-checkbox-table>
+        <thead>
+          <tr>
+            <th style="text-align: center; padding: 8px 8px 8px 16px; width: 32px;">
+              <input type="checkbox" data-select-all>
+            </th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th class="col-right">Currency</th>
+            <th class="col-center">Default Debit Account</th>
+            <th class="col-center">Default Credit Account</th>
+            <th class="col-center">Suspense Account</th>
+            <th class="col-center">Sequence</th>
+            <th class="col-center">Requires Reconciliation</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="table-body">
+          {% for journal in journals %}
+            <tr>
+              <td style="text-align: center;">
+                <input type="checkbox"
+                       name="journal_ids"
+                       value="{{ journal.id }}"
+                       data-select-row
+                       data-row-id="{{ journal.id }}">
+              </td>
+              <td class="td-mono">{{ journal.code }}</td>
+              <td class="td-primary">{{ journal.name }}</td>
+              <td>{{ journal.get_type_display }}</td>
+              <td class="col-right">{{ journal.currency|default:"Company Currency" }}</td>
+              <td class="col-center">{{ journal.default_debit_account|default:"-" }}</td>
+              <td class="col-center">{{ journal.default_credit_account|default:"-" }}</td>
+              <td class="col-center">{{ journal.suspense_account|default:"-" }}</td>
+              <td class="col-center">{{ journal.sequence }}</td>
+              <td class="col-center">
+                {% if journal.requires_outstanding_reconciliation %}
+                  <span class="badge bg-success">Yes</span>
+                {% else %}
+                  <span class="badge bg-secondary">No</span>
+                {% endif %}
+              </td>
+              <td>
+                <button type="button"
+                        class="btn btn-secondary btn-sm"
+                        hx-get="{% url 'accounting:company_journal_detail' journal.id %}"
+                        hx-target="#accounting-display"
+                        hx-push-url="true"
+                        hx-disable-elt="this">
+                  <i class="ti ti-eye"></i> View
+                </button>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="11" class="table-empty">
+                <div class="table-empty-icon">
+                  <i class="bi bi-receipt"></i>
+                </div>
+                <div class="table-empty-title">No Journals found</div>
+                <div class="table-empty-desc">There are no records matching your current filter criteria.</div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {# ── Pagination (only when more than one page) ────────────── #}
+      {% if journals.paginator.num_pages > 1 %}
+        <div class="table-footer">
+          <small class="table-footer-count">
+            Showing {{ journals.start_index }}–{{ journals.end_index }}
+            of {{ journals.paginator.count }} Journal{{ journals.paginator.count|pluralize }}
+          </small>
+
+          <div class="table-pagination" hx-include="#journal-filters">
+            {# First #}
+            {% if journals.has_previous %}
+              <a class="page-btn page-btn--arrow"
+                 hx-get="?page=1"
+                 hx-target="#accounting-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+                <i class="bi bi-chevron-double-left"></i>
+              </a>
+            {% else %}
+              <span class="page-btn page-btn--arrow" aria-disabled="true">
+                <i class="bi bi-chevron-double-left"></i>
+              </span>
+            {% endif %}
+
+            {# Prev #}
+            {% if journals.has_previous %}
+              <a class="page-btn page-btn--arrow"
+                 hx-get="?page={{ journals.previous_page_number }}"
+                 hx-target="#accounting-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+                <i class="bi bi-chevron-left"></i>
+              </a>
+            {% else %}
+              <span class="page-btn page-btn--arrow" aria-disabled="true">
+                <i class="bi bi-chevron-left"></i>
+              </span>
+            {% endif %}
+
+            {# Page numbers #}
+            {% for num in journals.paginator.page_range %}
+              {% if journals.number == num %}
+                <span class="page-btn active">{{ num }}</span>
+              {% elif num > journals.number|add:'-3' and num < journals.number|add:'3' %}
+                <a class="page-btn"
+                   hx-get="?page={{ num }}"
+                   hx-target="#accounting-display"
+                   hx-swap="innerHTML"
+                   hx-push-url="true">{{ num }}</a>
+              {% endif %}
+            {% endfor %}
+
+            {# Next #}
+            {% if journals.has_next %}
+              <a class="page-btn page-btn--arrow"
+                 hx-get="?page={{ journals.next_page_number }}"
+                 hx-target="#accounting-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            {% else %}
+              <span class="page-btn page-btn--arrow" aria-disabled="true">
+                <i class="bi bi-chevron-right"></i>
+              </span>
+            {% endif %}
+
+            {# Last #}
+            {% if journals.has_next %}
+              <a class="page-btn page-btn--arrow"
+                 hx-get="?page={{ journals.paginator.num_pages }}"
+                 hx-target="#accounting-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+                <i class="bi bi-chevron-double-right"></i>
+              </a>
+            {% else %}
+              <span class="page-btn page-btn--arrow" aria-disabled="true">
+                <i class="bi bi-chevron-double-right"></i>
+              </span>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+</div>

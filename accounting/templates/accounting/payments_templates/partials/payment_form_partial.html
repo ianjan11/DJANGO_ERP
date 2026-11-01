@@ -1,0 +1,195 @@
+<form id="paymentForm"
+      hx-post="{% if payment and payment.pk %}{% url 'accounting:edit_payment' payment.id %}{% elif invoice and invoice.pk %}{% url 'accounting:create_payment' %}{% else %}{% url 'accounting:create_pre_payment' %}{% endif %}"
+      hx-target="#accounting-display"
+      method="post"
+      hx-push-url="true"
+      style="padding:var(--spacing-16);
+             display:flex; flex-direction:column; gap:var(--spacing-16);">
+  {% csrf_token %}
+  
+  {% if errors %}
+  <div class="alert alert-danger" id="payment-errors">
+    <strong>Please fix the following errors:</strong>
+    <ul class="mb-0 mt-1">
+      {% for field, error_list in errors.items %}
+        {% if error_list %}
+          <li><strong>{{ field|title }}</strong>: {{ error_list.0 }}</li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="inv-header-section" style="border:none;">
+
+    {# ── Left Column ── #}
+    <div class="inv-header-col">
+      <div class="chart-card-header" style="border-bottom:none; padding:0 0 var(--spacing-8);">
+        <span class="chart-eyebrow">Payment Details</span>
+      </div>
+
+      {# Partner #}
+      <div class="inv-field">
+        <label class="inv-field-label" for="{{ payment_form.partner.id_for_label }}">
+          Partner <span style="color:#b91c1c">*</span>
+        </label>
+        <div style="flex:1;">
+          {{ payment_form.partner }}
+          {% if payment_form.partner.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ payment_form.partner.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Amount #}
+      <div class="inv-field">
+        <label class="inv-field-label" for="{{ payment_form.amount.id_for_label }}">
+          Amount <span style="color:#b91c1c">*</span>
+        </label>
+        <div style="flex:1;">
+          {{ payment_form.amount }}
+          {% if payment_form.amount.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ payment_form.amount.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Payment Type #}
+      {% if invoice %}
+        <div style="display: none;">
+          {{ payment_form.payment_type }}
+        </div>
+      {% else %}
+        <div class="inv-field">
+          <label class="inv-field-label" for="{{ payment_form.payment_type.id_for_label }}">
+            Payment Type <span style="color:#b91c1c">*</span>
+          </label>
+          <div style="flex:1;">
+            {{ payment_form.payment_type }}
+            {% if payment_form.payment_type.errors %}
+              <div class="inv-field-sub" style="color:#9b2626;">{{ payment_form.payment_type.errors.0 }}</div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+      {# Payment Method #}
+      <div class="inv-field">
+        <label class="inv-field-label" for="{{ payment_form.payment_method.id_for_label }}">
+          Payment Method <span style="color:#b91c1c">*</span>
+        </label>
+        <div style="flex:1;">
+          {{ payment_form.payment_method }}
+          {% if payment_form.payment_method.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ payment_form.payment_method.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    {# ── Right Column ── #}
+    <div class="inv-header-col">
+      <div class="chart-card-header" style="border-bottom:none; padding:0 0 var(--spacing-8);">
+        <span class="chart-eyebrow">Accounting & Settings</span>
+      </div>
+
+      {# Journal #}
+      <div class="inv-field">
+        <label class="inv-field-label" for="{{ payment_form.journal.id_for_label }}">
+          Journal <span style="color:#b91c1c">*</span>
+        </label>
+        <div style="flex:1;">
+          {{ payment_form.journal }}
+          {% if payment_form.journal.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ payment_form.journal.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Date #}
+      <div class="inv-field">
+        <label class="inv-field-label" for="{{ payment_form.date.id_for_label }}">
+          Date <span style="color:#b91c1c">*</span>
+        </label>
+        <div style="flex:1;">
+          {{ payment_form.date }}
+          {% if payment_form.date.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ payment_form.date.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Currency #}
+      <div class="inv-field">
+        <label class="inv-field-label" for="{{ payment_form.currency.id_for_label }}">Currency</label>
+        <div style="flex:1;">
+          {{ payment_form.currency }}
+          {% if payment_form.currency.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ payment_form.currency.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Memo #}
+      <div class="inv-field" style="align-items:flex-start;">
+        <label class="inv-field-label"
+               for="{{ payment_form.memo.id_for_label }}"
+               style="padding-top:var(--spacing-8);">Memo</label>
+        <div style="flex:1;">
+          {{ payment_form.memo }}
+          {% if payment_form.memo.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ payment_form.memo.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  {# Hidden Inputs #}
+  {% if invoice %}
+    <input type="hidden" name="invoice_id" id="allocations-input" value="{{ invoice.id }}">
+  {% endif %}
+  <input type="hidden" name="partner_type" value="{{ partner_type }}">
+
+
+  {# ── Dynamic Actions ── #}
+  <div style="display:flex; justify-content:flex-end; gap:var(--spacing-8);
+              padding-top:var(--spacing-12);
+              border-top:1px solid var(--color-mist);">
+    
+      {% if invoice %}
+  {# In Invoice Modal: Simply close/cancel the modal #}
+  <button type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal">
+    <i class="bi bi-x-lg me-1"></i> Cancel
+  </button>
+      {% else %}
+  {# Standalone Form: Navigate back to the specific list view #}
+  <button type="button"
+          class="btn btn-secondary"
+          hx-get="{{ back_url }}"
+          hx-target="#accounting-display"
+          hx-swap="innerHTML"
+          hx-push-url="true">
+    <i class="bi bi-arrow-left me-1"></i> Back
+  </button>
+{% endif %}
+    
+
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-check-circle"></i>
+      {% if payment and payment.pk %}
+        Save Changes
+      {% elif invoice and invoice.pk %}
+        Pay Invoice
+      {% else %}
+        Record Pre-payment
+      {% endif %}
+    </button>
+
+  </div>
+</form>

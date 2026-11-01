@@ -1,0 +1,60 @@
+{% load group_tags %}
+{% load humanize %}
+
+
+
+
+
+
+     <div>
+    {# ── INFO CARD ────────────────────────────────── #}
+        
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'accounting:post_payment' payment.id %}"
+            hx-target="#accounting-display"
+            hx-confirm="Post Payment?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-check-circle"></i> Post
+        </button>
+         
+         
+         <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'accounting:apply_pre_payment' payment.id %}"
+            hx-target="#accounting-display"
+            hx-confirm="apply Payment?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-check-circle"></i> Apply
+        </button>
+
+         
+         <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'accounting:cancel_payment' payment.id %}"
+            hx-target="#accounting-display"
+            hx-confirm="Cancel this Payment? Once confirmed all accounting entries will be reversed"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-check-circle"></i> Cancel Posted
+        </button>
+
+
+     </div>
+
+             <span class="po-invoice-number">
+                       {% if credit_note.status == "DRAFT" %}
+                        <span class="badge badge--draft"><i class="bi bi-hourglass-top"></i>Draft</span>
+                        {% elif credit_note.status == "POSTED" %}
+                        <span class="badge badge--posted"><i class="bi bi-check-circle-fill"></i>Posted</span>
+                        {% elif credit_note.status == "CANCELLED" %}
+                        <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i>Cancelled</span>
+                        {% else %}
+                        <span class="badge"><span></span>{{ credit_note.status }}</span>
+                        {% endif %}
+    </span>

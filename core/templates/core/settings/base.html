@@ -1,0 +1,37 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block app_wrapper %}
+<div class="main-container  settings-container">
+    
+    <div id="settings-display"  hx-history-elt>
+        {% block content %}{% endblock %}
+    </div>
+
+
+</div>
+{% endblock %}
+{% block scripts %}
+
+
+<script>
+document.addEventListener('htmx:beforeSwap', (e) => {
+    if (e.detail.xhr.status === 400) {
+        e.detail.shouldSwap = true;
+        e.detail.isError = false;
+    }
+});
+</script>
+{{ block.super }}
+
+
+    <script src="{% static 'js/general/check_box_all.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/check_box_all.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/clear_buton.js' %}?t={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/select2.js' %}?v={{ now|date:'U' }}"></script>
+
+
+
+
+
+{% endblock %}

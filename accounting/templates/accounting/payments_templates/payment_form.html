@@ -1,0 +1,13 @@
+{% extends 'accounting/base.html' %}
+{% load humanize %}
+{% load static %}
+
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+        {% include "accounting/payments_templates/partials/payment_form_partial.html" %}
+{% endblock %}
+
+

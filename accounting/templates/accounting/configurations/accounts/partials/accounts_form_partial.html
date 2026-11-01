@@ -1,0 +1,170 @@
+{% load humanize %}
+
+<div class="table-toolbar">
+  <h5 class="table-toolbar-title">
+    {% if account.pk %}Edit Account{% else %}New Account{% endif %}
+    
+  </h5>
+  
+  
+</div>
+
+
+<form id="accountForm"
+      hx-post="{% if account and account.pk %}{% url 'accounting:account_edit' account.id %}{% else %}{% url 'accounting:create_account' %}{% endif %}"
+      hx-target="#accounting-display"
+      method="post"
+      hx-push-url="true"
+      style="padding:var(--spacing-16);
+             display:flex; flex-direction:column; gap:var(--spacing-16);"
+
+>
+  {% csrf_token %}
+
+  <div class="inv-header-section" style="border:none;">
+
+    {# Left column #}
+    <div class="inv-header-col">
+      <div class="chart-card-header" style="border-bottom:none; padding:0 0 var(--spacing-8);">
+        <span class="chart-eyebrow">Identity</span>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_code">Code <span style="color:#b91c1c">*</span></label>
+        <div style="flex:1;">
+          {{ account_form.code }}
+          {% if account_form.code.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ account_form.code.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_name">Name <span style="color:#b91c1c">*</span></label>
+        <div style="flex:1;">
+          {{ account_form.name }}
+          {% if account_form.name.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ account_form.name.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_account_type">Account Type <span style="color:#b91c1c">*</span></label>
+        <div style="flex:1;">
+          {{ account_form.account_type }}
+          {% if account_form.account_type.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ account_form.account_type.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_internal_type">Internal Type</label>
+        <div style="flex:1;">
+          {{ account_form.internal_type }}
+          {% if account_form.internal_type.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ account_form.internal_type.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_currency">Currency</label>
+        <div style="flex:1;">
+          {{ account_form.currency }}
+          <span class="inv-field-sub">Force all moves on this account to use this currency.</span>
+          {% if account_form.currency.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ account_form.currency.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_parent">Parent Account</label>
+        <div style="flex:1;">
+          {{ account_form.parent }}
+          {% if account_form.parent.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ account_form.parent.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    {# Right column #}
+    <div class="inv-header-col">
+      <div class="chart-card-header" style="border-bottom:none; padding:0 0 var(--spacing-8);">
+        <span class="chart-eyebrow">Settings</span>
+      </div>
+
+      <div class="inv-field">
+        <span class="inv-field-label">Control Account</span>
+        <div style="flex:1; display:flex; align-items:center; gap:var(--spacing-8);">
+          {{ account_form.is_control_account }}
+          <span class="inv-field-sub">
+            Prevents direct manual journal entry lines on this account.
+          </span>
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <span class="inv-field-label">Allow Reconciliation</span>
+        <div style="flex:1; display:flex; align-items:center; gap:var(--spacing-8);">
+          {{ account_form.allow_reconciliation }}
+          <span class="inv-field-sub">
+            Required for AR, AP, and bank accounts.
+          </span>
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <span class="inv-field-label">Active</span>
+        <div style="flex:1; display:flex; align-items:center; gap:var(--spacing-8);">
+          {{ account_form.is_active }}
+          <span class="inv-field-sub">
+            Inactive accounts are hidden from dropdowns but retain their history.
+          </span>
+        </div>
+      </div>
+
+      <div class="inv-field" style="align-items:flex-start;">
+        <label class="inv-field-label"
+               for="id_description"
+               style="padding-top:var(--spacing-8);">Description</label>
+        <div style="flex:1;">
+          {{ account_form.description }}
+          {% if account_form.description.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ account_form.description.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  {# ── Actions ── #}
+  <div style="display:flex; justify-content:flex-end; gap:var(--spacing-8);
+              padding-top:var(--spacing-12);
+              border-top:1px solid var(--color-mist);">
+      
+      
+     <button type="button"
+        class="btn btn-secondary"
+        hx-get="{% url 'accounting:accounts_list' %}"
+        hx-target="#accounting-display"
+        hx-swap="innerHTML"
+        hx-push-url="true">
+    <i class="bi bi-arrow-left me-1"></i> Back
+</button>
+    
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-check-circle"></i>
+      {% if account.pk %}Save Changes{% else %}Create Account{% endif %}
+    </button>
+    
+  </div>
+
+</form>
+

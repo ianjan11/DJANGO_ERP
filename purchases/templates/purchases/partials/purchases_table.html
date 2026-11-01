@@ -1,0 +1,246 @@
+{% load humanize %}
+
+<div class="main-wrapper">
+  <div class="invoice-card">
+
+  
+
+    {# ── Toolbar ── #}
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        Purchases
+        <span class="badge badge--count">
+          {{ purchases.paginator.count }} purchase{{ purchases.paginator.count|pluralize }}
+        </span>
+      </h5>
+
+      <button class="btn btn-primary btn-sm"
+              hx-get="{% url 'purchases:purchase_create_or_detail' %}"
+              hx-target="#purchases-display"
+              hx-push-url="true">
+        <i class="bi bi-plus-lg"></i> New
+      </button>
+
+      <form data-toolbar
+            class="toolbar"
+            id="purchases-filters"
+            hx-get="{% url 'purchases:purchases_list' %}"
+            hx-trigger="input changed delay:400ms from:.toolbar-search,
+                  change from:.toolbar-select,
+                  change from:.date-select-input,
+                  filters:changed"
+            hx-target="#purchases-display"
+            hx-replace-url="true"
+
+      >
+
+        <div class="date-select-bar">
+          <div class="date-select-presets">
+            <input type="hidden" class="preset-input" name="preset" value="{{ request.GET.preset }}">
+            <button type="button" class="date-select-preset {% if request.GET.preset == 'Today' %}active{% endif %}"
+                    data-preset="Today">Today</button>
+            <button type="button" class="date-select-preset {% if request.GET.preset == 'ThisWeek' %}active{% endif %}"
+                    data-preset="ThisWeek">This week</button>
+            <button type="button" class="date-select-preset {% if not request.GET.preset or request.GET.preset == 'ThisMonth' %}active{% endif %}"
+                    data-preset="ThisMonth">This month</button>
+            <button type="button" class="date-select-preset {% if request.GET.preset == 'ThisYear' %}active{% endif %}"
+                    data-preset="ThisYear">This year</button>
+          </div>
+          <div class="date-select-wrap">
+            <i class="bi bi-calendar3 date-select-icon"></i>
+            <input type="date" class="date-select-input"
+                   name="target_date"
+                   value="{{ request.GET.target_date }}">
+          </div>
+        </div>
+
+        <div class="toolbar-search-wrap">
+          <i class="ti ti-search toolbar-search-icon" aria-hidden="true"></i>
+          <input type="text" class="toolbar-search"
+                 name="search_purchase"
+                 placeholder="Search purchase..."
+                 value="{{ request.GET.search_purchase }}">
+          <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+
+        <select class="toolbar-select" name="purchase_status">
+          <option value="">All Purchases</option>
+          <option value="DRAFT"            {% if request.GET.purchase_status == "DRAFT"            %}selected{% endif %}>Draft</option>
+          <option value="CONFIRMED"          {% if request.GET.purchase_status == "CONFIRMED"          %}selected{% endif %}>Confirmed</option>
+          <option value="PARTIALLY_RECEIVED" {% if request.GET.purchase_status == "PARTIALLY_RECEIVED" %}selected{% endif %}>Partially Received</option>
+          <option value="RECEIVED"           {% if request.GET.purchase_status == "RECEIVED"           %}selected{% endif %}>Received</option>
+          <option value="CANCELLED"          {% if request.GET.purchase_status == "CANCELLED"          %}selected{% endif %}>Cancelled</option>
+        </select>
+
+        <button type="button" class="toolbar-clear-btn">
+          <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
+        </button>
+
+      </form>
+    </div>
+
+    {# ── Table ── #}
+    <div class="inv-table-wrap">
+      <table class="inv-table">
+        <thead>
+          <tr>
+            <th style="width:160px">Reference</th>
+            <th style="width:180px">Supplier</th>
+            <th style="width:130px">Order Date</th>
+            <th style="width:130px">Expected Date</th>
+            <th style="width:140px" class="col-right">Amount</th>
+            <th style="width:140px" class="col-center">Status</th>
+            <th style="width:140px" class="col-center">Payment</th>
+            <th style="width:140px" class="col-center">Shipment</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for purchase in purchases %}
+          <tr hx-get="{% url 'purchases:purchase_create_or_detail' purchase.id %}"
+              hx-target="#purchases-display"
+              hx-push-url="true"
+              style="cursor: pointer;">
+
+            <td><span class="td-mono">{{ purchase.reference }}</span></td>
+
+            <td class="td-primary">{{ purchase.supplier }}</td>
+
+            <td style="color: var(--color-slate);">
+              {{ purchase.issue_date|date:'M d, Y' }}
+            </td>
+
+            <td style="color: var(--color-slate);">
+              {{ purchase.expected_date|date:'M d, Y'|default:"—" }}
+            </td>
+
+            <td class="col-right">
+              <span class="td-amount">
+                {{purchase.currency.symbol}} {{ purchase.total_amount|floatformat:2|intcomma }}
+              </span>
+            </td>
+
+            <td class="col-center">
+              {% if purchase.status == "PENDING" %}
+                <span class="badge badge--draft"><span class="badge-dot"></span>Pending</span>
+              {% elif purchase.status == "CONFIRMED" %}
+                <span class="badge badge--posted"><span class="badge-dot"></span>Confirmed</span>
+              {% elif purchase.status == "PARTIALLY_RECEIVED" %}
+                <span class="badge badge--pending"><span class="badge-dot"></span>Partial</span>
+              {% elif purchase.status == "RECEIVED" %}
+                <span class="badge badge--paid"><span class="badge-dot"></span>Received</span>
+              {% elif purchase.status == "CANCELLED" %}
+                <span class="badge badge--cancelled"><span class="badge-dot"></span>Cancelled</span>
+              {% else %}
+                <span class="badge badge--draft"><span class="badge-dot"></span>{{ purchase.status }}</span>
+              {% endif %}
+            </td>
+
+            <td class="col-center">
+              {% if purchase.payment_state == "paid" %}
+                <span class="badge badge--paid"><span class="badge-dot"></span>Reconciled</span>
+              {% elif purchase.payment_state == "not_paid" %}
+                <span class="badge badge--overdue"><span class="badge-dot"></span>Awaiting Payment</span>
+              {% elif purchase.payment_state == "partial" %}
+                <span class="badge badge--pending"><span class="badge-dot"></span>Partial</span>
+              {% else %}
+                <span class="td-dash">—</span>
+              {% endif %}
+            </td>
+
+            <td class="col-center">
+              {% if purchase.shipment_status == "RECEIVED" %}
+                <span class="badge badge--paid"><span class="badge-dot"></span>Received</span>
+              {% elif purchase.shipment_status == "PENDING" %}
+                <span class="badge badge--draft"><span class="badge-dot"></span>Pending</span>
+              {% elif purchase.shipment_status == "PARTIAL" %}
+                <span class="badge badge--pending"><span class="badge-dot"></span>Partial</span>
+              {% elif purchase.shipment_status == "CANCELLED" %}
+                <span class="badge badge--cancelled"><span class="badge-dot"></span>Cancelled</span>
+              {% else %}
+                <span class="td-dash">—</span>
+              {% endif %}
+            </td>
+
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="table-empty">
+              <div class="table-empty-icon"><i class="bi bi-cart3"></i></div>
+              <div class="table-empty-title">No purchases found</div>
+              <div class="table-empty-desc">
+                There are no records matching your current filter criteria.
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {# ── Pagination ── #}
+    {% if purchases.paginator.num_pages > 1 %}
+    <div class="table-footer">
+      <small class="table-footer-count">
+        Showing {{ purchases.start_index }}–{{ purchases.end_index }}
+        of {{ purchases.paginator.count }} purchase{{ purchases.paginator.count|pluralize }}
+      </small>
+
+      {% with base_params=base_params %}
+      <div class="table-pagination" hx-include="#purchases-filters">
+
+        {% if purchases.has_previous %}
+          <a class="page-btn page-btn--arrow"
+             hx-get="?{{ base_params }}&page=1"
+             hx-target="#purchases-display"
+             hx-push-url="true">
+            <i class="bi bi-chevron-double-left"></i>
+          </a>
+          <a class="page-btn page-btn--arrow"
+             hx-get="?{{ base_params }}&page={{ purchases.previous_page_number }}"
+             hx-target="#purchases-display"
+             hx-push-url="true">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        {% else %}
+          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-double-left"></i></span>
+          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-left"></i></span>
+        {% endif %}
+
+        {% for num in purchases.paginator.page_range %}
+          {% if purchases.number == num %}
+            <span class="page-btn active">{{ num }}</span>
+          {% elif num > purchases.number|add:'-3' and num < purchases.number|add:'3' %}
+            <a class="page-btn"
+               hx-get="?{{ base_params }}&page={{ num }}"
+               hx-target="#purchases-display"
+               hx-push-url="true">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if purchases.has_next %}
+          <a class="page-btn page-btn--arrow"
+             hx-get="?{{ base_params }}&page={{ purchases.next_page_number }}"
+             hx-target="#purchases-display"
+             hx-push-url="true">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+          <a class="page-btn page-btn--arrow"
+             hx-get="?{{ base_params }}&page={{ purchases.paginator.num_pages }}"
+             hx-target="#purchases-display"
+             hx-push-url="true">
+            <i class="bi bi-chevron-double-right"></i>
+          </a>
+        {% else %}
+          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-right"></i></span>
+          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-double-right"></i></span>
+        {% endif %}
+
+      </div>
+      {% endwith %}
+    </div>
+    {% endif %}
+
+  </div>
+</div>

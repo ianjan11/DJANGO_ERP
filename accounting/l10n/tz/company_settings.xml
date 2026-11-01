@@ -1,0 +1,43 @@
+<company_settings>
+    <!-- ═══ Existing (unchanged) ═══ -->
+    <setting key="default_receivable" account_code="110000"/>
+    <setting key="default_payable" account_code="200000"/>
+    <setting key="default_cash" account_code="100000"/>
+    <setting key="default_bank" account_code="101000"/>
+    <setting key="default_tax_receivable" account_code="111000"/>
+    <setting key="default_tax_payable" account_code="210000"/>
+    <setting key="default_prepaid" account_code="130000"/>
+    <setting key="default_revenue_account" account_code="400000"/>
+    <setting key="default_cogs_account" account_code="500000"/>
+    <setting key="default_retained_earnings" account_code="310000"/>
+    <setting key="default_current_year_earnings" account_code="320000"/>
+    <setting key="default_exchange_gain_account" account_code="420000"/>
+    <setting key="default_exchange_loss_account" account_code="590000"/>
+    <setting key="default_customer_credit_note_account" account_code="400000"/>
+    <setting key="default_vendor_credit_note_account" account_code="500000"/>
+
+    <!-- ═══ Inventory / stock (needed by delivery, receipt and invoice valuation) ═══ -->
+    <setting key="default_inventory_valuation_account" account_code="120000"/>
+    <setting key="default_stock_input_account" account_code="218000"/>   <!-- GRNI -->
+    <setting key="default_stock_output_account" account_code="121000"/>  <!-- GDNI -->
+    <setting key="default_inventory_adjustment_gain" account_code="410200"/>
+    <setting key="default_inventory_adjustment_expense" account_code="500100"/>
+    <setting key="default_inventory_revaluation_gain" account_code="410100"/>
+    <setting key="default_inventory_revaluation_expense" account_code="500200"/>
+    <setting key="default_price_difference_account" account_code="500300"/>
+
+    <!-- ═══ Prepayments / advances ═══ -->
+    <setting key="default_unearned_revenue" account_code="221000"/>
+    <setting key="default_customer_prepayments" account_code="222000"/>
+    <setting key="default_vendor_advances" account_code="114000"/>
+
+    <!-- ═══ Cash differences ═══ -->
+    <setting key="default_cash_difference_gain" account_code="410300"/>
+    <setting key="default_cash_difference_loss" account_code="580100"/>
+
+    <!-- ═══ Journals (these keys point at journals, not accounts) ═══ -->
+    <setting key="default_return_journal" journal_code="RET"/>
+    <setting key="default_cash_refund_journal" journal_code="CSH"/>
+    <setting key="default_store_credit_journal" journal_code="SCR"/>
+    <!-- If your settings loader expects a different attribute than journal_code, rename it here. -->
+</company_settings>

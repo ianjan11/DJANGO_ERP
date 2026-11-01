@@ -1,0 +1,1 @@
+from inventory.events.types import InventoryEventType

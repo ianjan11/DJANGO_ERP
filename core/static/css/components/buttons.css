@@ -1,0 +1,119 @@
+/* ═══════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════ */
+
+/* ── Base ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-family: var(--font-suisseintl);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  /* transition only what moves — not all, avoids layout reflows */
+  transition: background 0.12s ease,
+              color 0.12s ease,
+              border-color 0.12s ease,
+              box-shadow 0.12s ease,
+              transform 0.1s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+.btn:disabled,
+.btn.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ── Primary ── */
+.btn-primary {
+  background: var(--color-deep-indigo);
+  color: #ffffff;
+  border-color: var(--color-deep-indigo);
+}
+.btn-primary:hover {
+  background: #213481;
+  border-color: #213481;
+  transform: translateY(-1px);
+}
+
+/* ── Secondary ── */
+.btn-secondary {
+  background: var(--surface-card);
+  color: var(--color-deep-ink);
+  border-color: var(--color-mist);
+}
+.btn-secondary:hover {
+  background: var(--color-paper-white);
+  border-color: var(--color-fog);
+  color: var(--color-deep-indigo);
+  box-shadow: rgba(0, 0, 0, 0.06) 0px 4px 8px,
+              rgba(0, 0, 0, 0.04) 0px 1px 3px;
+  transform: translateY(-1px);
+}
+
+/* ── Danger ── */
+.btn-danger {
+  background: transparent;
+  color: #9b2626;
+  border-color: #f7c1c1;
+}
+.btn-danger:hover {
+  background: #fef5f5;
+  border-color: #e24b4a;
+  box-shadow: rgba(226, 75, 74, 0.15) 0px 4px 8px;
+  transform: translateY(-1px);
+}
+
+/* ── Success ── */
+.btn-success {
+  background: transparent;
+  color: #0f6e56;
+  border-color: #9fe1cb;
+}
+.btn-success:hover {
+  background: #f0fbf7;
+  border-color: var(--color-mint);
+  box-shadow: rgba(68, 180, 139, 0.15) 0px 4px 8px;
+  transform: translateY(-1px);
+}
+
+/* ── Ghost — no border, no bg ── */
+.btn-ghost {
+  background: transparent;
+  color: var(--color-slate);
+  border-color: transparent;
+}
+.btn-ghost:hover {
+  background: var(--color-paper-white);
+  color: var(--color-deep-indigo);
+  border-color: var(--color-mist);
+}
+
+/* ── Sizes ── */
+.btn-sm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  gap: 4px;
+}
+
+.btn-lg {
+  height: 42px;
+  padding: 0 20px;
+  font-size: 15px;
+  border-radius: 9px;
+}

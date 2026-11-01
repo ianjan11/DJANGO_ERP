@@ -1,0 +1,86 @@
+{% load group_tags %}
+{% load humanize %}
+
+<div class="inv-card">
+
+{# ── TABLE ────────────────────────────────────── #}
+
+
+<div class="table-wrap">
+
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Invoice No</th>
+                <th>Partner</th>
+                <th>Date</th>
+                <th class="col-right">Amount</th>
+                <th class="col-center">Order Status</th>
+                <th class="col-center">Payment Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for invoice in credit_notes %}
+            <tr hx-get="{% url 'accounting:invoice_create_or_detail' invoice.id %}"
+                hx-target="#accounting-display"
+                hx-push-url="true">
+
+                <td class="td-mono">{{ invoice.invoice_number }}</td>
+
+                <td class="td-primary">{{ invoice.partner }}</td>
+
+                <td>{{ invoice.created_at|date:'M d, Y H:i:s' }}</td>
+
+                <td class="col-right">
+                 <span class="td-amount">
+                                         {{invoice.currency.symbol}}  {{ invoice.total_amount|floatformat:2|intcomma }}
+                 </span>
+                </td>
+
+                <td class="col-center">
+                    {% if invoice.status == "DRAFT" %}
+                        <span class="badge badge--draft"><i class="bi bi-pencil-square"></i> Draft</span>
+                    {% elif invoice.status == "POSTED" %}
+                        <span class="badge badge--pending"><i class="bi bi-send-fill"></i> Posted</span>
+                    {% elif invoice.status == "CONFIRMED" %}
+                        <span class="badge badge--paid"><i class="bi bi-check-circle-fill"></i> Confirmed</span>
+                    {% elif invoice.status == "CANCELLED" %}
+                        <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
+                    {% else %}
+                        <span class="badge">{{ invoice.status }}</span>
+                    {% endif %}
+                </td>
+
+                <td class="col-center">
+                    {% if invoice.payment_state == "paid" %}
+                        <span class="badge badge--paid"><i class="bi bi-shield-check"></i> Reconciled</span>
+                    {% elif invoice.payment_state == "not_paid" %}
+                        <span class="badge badge--overdue"><i class="bi bi-clock"></i> Awaiting Payment</span>
+                    {% elif invoice.payment_state == "partial" %}
+                        <span class="badge badge--partial"><i class="bi bi-circle-half"></i> Partial</span>
+                    {% else %}
+                        <span style="color:var(--color-fog);">—</span>
+                    {% endif %}
+                </td>
+
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="table-empty">
+                    <div class="table-empty-icon">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                    <div class="table-empty-title">No credit invoices found</div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+
+</div>
+

@@ -1,0 +1,109 @@
+{% load group_tags %}
+{% load humanize %}
+
+
+     <div>
+    {# ── INFO CARD ────────────────────────────────── #}
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'sales:confirm_sales_order' order.id %}"
+            hx-target="#sales-display"
+            hx-confirm="Confirm this Order?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-check-circle"></i> Confirm
+        </button>
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'sales:send_sales_order' order.id %}"
+            hx-target="#sales-display"
+            hx-confirm="Send this Order ?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-check-circle"></i> Send Order
+        </button>
+
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'sales:reset_sales_order' order.id %}"
+            hx-target="#sales-display"
+            hx-confirm="Reset this Order, confirming this action will cancel active delivery if not yet processed?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset
+        </button>
+
+
+
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'sales:cancel_order' order.id %}"
+            hx-target="#sales-display"
+            hx-confirm="Cancel this Order, canceling this action will cancel active delivery if not yet processed?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-x-circle"></i> Cancel
+        </button>
+
+
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'sales:order_delete' order.id %}"
+            hx-target="#sales-display"
+            hx-confirm="Delete this Order?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-trash"></i> Delete
+        </button>
+
+  <button
+    type="button"
+    class="btn btn-primary"
+    hx-post="{% url 'sales:sales_to_invoice' order_id=order.id %}"
+    hx-target="#sales-display"
+    hx-swap="outerHTML"
+    hx-confirm="Create an invoice from this sales order?"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+  >
+    Convert to Invoice
+  </button>
+
+
+     </div>
+
+     <div>
+     <a href="{% url 'inventory:get_pickings' %}?picking_origin={{ order.order_number }}"
+     class="btn btn-secondary">
+     <i class="bi bi-box-seam"></i> Deliveries
+     </a>
+     </div>
+
+             <span class="po-invoice-number">
+                       {% if order.status == "DRAFT" %}
+                        <span class="badge badge--draft"><i class="bi bi-pencil-square"></i>Quotation</span>
+                        {% elif order.status == "SENT" %}
+                        <span class="badge badge--posted"><i class="bi bi-send-fill"></i>Quotation Sent</span>
+                        {% elif order.status == "CONFIRMED" %}
+                        <span class="badge badge--completed"><i class="bi bi-x-check-fill"></i>Confirmed</span>
+                        {% elif order.status == "CANCELLED" %}
+                        <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i>Cancelled</span>
+                        {% else %}
+                        <span class="badge">{{ order.status }}</span>
+                        {% endif %}
+             </span>
+
+
+
+
+
+

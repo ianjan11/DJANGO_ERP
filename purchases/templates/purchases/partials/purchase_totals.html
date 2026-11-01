@@ -1,0 +1,8 @@
+{% load humanize %}
+{% load static %}
+
+
+<div id="purchase-total">
+                          <label> Total (Tax-Inclusive): </label>
+              <span>{{purchase.currency.symbol}} {{ purchase.total_amount|intcomma }} </span>
+</div>

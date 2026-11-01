@@ -1,0 +1,12 @@
+{% extends "core/settings/base.html" %}
+{% load static %}
+
+{% block content %}
+  {% include "core/settings/tenants/partials/tenant_form_partial.html" %}
+{% endblock %}
+
+
+
+{% block scripts %}
+{{block.super}}
+{% endblock %}

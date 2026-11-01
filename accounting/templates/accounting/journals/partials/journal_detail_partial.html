@@ -1,0 +1,38 @@
+{% load humanize %}
+
+<div class="main-wrapper">
+  <div class="invoice-card">
+      
+      <div class="action-card">
+  {% include "accounting/journals/partials/action_buttons.html" %}
+ </div>
+
+
+    {# ── Header ── #}
+    <div class="invoice-header-card">
+      <div class="invoice-header-title">
+        
+        
+        
+        <label class="invoice-header-label">Journal Entry</label>
+        <span class="invoice-number">{{ move.name|default:"Draft Entry" }}</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:var(--spacing-8);">
+        <button type="button"
+                class="btn btn-ghost btn-sm"
+                hx-get="{% url 'accounting:journal_entries' %}"
+                hx-target="#accounting-display"
+                hx-push-url="true">
+          <i class="bi bi-arrow-left"></i> Back
+        </button>
+      </div>
+    </div>
+        <div id="journal-document" data-swap-on-error>
+    {% include "accounting/journals/partials/journal_form.html" %}
+        </div>
+    
+  </div>
+</div>
+
+
+

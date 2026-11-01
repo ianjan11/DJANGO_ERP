@@ -1,0 +1,80 @@
+{% load humanize %}
+
+<form id="journal-header-form"
+      hx-post="{% url 'accounting:journal_update' %}"
+      hx-trigger="change[event.target.classList.contains('move-header-field')] delay:300ms"
+      hx-swap="none"
+      hx-sync="this:queue last">
+
+  {% csrf_token %}
+  <div id="header-form-wrapper" class="form-header">
+    {% include "accounting/journals/partials/header_form_inner.html" %}
+  </div>
+
+  {# ── Line items ── #}
+  <div class="table-toolbar">
+    <h5 class="table-toolbar-title">Journal Items</h5>
+  </div>
+
+  <div id="items-management-form">
+    {{ formset.management_form }}
+  </div>
+
+  {% if formset.non_form_errors %}
+  <div style="margin: var(--spacing-12) var(--spacing-16);
+              padding: var(--spacing-12);
+              background: #fce8e8;
+              border: 1px solid #f7c1c1;
+              border-radius: var(--radius-cards);
+              font-size: var(--text-body-sm);
+              color: #9b2626;">
+    {{ formset.non_form_errors }}
+  </div>
+  {% endif %}
+
+  <div class="inv-table-wrap">
+    <table class="inv-table" id="journal-lines-table">
+      <thead>
+        <tr>
+          <th style="display:none"></th>
+          <th style="width:25%; min-width:200px">Account</th>
+          <th style="width:25%; min-width:200px">Partner</th>
+          <th style="width:25%; min-width:180px">Memo / Label</th>
+          <th style="width:15%; min-width:120px" class="col-right">Debit</th>
+          <th style="width:15%; min-width:120px" class="col-right">Credit</th>
+          <th style="width:5%;  min-width:48px"  class="col-center"></th>
+        </tr>
+      </thead>
+      <tbody id="journal-items">
+        {% for form in formset %}
+          {% include "accounting/journals/partials/journal_item_row.html" %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# TOTAL_FORMS is derived from the DOM row count so it can't drift from the server-rendered management form #}
+  <button id="row-btn"
+          class="btn btn-secondary btn-sm"
+          type="button"
+          style="display:none; margin:var(--spacing-8);"
+          hx-get="{% url 'accounting:journal_item_row' move.id %}"
+          hx-target="#journal-items"
+          hx-swap="beforeend"
+          hx-sync="closest form:queue last"
+          hx-vals='js:{
+            total_forms: document.querySelectorAll("#journal-items > tr").length,
+            partner_id: document.querySelector("[name=partner]")?.value ?? ""
+          }'
+          hx-on::after:swap="
+            document.querySelector('[name=items-TOTAL_FORMS]').value =
+              document.querySelectorAll('#journal-items > tr').length;
+          ">
+    <i class="bi bi-plus"></i> Add Row
+  </button>
+
+  <div id="journal-total-container" class="totals-container">
+    {% include "accounting/journals/partials/journal_totals.html" %}
+  </div>
+
+</form>

@@ -1,0 +1,170 @@
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="main-wrapper">
+  <div class="invoice-card">
+
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        Trial Balance
+        <span class="badge badge--count">As of {{ target_date|date:"d M Y" }}</span>
+      </h5>
+      <form method="get"
+            hx-get="{% url 'accounting:trial_balance' %}"
+            hx-trigger="change from:.date-select-input"
+            hx-target="#accounting-display"
+            hx-push-url="true">
+        <div class="date-select-wrap">
+          <i class="bi bi-calendar3 date-select-icon"></i>
+          <input type="date"
+                 class="date-select-input"
+                 name="target_date"
+                 value="{{ target_date|date:'Y-m-d' }}">
+        </div>
+      </form>
+    </div>
+
+    {# ── Balance check banner ── #}
+    {% if balanced %}
+    <div style="margin: var(--spacing-16);
+                padding: var(--spacing-12) var(--spacing-16);
+                background: #e1f5ee;
+                border: 1px solid #9fe1cb;
+                border-radius: var(--radius-cards);
+                display:flex; align-items:center; gap: var(--spacing-8);
+                font-size: var(--text-body-sm); color:#0f6e56;">
+      <i class="bi bi-check-circle-fill" style="flex-shrink:0;"></i>
+      Balanced — total debits equal total credits
+    </div>
+    {% else %}
+    <div style="margin: var(--spacing-16);
+                padding: var(--spacing-12) var(--spacing-16);
+                background: #fce8e8;
+                border: 1px solid #f7c1c1;
+                border-radius: var(--radius-cards);
+                display:flex; align-items:center; gap: var(--spacing-8);
+                font-size: var(--text-body-sm); color:#9b2626;">
+      <i class="bi bi-exclamation-triangle-fill" style="flex-shrink:0;"></i>
+      Out of balance — debits and credits do not match. Check your journal entries.
+    </div>
+    {% endif %}
+
+    {# ── Summary cards ── #}
+    <div class="inv-summary-row">
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Total Debits</span>
+        <span class="inv-summary-value td-mono">
+          {{ total_debit|floatformat:0|intcomma }}
+        </span>
+      </div>
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Total Credits</span>
+        <span class="inv-summary-value td-mono">
+          {{ total_credit|floatformat:0|intcomma }}
+        </span>
+      </div>
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Difference</span>
+        <span class="inv-summary-value td-mono
+          {% if not balanced %}td-amount--overdue{% endif %}">
+          {{ difference|floatformat:0|intcomma }}
+        </span>
+        {% if balanced %}
+          <span class="inv-summary-sub">In balance</span>
+        {% else %}
+          <span class="inv-summary-sub" style="color:#9b2626;">Out of balance</span>
+        {% endif %}
+      </div>
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Accounts</span>
+        <span class="inv-summary-value td-mono">{{ rows|length }}</span>
+        <span class="inv-summary-sub">With movements</span>
+      </div>
+    </div>
+
+    {# ── Trial balance table ── #}
+    {% if rows %}
+    <div class="inv-table-wrap">
+      <table class="inv-table">
+        <thead>
+          <tr>
+            <th style="width:80px">Code</th>
+            <th style="width:260px">Account</th>
+            <th style="width:140px" class="col-right">Debit</th>
+            <th style="width:140px" class="col-right">Credit</th>
+            <th style="width:140px" class="col-right">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+          <tr>
+            <td><span class="td-mono">{{ row.account_code }}</span></td>
+            <td class="td-primary">{{ row.account_name }}</td>
+            <td class="col-right">
+              {% if row.total_debit == 0 %}
+                <span class="td-muted">—</span>
+              {% else %}
+                <span class="td-mono">{{ row.total_debit|floatformat:2|intcomma }}</span>
+              {% endif %}
+            </td>
+            <td class="col-right">
+              {% if row.total_credit == 0 %}
+                <span class="td-muted">—</span>
+              {% else %}
+                <span class="td-mono">{{ row.total_credit|floatformat:2|intcomma }}</span>
+              {% endif %}
+            </td>
+            <td class="col-right">
+              <span class="td-amount
+                {% if row.balance < 0 %}td-amount--overdue{% endif %}">
+                {{ row.balance|floatformat:2|intcomma }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr style="border-top:2px solid var(--color-mist);
+                     background:var(--color-paper-white);">
+            <td colspan="2"
+                style="padding:var(--spacing-12) var(--spacing-16);
+                       font-weight:var(--font-weight-semibold);
+                       color:var(--color-deep-indigo);">
+              Total
+            </td>
+            <td class="col-right"
+                style="padding:var(--spacing-12) var(--spacing-16);">
+              <span class="td-amount">{{ total_debit|floatformat:2|intcomma }}</span>
+            </td>
+            <td class="col-right"
+                style="padding:var(--spacing-12) var(--spacing-16);">
+              <span class="td-amount">{{ total_credit|floatformat:2|intcomma }}</span>
+            </td>
+            <td class="col-right"
+                style="padding:var(--spacing-12) var(--spacing-16);">
+              <span class="td-amount
+                {% if not balanced %}td-amount--overdue{% endif %}">
+                {% if balanced %}—{% else %}{{ difference|floatformat:2|intcomma }}{% endif %}
+              </span>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    {% else %}
+    <div style="padding:var(--spacing-64) var(--spacing-24);">
+      <div class="table-empty">
+        <div class="table-empty-icon"><i class="bi bi-journal-text"></i></div>
+        <div class="table-empty-title">No journal entries found</div>
+        <div class="table-empty-desc">
+          No entries recorded as of {{ target_date|date:"d M Y" }}.
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

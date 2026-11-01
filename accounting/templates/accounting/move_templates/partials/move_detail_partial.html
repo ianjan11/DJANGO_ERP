@@ -1,0 +1,92 @@
+{% load group_tags %}
+{% load humanize %}
+
+
+
+<div class="main-wrapper">
+
+
+<div class="invoice-card">
+
+ <div class="action-card">
+  {% include "accounting/move_templates/partials/action_buttons.html" %}
+ </div>
+
+
+<div class="form-card ">
+
+
+<div class="invoice-header-card">
+
+
+   <div class="invoice-header-title">
+<div>
+    <label>Customer Invoice </label>
+    </div>
+
+<div>
+    <span class="invoice-number">  {{ invoice.invoice_number }}
+            </span>
+    </div>
+
+   </div>
+       <div class="invoice-header-title">
+<div>
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'accounting:invoice_refresh' invoice.id %}"
+            hx-target="#accounting-display"
+            hx-swap="innerHTML"
+            hx-disabled="this">
+            <i class="bi bi-arrow-clockwise"></i> Refresh
+        </button>
+    </div>
+
+    
+   </div>
+
+<div>
+              {% if invoice.state != "draft" %}
+<span>
+    {% if invoice.payment_state == "paid" %}
+          <span class="badge badge--paid" style="border:none"><i class="bi bi-shield-check me-1"></i> Payment Reconciled</span>
+          {% elif invoice.payment_state == "partial" %}
+          <span class="badge badge--pending " style="border:none"> <i class="bi bi-circle-half me-1"></i> Partially Paid </span>
+          {% elif invoice.payment_state == "not_paid" %}
+    <span class="badge badge--not_paid" style="border:none">
+            <i class="bi bi-clock me-1"></i> Awaiting Payment
+    </span>
+
+            {% endif %}
+
+          {% endif %}
+</span>
+    </div>
+
+</div>
+
+    <div id="invoice-document" data-swap-on-error>
+
+        {% include 'accounting/move_templates/partials/move_form.html' %}
+    
+    </div>
+
+
+</div>
+        </div>
+    
+    </div>
+
+
+{% if invoice.status != "DRAFT" %}
+    {% include 'accounting/move_templates/partials/credit_notes_table.html' %}
+{% endif %}
+
+       <!-- PAYMENT MODAL -->
+{% include "accounting/payments_templates/partials/payment_modal.html" %}
+
+{% include 'accounting/move_templates/partials/credit_note_modal.html'%}
+
+
+

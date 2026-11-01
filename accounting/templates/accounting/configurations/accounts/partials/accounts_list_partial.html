@@ -1,0 +1,272 @@
+{% load humanize %}
+
+<div class="main-wrapper">
+  <div class="inv-card">
+    {# ── TABLE WRAPPER ────────────────────────────────────── #}
+    <div class="table-wrap">
+
+      <div class="table-toolbar">
+        <h5 class="table-toolbar-title">
+          Accounts
+          <span class="badge badge--count">
+            {{ accounts.paginator.count }} Account{{ accounts.paginator.count|pluralize }}
+          </span>
+        </h5>
+  
+        <div>
+         
+         <button class="btn btn-primary btn-sm"
+                    hx-get="{% url 'accounting:get_empty_account_form' %}"
+                    hx-disable-elt="this"
+                    hx-target="#accounting-display"
+                    hx-push-url="true"
+         >
+              <i class="bi bi-plus-lg"></i> New
+            </button>
+    
+          <button type="button"
+                  class="btn btn-danger btn-sm"
+                  hx-post="{% url 'accounting:delete_account' %}"
+                  hx-include="[name='account_ids']:checked"
+                  hx-confirm="Are you sure you want to delete the selected accounts?"
+                  hx-target="#accounting-display">
+            <i class="ti ti-trash me-1"></i> Delete
+          </button>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <form data-toolbar
+              class="toolbar"
+              id="account-filters"
+              hx-get="{% url 'accounting:accounts_list' %}"
+              hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
+              hx-target="#accounting-display"
+              hx-replace-url="true">
+
+          <div class="form-check form-switch mb-0">
+            <input class="form-check-input"
+                   type="checkbox"
+                   role="switch"
+                   id="allow-reconciliation-toggle"
+                   name="allow_reconciliation"
+                   value="true"
+                   {% if request.GET.allow_reconciliation == 'true' %}checked{% endif %}
+                   hx-get="{% url 'accounting:accounts_list' %}"
+                   hx-trigger="change"
+                   hx-target="#accounting-display"
+                   hx-include="#toolbar-search-input"
+                   hx-push-url="true">
+            <label class="form-check-label fw-semibold" for="allow-reconciliation-toggle">
+              Allow Reconciliation
+            </label>
+          </div>
+
+          <div class="toolbar-search-wrap">
+            <i class="ti ti-search toolbar-search-icon"></i>
+            <input type="text"
+                   id="toolbar-search-input"
+                   class="toolbar-search"
+                   name="search_account"
+                   placeholder="Search account..."
+                   value="{{ request.GET.search_account }}">
+            <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+              <i class="ti ti-x"></i>
+            </button>
+          </div>
+  
+          <button type="button" class="toolbar-clear-btn">
+            <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
+          </button>
+        </form>
+      </div>
+
+
+        
+        <!-- REQUIRED DJANGO FORMSET MANAGEMENT FORM -->
+        {% if formset %}
+            {{ formset.management_form }}
+        {% endif %}
+
+        <table class="data-table" data-checkbox-table>
+          <thead>
+            <tr>
+              <th style="text-align: center; padding: 4px 4px 8px 16px; width: 32px;">
+                <input type="checkbox" data-select-all>
+              </th>
+              <th>Code</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Account Type</th>
+              <th class="col-right">Currency</th>
+              <th class="col-center">Parent</th>
+              <th class="col-center">Internal Type</th>
+              <th class="col-center">Is Control</th>
+              <th>Is Active</th>
+              <th>Allow Reconciliation</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody id="table-body">
+            {% for account in accounts %}
+              <tr>
+                <td style="text-align: center;">
+                  <input type="checkbox"
+                         name="account_ids"
+                         value="{{ account.id }}"
+                         data-select-row
+                         data-row-id="{{ account.id }}">
+                </td>
+                <td class="td-mono">{{ account.code }}</td>
+                <td class="td-primary">{{ account.name }}</td>
+                <td>{{ account.description|default:"-" }}</td>
+                <td class="col-right">{{ account.account_type.name }}</td>
+                <td>{{ account.currency }}</td>
+                <td class="col-center">{{ account.parent|default:"-" }}</td>
+                <td class="col-center">{{ account.internal_type }}</td>
+                <td class="col-center">{{ account.is_control_account }}</td>
+                
+                  <!-- Is Active -->
+                <td>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               role="switch"
+                               id="account-active-{{ account.id }}"
+                               name="is_active"
+                               value="true"
+                               {% if account.is_active %}checked{% endif %}
+                               hx-post="{% url 'accounting:toggle_account' account.id %}"
+                               hx-trigger="change"
+                               hx-swap="none">
+                    </div>
+                </td>
+                
+                <td>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               role="switch"
+                               id="account-reconciliation-{{ account.id }}"
+                               name="allow_reconciliation"
+                               value="true"
+                               {% if account.allow_reconciliation %}checked{% endif %}
+                               hx-post="{% url 'accounting:toggle_reconciliation' account.id %}"
+                               hx-trigger="change"
+                               hx-swap="none">
+                    </div>
+                </td>
+                <td>
+                  <button type="button"
+                          class="btn btn-secondary btn-sm"
+                          hx-get="{% url 'accounting:account_detail' account.id %}"
+                          hx-target="#accounting-display"
+                          hx-push-url="true"
+                          hx-disable-elt="this"
+                  >
+                    <i class="ti ti-eye"></i> View
+                  </button>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="12" class="table-empty">
+                  <div class="table-empty-icon">
+                    <i class="bi bi-receipt"></i>
+                  </div>
+                  <div class="table-empty-title">No Accounts found</div>
+                  <div class="table-empty-desc">There are no records matching your current filter criteria.</div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+      {# ── Pagination (only when more than one page) ────────────── #}
+      {% if accounts.paginator.num_pages > 1 %}
+        <div class="table-footer">
+          <small class="table-footer-count">
+            Showing {{ accounts.start_index }}–{{ accounts.end_index }}
+            of {{ accounts.paginator.count }} Account{{ accounts.paginator.count|pluralize }}
+          </small>
+
+          <div class="table-pagination" hx-include="#account-filters">
+            {# First #}
+            {% if accounts.has_previous %}
+              <a class="page-btn page-btn--arrow"
+                 hx-get="?page=1"
+                 hx-target="#accounting-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+                <i class="bi bi-chevron-double-left"></i>
+              </a>
+            {% else %}
+              <span class="page-btn page-btn--arrow" aria-disabled="true">
+                <i class="bi bi-chevron-double-left"></i>
+              </span>
+            {% endif %}
+
+            {# Prev #}
+            {% if accounts.has_previous %}
+              <a class="page-btn page-btn--arrow"
+                 hx-get="?page={{ accounts.previous_page_number }}"
+                 hx-target="#accounting-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+                <i class="bi bi-chevron-left"></i>
+              </a>
+            {% else %}
+              <span class="page-btn page-btn--arrow" aria-disabled="true">
+                <i class="bi bi-chevron-left"></i>
+              </span>
+            {% endif %}
+
+            {# Page numbers #}
+            {% for num in accounts.paginator.page_range %}
+              {% if accounts.number == num %}
+                <span class="page-btn active">{{ num }}</span>
+              {% elif num > accounts.number|add:'-3' and num < accounts.number|add:'3' %}
+                <a class="page-btn"
+                   hx-get="?page={{ num }}"
+                   hx-target="#accounting-display"
+                   hx-swap="innerHTML"
+                   hx-push-url="true">{{ num }}</a>
+              {% endif %}
+            {% endfor %}
+
+            {# Next #}
+            {% if accounts.has_next %}
+              <a class="page-btn page-btn--arrow"
+                 hx-get="?page={{ accounts.next_page_number }}"
+                 hx-target="#accounting-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            {% else %}
+              <span class="page-btn page-btn--arrow" aria-disabled="true">
+                <i class="bi bi-chevron-right"></i>
+              </span>
+            {% endif %}
+
+            {# Last #}
+            {% if accounts.has_next %}
+              <a class="page-btn page-btn--arrow"
+                 hx-get="?page={{ accounts.paginator.num_pages }}"
+                 hx-target="#accounting-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+                <i class="bi bi-chevron-double-right"></i>
+              </a>
+            {% else %}
+              <span class="page-btn page-btn--arrow" aria-disabled="true">
+                <i class="bi bi-chevron-double-right"></i>
+              </span>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>

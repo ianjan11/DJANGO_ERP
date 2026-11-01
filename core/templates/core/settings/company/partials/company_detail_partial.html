@@ -1,0 +1,391 @@
+{% load humanize %}
+
+<div class="main-wrapper">
+  <div class="inv-card">
+
+      
+      <div class="form-card">
+      
+<div class="table-toolbar">
+  <h5 class="table-toolbar-title">
+    {% if company_form.instance.pk %}
+      Edit Company
+    {% else %}
+      New Company
+    {% endif %}
+  </h5>
+</div>
+
+
+
+<form id="companyForm"
+      method="post"
+      hx-post="{% if company_form.instance.pk %}{% url 'core:company_edit' company_form.instance.pk %}{% else %}{% url 'core:company_create' %}{% endif %}"
+      {% if form_context == "settings" %} hx-target="#settings-display" {% else %} hx-target="#company-display" {% endif %}
+      hx-push-url="true"
+      style="padding:var(--spacing-16);
+             display:flex;
+             flex-direction:column;
+             gap:var(--spacing-16);">
+
+  {% csrf_token %}
+
+  {# ── Section 1: Identity & Contact ── #}
+  <div class="inv-header-section" style="border:none;">
+
+    {# Left column - Basic Information #}
+    <div class="inv-header-col">
+
+      <div class="chart-card-header"
+           style="border-bottom:none; padding:0 0 var(--spacing-8);">
+        <span class="chart-eyebrow">Company Identity</span>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_code">
+          Code <span style="color:#b91c1c">*</span>
+        </label>
+        <div style="flex:1;">
+          {{ company_form.code }}
+          {% if company_form.code.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.code.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_name">
+          Name <span style="color:#b91c1c">*</span>
+        </label>
+        <div style="flex:1;">
+          {{ company_form.name }}
+          {% if company_form.name.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.name.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_vat">
+          Tax ID / VAT
+        </label>
+        <div style="flex:1;">
+          {{ company_form.vat }}
+          {% if company_form.vat.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.vat.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_parent">
+          Parent Company
+        </label>
+        <div style="flex:1;">
+          {{ company_form.parent }}
+          <span class="inv-field-sub">
+            For consolidated multi-company structures.
+          </span>
+
+          {% if company_form.parent.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.parent.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if company_form.instance.pk %}
+        <div class="inv-field">
+          <label class="inv-field-label" for="id_is_active">
+            Active
+          </label>
+          <div style="flex:1;">
+            {{ company_form.is_active }}
+
+            {% if company_form.is_active.errors %}
+              <div class="inv-field-sub" style="color:#9b2626;">
+                {{ company_form.is_active.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+
+    {# Right column - Address & Contact #}
+    <div class="inv-header-col">
+
+      <div class="chart-card-header"
+           style="border-bottom:none; padding:0 0 var(--spacing-8);">
+        <span class="chart-eyebrow">Address & Contact</span>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_street">
+          Street
+        </label>
+        <div style="flex:1;">
+          {{ company_form.street }}
+
+          {% if company_form.street.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.street.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_city">
+          City
+        </label>
+        <div style="flex:1;">
+          {{ company_form.city }}
+
+          {% if company_form.city.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.city.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_email">
+          Email
+        </label>
+        <div style="flex:1;">
+          {{ company_form.email }}
+
+          {% if company_form.email.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.email.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_phone">
+          Phone
+        </label>
+        <div style="flex:1;">
+          {{ company_form.phone }}
+
+          {% if company_form.phone.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.phone.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  {# ── Section 2: Localization & Currency ── #}
+  <div class="inv-header-section"
+       style="border-top:1px solid var(--color-mist);
+              padding-top:var(--spacing-16);">
+
+    <div class="inv-header-col">
+
+      <div class="chart-card-header"
+           style="border-bottom:none; padding:0 0 var(--spacing-8);">
+        <span class="chart-eyebrow">Localization & Currency</span>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_country">
+          Country
+        </label>
+        <div style="flex:1;">
+          {{ company_form.country }}
+
+          {% if company_form.country.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.country.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_currency">
+          Base Currency <span style="color:#b91c1c">*</span>
+        </label>
+        <div style="flex:1;">
+          {{ company_form.currency }}
+
+          <span class="inv-field-sub">
+            Primary accounting currency for this entity.
+          </span>
+
+          {% if company_form.currency.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.currency.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    {# Fiscal Year settings #}
+    <div class="inv-header-col">
+
+      <div class="chart-card-header"
+           style="border-bottom:none; padding:0 0 var(--spacing-8);">
+        <span class="chart-eyebrow">Fiscal Year</span>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_fiscal_year_start_month">
+          Start Month
+        </label>
+        <div style="flex:1;">
+          {{ company_form.fiscal_year_start_month }}
+
+          {% if company_form.fiscal_year_start_month.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.fiscal_year_start_month.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_fiscal_year_start_day">
+          Start Day
+        </label>
+        <div style="flex:1;">
+          {{ company_form.fiscal_year_start_day }}
+
+          <span class="inv-field-sub">
+            e.g. Month=1, Day=1 for a calendar-year fiscal year.
+          </span>
+
+          {% if company_form.fiscal_year_start_day.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.fiscal_year_start_day.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  {# ── Section 3: Lock Dates ── #}
+  <div class="inv-header-section"
+       style="border-top:1px solid var(--color-mist);
+              padding-top:var(--spacing-16);">
+
+    <div class="inv-header-col">
+
+      <div class="chart-card-header"
+           style="border-bottom:none; padding:0 0 var(--spacing-8);">
+        <span class="chart-eyebrow">Posting Locks</span>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_lock_date">
+          Lock Date
+        </label>
+        <div style="flex:1;">
+          {{ company_form.lock_date }}
+
+          <span class="inv-field-sub">
+            No entries can be posted or modified on or before this date.
+          </span>
+
+          {% if company_form.lock_date.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.lock_date.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_tax_lock_date">
+          Tax Lock Date
+        </label>
+        <div style="flex:1;">
+          {{ company_form.tax_lock_date }}
+
+          <span class="inv-field-sub">
+            Locks tax-relevant entries independently of the general lock date.
+          </span>
+
+          {% if company_form.tax_lock_date.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">
+              {{ company_form.tax_lock_date.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="inv-header-col"></div>
+
+  </div>
+
+  {# ── Non-field errors ── #}
+  {% if company_form.non_field_errors %}
+    <div class="inv-field-sub" style="color:#9b2626;">
+      {% for error in company_form.non_field_errors %}
+        <div>{{ error }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {# ── Actions ── #}
+  <div style="display:flex;
+              justify-content:flex-end;
+              gap:var(--spacing-8);
+              padding-top:var(--spacing-12);
+              border-top:1px solid var(--color-mist);">
+
+    <button type="button"
+            class="btn btn-secondary"
+            hx-get="{{ back_url }}"
+            {% if form_context == "settings" %}
+              hx-target="#settings-display"
+            {% else %}
+              hx-target="#company-display"
+            {% endif %}
+            hx-swap="innerHTML"
+            hx-push-url="true">
+      <i class="bi bi-arrow-left me-1"></i>
+      Cancel
+    </button>
+
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-check-circle"></i>
+
+      {% if company_form.instance.pk %}
+        Save Changes
+      {% else %}
+        Create Company
+      {% endif %}
+    </button>
+
+  </div>
+
+</form>
+
+      </div>
+  </div>
+</div>

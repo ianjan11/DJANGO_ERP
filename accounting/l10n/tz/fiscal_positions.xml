@@ -1,0 +1,12 @@
+<!-- l10n/tz/fiscal_positions.xml -->
+<fiscal_positions>
+    <fiscal_position name="Tanzania Domestic (Standard VAT)" country_code="TZ" auto_apply="true"/>
+    <fiscal_position name="East African Community (EAC) Cross-Border" country_group="East African Community (EAC)" auto_apply="true">
+    <tax_mapping src="VAT 18% (Sales)" dest="VAT 18% (EAC Cross-Border, Standard)"/>
+    </fiscal_position>
+
+    <fiscal_position name="Export / Zero-Rated" country_code="" auto_apply="false">
+        <tax_mapping src="VAT 18% (Sales)" dest="VAT 0% (Export)"/>
+        <account_mapping src="400000" dest="400300"/>
+    </fiscal_position>
+</fiscal_positions>

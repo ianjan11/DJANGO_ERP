@@ -1,0 +1,256 @@
+{% load humanize %}
+{% load static %}
+
+
+<div class="main-wrapper">
+  <div class="invoice-card">
+
+    {# ── Page Header / Toolbar ── #}
+      
+        <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        Reconciliation Workspace
+        <span class="badge badge--count">
+          Line-Level Matching
+        </span>
+      </h5>
+            
+            
+            <button
+            class="btn btn-primary btn-sm "
+            type="button"
+            hx-post="{% url 'accounting:reconcile_journal' %}"
+            hx-target="#accounting-display"
+            hx-include="#reconciliation-selection"
+            >
+                reconcile
+            </button>
+            
+            <button
+            class="btn btn-primary btn-sm "
+            type="button"
+            hx-post="{% url 'accounting:auto_reconcile_journal' %}"
+            hx-target="#accounting-display"
+            >
+                Auto reconcile
+            </button>
+ 
+      <form
+        data-toolbar
+        class="toolbar"
+        id="reconciliation-filters"
+        hx-get="{% url 'accounting:reconciliation' %}"
+        hx-trigger="change from:[data-toolbar], keyup changed delay:800ms from:.toolbar-search"
+        hx-target="#accounting-display"
+        hx-push-url="true"
+      >
+        {% include "core/date_range_selector.html" %}
+ 
+        <div class="toolbar-search-wrap">
+          <i class="ti ti-search toolbar-search-icon"></i>
+          <input
+            type="text"
+            class="toolbar-search"
+            name="search_line"
+            placeholder="Search partner/account/reference..."
+            value="{{ request.GET.search_line }}"
+          >
+          <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+ 
+        <button
+          type="button"
+          class="toolbar-clear-btn"
+        >
+          <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i>
+          Clear
+        </button>
+      </form>
+    </div>
+
+    {# ── Empty State ── #}
+    {% if not candidates %}
+      <div style="padding:var(--spacing-64) var(--spacing-24);">
+        <div class="table-empty">
+          <div class="table-empty-icon">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <div class="table-empty-title">
+            No open lines to reconcile
+          </div>
+          <div class="table-empty-desc">
+            All posted journal item lines on reconcilable accounts are balanced.
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <form id="reconciliation-selection" hx-target="#accounting-display">
+        {% csrf_token %}
+
+        <div class="inv-table-wrap">
+
+          <table class="inv-table">
+
+            <thead>
+              <tr>
+                <th style="width:300px">Account</th>
+                <th class="col-right" style="width:140px">Partners</th>
+                <th class="col-right" style="width:140px">Open Lines</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              {# ── Account Level Loop (collapsible) ── #}
+              {% for account_id, account in candidates.items %}
+
+                <tr
+                  class="partner-row"
+                  style="cursor:pointer;"
+                  onclick="toggleReconDetail('{{ account_id }}')"
+                >
+                  <td>
+                    <div style="display:flex; align-items:center; gap:var(--spacing-8);">
+                      <i
+                        class="bi bi-chevron-right"
+                        id="chevron-recon-{{ account_id }}"
+                        style="font-size:10px; color:var(--color-fog); transition:transform 0.15s ease;"
+                      ></i>
+                      <span class="td-primary">{{ account.name }}</span>
+                    </div>
+                  </td>
+                  <td class="col-right">
+                    <span class="td-mono">{{ account.partner_count }}</span>
+                  </td>
+                  <td class="col-right">
+                    <span class="td-mono">{{ account.line_count }}</span>
+                  </td>
+                </tr>
+
+                {# ── Account Detail Row (Collapsible) ── #}
+                <tr id="detail-recon-{{ account_id }}" style="display:none;">
+                  <td colspan="3" style="padding:0; background:var(--color-paper-white); border-bottom:1px solid var(--color-mist);">
+
+                    <table style="width:100%; border-collapse:collapse;">
+                      <tbody>
+
+                        {# ── Partner Level Loop (collapsible) ── #}
+                        {% for partner_id, partner in account.partners.items %}
+
+                          <tr
+                            class="partner-row"
+                            style="cursor:pointer;"
+                            onclick="toggleReconDetail('{{ account_id }}-{{ partner_id }}')"
+                          >
+                            <td style="padding: var(--spacing-12) var(--spacing-16) var(--spacing-12) 44px;">
+                              <div style="display:flex; align-items:center; gap:var(--spacing-8);">
+                                <i
+                                  class="bi bi-chevron-right"
+                                  id="chevron-recon-{{ account_id }}-{{ partner_id }}"
+                                  style="font-size:10px; color:var(--color-fog); transition:transform 0.15s ease;"
+                                ></i>
+                                <i class="bi bi-person me-1"></i>
+                                <span style="font-size: 14px; font-weight: 600;">
+                                  {{ partner.name|default:"No Partner Assigned" }}
+                                </span>
+                              </div>
+                            </td>
+                            <td class="col-right" style="padding: var(--spacing-12) var(--spacing-16);">
+                              <span class="td-mono">{{ partner.lines|length }} line{{ partner.lines|length|pluralize }}</span>
+                            </td>
+                          </tr>
+
+                          {# ── Partner Detail Row (Collapsible) ── #}
+                          <tr id="detail-recon-{{ account_id }}-{{ partner_id }}" style="display:none;">
+                            <td colspan="2" style="padding:0; background:var(--color-white); border-bottom:1px solid var(--color-mist);">
+
+                              {# ── Line Level Table ── #}
+                              <table class="inv-table" style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                  <tr style="font-size: var(--text-caption); color: var(--color-slate);">
+                                    <th style="text-align: center; padding: 8px 8px 8px 44px; width: 32px;"></th>
+                                    <th style="text-align: left; padding: 8px;">Date</th>
+                                    <th style="text-align: left; padding: 8px;">Entry / Ref</th>
+                                    <th style="text-align: left; padding: 8px;">Label</th>
+                                    <th style="text-align: right; padding: 8px;">Debit</th>
+                                    <th style="text-align: right; padding: 8px;">Credit</th>
+                                    <th style="text-align: right; padding: 8px;">Open Balance</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for line in partner.lines %}
+                                    <tr style="border-top: 1px solid var(--color-mist);">
+                                      <td style="padding: 8px 8px 8px 44px; text-align: center;">
+                                        <input
+                                          type="checkbox"
+                                          name="line_ids"
+                                          value="{{ line.id }}"
+                                          class="recon-line-checkbox"
+                                          data-account-id="{{ account_id }}"
+                                          data-partner-id="{{ partner_id }}"
+                                        >
+                                      </td>
+                                      <td style="padding: 8px;" class="td-muted font-size-caption">
+                                        {{ line.date|date:"M j, Y" }}
+                                      </td>
+                                      <td style="padding: 8px;" class="td-mono font-size-caption">
+                                        <a href="{{ line.move.get_absolute_url }}">
+                                          {{ line.move.name }}
+                                        </a>
+                                      </td>
+                                      <td style="padding: 8px;" class="font-size-caption">
+                                        {{ line.name }}
+                                      </td>
+                                      <td style="padding: 8px; text-align: right;" class="td-mono font-size-caption">
+                                        {% if line.debit %}{{ line.debit|floatformat:2|intcomma }}{% else %}—{% endif %}
+                                      </td>
+                                      <td style="padding: 8px; text-align: right;" class="td-mono font-size-caption">
+                                        {% if line.credit %}{{ line.credit|floatformat:2|intcomma }}{% else %}—{% endif %}
+                                      </td>
+                                      <td style="padding: 8px; text-align: right;" class="td-amount font-size-caption">
+                                        {{ line.remaining|floatformat:2|intcomma }}
+                                      </td>
+                                    </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+
+                            </td>
+                          </tr>
+
+                        {% endfor %}
+
+                      </tbody>
+                    </table>
+
+                  </td>
+                </tr>
+
+              {% endfor %}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </form>
+    {% endif %}
+
+  </div>
+</div>
+
+<script>
+function toggleReconDetail(key) {
+  const detail = document.getElementById('detail-recon-' + key);
+  const chevron = document.getElementById('chevron-recon-' + key);
+
+  if (!detail || !chevron) return;
+
+  const isOpen = detail.style.display !== 'none';
+  detail.style.display = isOpen ? 'none' : 'table-row';
+  chevron.style.transform = isOpen ? '' : 'rotate(90deg)';
+}
+</script>

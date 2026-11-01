@@ -1,0 +1,289 @@
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="main-wrapper">
+  
+  <div class="invoice-card" style="margin-bottom: var(--spacing-16);">
+
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        Balance Sheet
+        <span class="badge badge--count">As of {{ target_date|date:"d M Y" }}</span>
+      </h5>
+      <form method="get"
+            hx-get="{% url 'accounting:balance_sheet' %}"
+            hx-trigger="change from:.date-select-input"
+            hx-target="#accounting-display"
+            hx-push-url="true">
+        <div class="date-select-wrap">
+          <i class="bi bi-calendar3 date-select-icon"></i>
+          <input type="date"
+                 class="date-select-input"
+                 name="target_date"
+                 value="{{ target_date|date:'Y-m-d' }}">
+        </div>
+      </form>
+    </div>
+
+    {# ── Balance check banner ── #}
+    {% if balanced %}
+    <div style="margin: var(--spacing-16);
+                padding: var(--spacing-12) var(--spacing-16);
+                background: #e1f5ee;
+                border: 1px solid #9fe1cb;
+                border-radius: var(--radius-cards);
+                display:flex; align-items:center; gap: var(--spacing-8);
+                font-size: var(--text-body-sm);
+                color: #0f6e56;">
+      <i class="bi bi-check-circle-fill" style="flex-shrink:0;"></i>
+      Balanced — Assets equal Liabilities + Equity
+    </div>
+    {% else %}
+    <div style="margin: var(--spacing-16);
+                padding: var(--spacing-12) var(--spacing-16);
+                background: #fce8e8;
+                border: 1px solid #f7c1c1;
+                border-radius: var(--radius-cards);
+                display:flex; align-items:center; gap: var(--spacing-8);
+                font-size: var(--text-body-sm);
+                color: #9b2626;">
+      <i class="bi bi-exclamation-triangle-fill" style="flex-shrink:0;"></i>
+      Out of balance — check your journal entries
+    </div>
+    {% endif %}
+
+    {# ── Two-column layout: Assets | Liabilities + Equity ── #}
+    <div style="display:grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--spacing-16);
+                padding: var(--spacing-16);">
+
+      {# ── Assets ── #}
+      <div class="invoice-card">
+        <div class="table-toolbar">
+          <h5 class="table-toolbar-title">
+            Assets
+            <span class="badge badge--count">
+              {{ sections.ASSET.total|floatformat:2|intcomma }}
+            </span>
+          </h5>
+        </div>
+        <div class="inv-table-wrap">
+          <table class="inv-table">
+            <thead>
+              <tr>
+                <th style="width:80px">Code</th>
+                <th>Account</th>
+                <th class="col-right">Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in sections.ASSET.accounts %}
+              <tr>
+                <td><span class="td-mono">{{ row.account_code }}</span></td>
+                <td class="td-primary">{{ row.account_name }}</td>
+                <td class="col-right">
+                  <span class="td-amount
+                    {% if row.balance < 0 %}td-amount--overdue{% endif %}">
+                    {{ row.balance|floatformat:2|intcomma }}
+                  </span>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="3" class="table-empty">
+                  <div class="table-empty-desc">No asset accounts with balances.</div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr style="border-top:2px solid var(--color-mist);
+                         background:var(--color-paper-white);">
+                <td colspan="2"
+                    style="padding:var(--spacing-12) var(--spacing-16);
+                           font-weight:var(--font-weight-semibold);
+                           color:var(--color-deep-indigo);">
+                  Total Assets
+                </td>
+                <td class="col-right"
+                    style="padding:var(--spacing-12) var(--spacing-16);">
+                  <span class="td-amount" style="font-size:var(--text-body);">
+                    {{ sections.ASSET.total|floatformat:2|intcomma }}
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      {# ── Liabilities + Equity ── #}
+      <div style="display:flex; flex-direction:column; gap:var(--spacing-16);">
+
+        {# Liabilities #}
+        <div class="invoice-card">
+          <div class="table-toolbar">
+            <h5 class="table-toolbar-title">
+              Liabilities
+              <span class="badge badge--count">
+                {{ sections.LIABILITY.total|floatformat:2|intcomma }}
+              </span>
+            </h5>
+          </div>
+          <div class="inv-table-wrap">
+            <table class="inv-table">
+              <thead>
+                <tr>
+                  <th style="width:80px">Code</th>
+                  <th>Account</th>
+                  <th class="col-right">Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in sections.LIABILITY.accounts %}
+                <tr>
+                  <td><span class="td-mono">{{ row.account_code }}</span></td>
+                  <td class="td-primary">{{ row.account_name }}</td>
+                  <td class="col-right">
+                    <span class="td-amount
+                      {% if row.balance < 0 %}td-amount--overdue{% endif %}">
+                      {{ row.balance|floatformat:2|intcomma }}
+                    </span>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="3" class="table-empty">
+                    <div class="table-empty-desc">No liability accounts with balances.</div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+              <tfoot>
+                <tr style="border-top:2px solid var(--color-mist);
+                           background:var(--color-paper-white);">
+                  <td colspan="2"
+                      style="padding:var(--spacing-12) var(--spacing-16);
+                             font-weight:var(--font-weight-semibold);
+                             color:var(--color-deep-indigo);">
+                    Total Liabilities
+                  </td>
+                  <td class="col-right"
+                      style="padding:var(--spacing-12) var(--spacing-16);">
+                    <span class="td-amount" style="font-size:var(--text-body);">
+                      {{ sections.LIABILITY.total|floatformat:2|intcomma }}
+                    </span>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        {# Equity #}
+        <div class="invoice-card">
+          <div class="table-toolbar">
+            <h5 class="table-toolbar-title">
+              Equity
+              <span class="badge badge--count">
+                {{ sections.EQUITY.total|floatformat:2|intcomma }}
+              </span>
+            </h5>
+          </div>
+          <div class="inv-table-wrap">
+            <table class="inv-table">
+              <thead>
+                <tr>
+                  <th style="width:80px">Code</th>
+                  <th>Account</th>
+                  <th class="col-right">Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in sections.EQUITY.accounts %}
+                <tr>
+                  <td><span class="td-mono">{{ row.account_code }}</span></td>
+                  <td class="td-primary">{{ row.account_name }}</td>
+                  <td class="col-right">
+                    <span class="td-amount
+                      {% if row.balance < 0 %}td-amount--overdue{% endif %}">
+                      {{ row.balance|floatformat:2|intcomma }}
+                    </span>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="3" class="table-empty">
+                    <div class="table-empty-desc">No equity accounts with balances.</div>
+                  </td>
+                </tr>
+                {% endfor %}
+
+                {# Net income rolls into equity #}
+                <tr style="background:var(--color-paper-white);">
+                  <td><span class="td-mono">—</span></td>
+                  <td class="td-primary">
+                    Net Income (current period)
+                    <span class="inv-field-sub">P&L rolled into equity</span>
+                  </td>
+                  <td class="col-right">
+                    <span class="td-amount
+                      {% if net_income < 0 %}td-amount--overdue{% endif %}">
+                      {{ net_income|floatformat:2|intcomma }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr style="border-top:2px solid var(--color-mist);
+                           background:var(--color-paper-white);">
+                  <td colspan="2"
+                      style="padding:var(--spacing-12) var(--spacing-16);
+                             font-weight:var(--font-weight-semibold);
+                             color:var(--color-deep-indigo);">
+                    Total Equity
+                  </td>
+                  <td class="col-right"
+                      style="padding:var(--spacing-12) var(--spacing-16);">
+                    <span class="td-amount" style="font-size:var(--text-body);">
+                      {{ sections.EQUITY.total|floatformat:2|intcomma }}
+                    </span>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {# ── Totals bar ── #}
+    <div style="display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:var(--spacing-16);
+                padding: var(--spacing-16);
+                border-top:1px solid var(--color-mist);
+                background:var(--color-paper-white);">
+      <div class="totals-row" style="justify-content:space-between;">
+        <span class="totals-label">Total Assets</span>
+        <span class="totals-value totals-value--grand">
+          {{ total_assets|floatformat:2|intcomma }}
+        </span>
+      </div>
+      <div class="totals-row" style="justify-content:space-between;">
+        <span class="totals-label">Total Liabilities + Equity</span>
+        <span class="totals-value totals-value--grand
+          {% if not balanced %}td-amount--overdue{% endif %}">
+          {{ total_liabilities_equity|floatformat:2|intcomma }}
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  
+</div>
+{% endblock %}

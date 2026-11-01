@@ -1,0 +1,73 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<div class="dash-wrapper content-area" id="main-display">
+    <div class="dash-nav-grid">
+
+        <div class="dash-item">
+            <a href="{% url 'sales:sales_dashboard' %}">
+            <div class="dash-nav-card">
+                <img src="/static/images/sales.png" class="dash-img" alt="Sales">
+            </div>
+            <span class="dash-label">Sales </span>
+            </a>
+        </div>
+
+        <div class="dash-item">
+            <a href="{% url 'accounting:accounting_dashboard' %}">
+            <div class="dash-nav-card">
+                <img src="/static/images/ac3.png" class="dash-img" alt="Sales">
+            </div>
+            <span class="dash-label">Accounting</span>
+            </a>
+        </div>
+
+        <div class="dash-item">
+            <a href="{% url 'inventory:inventory_dashboard' %}">
+            <div class="dash-nav-card">
+                <img src="/static/images/inventory.png" class="dash-img" alt="inventory">
+            </div>
+            <span class="dash-label">Inventory</span>
+            </a>
+        </div>
+
+         <div class="dash-item">
+             <a href="{% url 'purchases:purchases_dashboard' %}">
+            <div class="dash-nav-card">
+                <img src="/static/images/knowledge2.png" class="dash-img" alt="Sales">
+            </div>
+            <span class="dash-label">Purchases</span>
+             </a>
+        </div>
+
+
+
+        <div class="dash-item">
+            <div class="dash-nav-card">
+                <img src="/static/images/knowledge2.png" class="dash-img" alt="Sales">
+            </div>
+            <span class="dash-label">Knowledge</span>
+        </div>
+
+        <div class="dash-item">
+            <div class="dash-nav-card">
+                <img src="/static/images/documents.png" class="dash-img" alt="Sales">
+            </div>
+            <span class="dash-label">Documents</span>
+        </div>
+
+        <div class="dash-item">
+                        <a href="{% url 'core:settings' %}">
+
+            <div class="dash-nav-card"> <img src="/static/images/configurations.png" class="dash-img" alt="Sales">
+</div>
+            <span class="dash-label">Settings</span>
+                        </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

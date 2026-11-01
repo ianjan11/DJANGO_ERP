@@ -1,0 +1,287 @@
+{% load humanize %}
+
+
+
+
+
+<div class="main-wrapper"
+    id="payments-table-body"
+    hx-get="{% url 'accounting:refresh_payments' %}"
+    hx-trigger="payments:refresh from:body"
+    hx-target="#accounting-display"
+     hx-include="#payment-filters"
+    hx-swap="innerHTML"
+>
+
+
+
+    <div class="inv-card">
+
+{# ── TABLE ────────────────────────────────────── #}
+
+
+<div class="table-wrap">
+
+
+
+
+ <div class="table-toolbar">
+
+  <h5 class="table-toolbar-title">Payments
+   <span class="badge badge--count">
+    {{ payments.paginator.count }} Payment{{ payments.paginator.count|pluralize }}
+  </span>
+  </h5>
+
+     <div>
+         
+         <button
+    class="btn btn-primary btn-sm"
+    hx-get="{% url 'accounting:get_empty_payment_form' %}"
+    hx-target="#accounting-display"
+    hx-push-url="true"
+    hx-include="#payment-filters"
+    hx-swap="innerHTML"
+    >
+                <i class="bi bi-plus-lg"></i>New
+    </button>
+     
+     
+     <button
+    class="btn btn-secondary btn-sm"
+    hx-get="{% url 'accounting:refresh_payments' %}"
+    hx-target="#accounting-display"
+    hx-include="#payment-filters"
+    hx-swap="innerHTML"
+    >             <i class="bi bi-arrow-clockwise"></i> Refresh
+
+
+    </button>
+ </div>
+
+<form data-toolbar
+      class="toolbar"
+      id="payment-filters"
+      hx-get="{% if partner_type == 'customer' %}{% url 'accounting:customer_payments' %}{% else %}{% url 'accounting:vendor_payments' %}{% endif %}"
+      hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
+      hx-target="#accounting-display"
+      hx-replace-url="true"
+
+>
+
+
+    {% include "core/date_filters.html" %}
+
+
+  <div class="toolbar-search-wrap">
+    <i class="ti ti-search toolbar-search-icon"></i>
+
+       <input type="hidden"
+           name="partner_type"
+           value="{{ partner_type }}">
+
+    <input type="text" class="toolbar-search"
+           name="search_payments" placeholder="Search payments..."
+           value="{{ request.GET.search_payments }}">
+    <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+      <i class="ti ti-x"></i>
+    </button>
+  </div>
+
+  <select class="toolbar-select" name="payment_state">
+    <option value="">All Payments</option>
+    <option value="draft"     {% if request.GET.payment_state == "draft"     %}selected{% endif %}>Draft</option>
+      <option value="reconciled"     {% if request.GET.payment_state == "reconciled"     %}selected{% endif %}>Reconciled</option>
+    <option value="posted"    {% if request.GET.payment_state == "posted"    %}selected{% endif %}>Posted</option>
+    <option value="cancelled" {% if request.GET.payment_state == "cancelled" %}selected{% endif %}>Cancelled</option>
+  </select>
+
+  <button type="button" class="toolbar-clear-btn">
+    <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
+  </button>
+
+</form>
+    </div>
+
+
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th> reference </th>
+                <th>Partner</th>
+                <th>Date</th>
+                <th class="col-right">Amount</th>
+                <th class="col-center">Payment Status</th>
+                <th class="col-center">Payment State</th>
+
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for payment in payments %}
+            <tr hx-get="{% url 'accounting:payment_details' payment.id %}"
+                hx-target="#accounting-display"
+                hx-push-url="true">
+
+                <td class="td-mono">{{ payment.payment_number }}</td>
+
+                <td class="td-primary">{{ payment.partner }}</td>
+
+                <td>{{ payment.created_at|date:'M d, Y H:i:s' }}</td>
+
+                <td class="col-right">
+                 <span class="td-amount">
+                                         {{payment.currency.symbol}}  {{ payment.amount|floatformat:2|intcomma }}
+                 </span>
+                </td>
+
+
+
+
+                <td class="col-center">
+                    {% if payment.state == "draft" %}
+                        <span class="badge badge--draft"><i class="bi bi-pencil-square"></i> Draft</span>
+                    {% elif payment.state == "posted" %}
+                        <span class="badge badge--pending"><i class="bi bi-send-fill"></i> Posted</span>
+                    {% elif payment.state == "canceled" %}
+                        <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
+                    {% elif payment.state == "reconciled" %}
+                        <span class="badge badge--paid"><i class="bi bi-shield-check"></i> Reconciled</span>
+
+                    {% else %}
+                        <span class="badge">{{ payment.status }}</span>
+                    {% endif %}
+                </td>
+
+                <td class="col-center">
+                    {% if payment.payment_state == "paid" %}
+                        <span class="badge badge--paid"><i class="bi bi-shield-check"></i> Paid</span>
+                    {% elif payment.payment_state == "not_paid" %}
+                        <span class="badge badge--overdue"><i class="bi bi-clock"></i> Awaiting Payment</span>
+                    {% elif payment.payment_state == "partial" %}
+                        <span class="badge badge--partial"><i class="bi bi-circle-half"></i> Partial</span>
+                    {% else %}
+                        <span style="color:var(--color-fog);">—</span>
+                    {% endif %}
+                </td>
+
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="table-empty">
+                    <div class="table-empty-icon">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                    <div class="table-empty-title">No Payments found</div>
+                    <div class="table-empty-desc">There are no records matching your current filter criteria.</div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{# ── Pagination (only when more than one page) ────────────── #}
+{% if payments.paginator.num_pages > 1 %}
+<div class="table-footer">
+
+  <small class="table-footer-count">
+    Showing {{ payments.start_index }}–{{ payments.end_index }}
+    of {{ payments.paginator.count }} Payment{{ payments.paginator.count|pluralize }}
+  </small>
+
+
+    <div class="table-pagination" hx-include="#payments-filters">
+
+    {# First #}
+    {% if payments.has_previous %}
+      <a class="page-btn page-btn--arrow"
+         hx-get="?page=1"
+         hx-target="#accounting-display"
+         hx-swap="innerHTML"
+         hx-push-url="true">
+        <i class="bi bi-chevron-double-left"></i>
+      </a>
+    {% else %}
+      <span class="page-btn page-btn--arrow" aria-disabled="true">
+        <i class="bi bi-chevron-double-left"></i>
+      </span>
+    {% endif %}
+
+    {# Prev #}
+    {% if payments.has_previous %}
+      <a class="page-btn page-btn--arrow"
+         hx-get="?page={{ payments.previous_page_number }}"
+         hx-target="#accounting-display"
+         hx-swap="innerHTML"
+         hx-push-url="true">
+        <i class="bi bi-chevron-left"></i>
+      </a>
+    {% else %}
+      <span class="page-btn page-btn--arrow" aria-disabled="true">
+        <i class="bi bi-chevron-left"></i>
+      </span>
+    {% endif %}
+
+    {# Page numbers #}
+    {% for num in payments.paginator.page_range %}
+      {% if payments.number == num %}
+        <span class="page-btn active">{{ num }}</span>
+      {% elif num > payments.number|add:'-3' and num < payments.number|add:'3' %}
+        <a class="page-btn"
+           hx-get="?page={{ num }}"
+           hx-target="#accounting-display"
+           hx-swap="innerHTML"
+           hx-push-url="true">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {# Next #}
+    {% if payments.has_next %}
+      <a class="page-btn page-btn--arrow"
+         hx-get="?page={{ payments.next_page_number }}"
+         hx-target="#accounting-display"
+         hx-swap="innerHTML"
+         hx-push-url="true">
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    {% else %}
+      <span class="page-btn page-btn--arrow" aria-disabled="true">
+        <i class="bi bi-chevron-right"></i>
+      </span>
+    {% endif %}
+
+    {# Last #}
+    {% if payments.has_next %}
+      <a class="page-btn page-btn--arrow"
+         hx-get="?page={{ payments.paginator.num_pages }}"
+         hx-target="#accounting-display"
+         hx-swap="innerHTML"
+         hx-push-url="true">
+        <i class="bi bi-chevron-double-right"></i>
+      </a>
+    {% else %}
+      <span class="page-btn page-btn--arrow" aria-disabled="true">
+        <i class="bi bi-chevron-double-right"></i>
+      </span>
+    {% endif %}
+
+  </div>
+</div>
+{% endif %}
+
+</div>
+
+    {# ── PAGINATION ───────────────────────────────── #}
+
+
+</div>
+
+
+</div>{# end po-wrapper #}
+
+
+{% include "accounting/payments_templates/partials/payment_modal.html" %}
+
+

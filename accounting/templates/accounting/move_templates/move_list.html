@@ -1,0 +1,18 @@
+{% extends 'accounting/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+{# ── INVOICE TABLE (partial) ───────────────────── #}
+        {% include 'accounting/move_templates/partials/move_table.html' %}
+{% endblock %}
+
+
+{% block scripts %}
+
+
+{{block.super}}
+{% endblock %}
+
+

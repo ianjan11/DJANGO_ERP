@@ -1,0 +1,63 @@
+{% load group_tags %}
+{% load humanize %}
+
+     <div>
+    {# ── INFO CARD ────────────────────────────────── #}
+        
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'accounting:post_journal' move.id %}"
+            hx-target="#accounting-display"
+            hx-confirm="Post this Invoice?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-check-circle"></i> Post
+        </button>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'accounting:delete_journal' move.id %}"
+            hx-target="#accounting-display"
+            hx-confirm="Delete this Journal?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-arrow-counterclockwise"></i> Delete
+        </button>
+
+
+
+         <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'accounting:cancel_journal' move.id %}"
+            hx-target="#accounting-display"
+            hx-confirm="Cancel this Journal? Once confirmed all stock and accounting entries will be reversed"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-x-circle"></i> Cancel
+        </button>
+
+
+
+
+     </div>
+
+             <span class="po-invoice-number">
+                       {% if move.state == "DRAFT" %}
+                        <span class="badge badge--draft"><i class="bi bi-pencil-square"></i>Draft</span>
+                        {% elif move.state == "POSTED" %}
+                        <span class="badge badge-posted"><i class="bi bi-send-fill"></i>Posted</span>
+                        {% elif move.state == "CANCELLED" %}
+                        <span class="badge badge--cancelled"><span><i class="bi bi-x-circle-fill"></i></span>Cancelled</span>
+                        {% else %}
+                        <span class="badge"><span></span>{{ move.state }}</span>
+                        {% endif %}
+             </span>
+
+
+
+
+
+

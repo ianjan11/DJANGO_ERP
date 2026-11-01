@@ -1,0 +1,17 @@
+{% extends 'accounting/base.html' %}
+{% load humanize %}
+{% load static %}
+
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+  {% include "accounting/journals/partials/journal_detail_partial.html" %}
+{% endblock %}
+
+
+{% block scripts %}
+
+{{block.super}}
+{% endblock %}

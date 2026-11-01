@@ -1,0 +1,8 @@
+{% load humanize %}
+{% load static %}
+
+
+<div id="order-total">
+              <label> Total (Tax-Inclusive): </label>
+              <span>{{order.currency.symbol}} {{ order.total_amount|intcomma }} </span>
+</div>

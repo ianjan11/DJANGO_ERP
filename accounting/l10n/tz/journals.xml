@@ -1,0 +1,74 @@
+<journals>
+    <!-- ═══ Sales / Purchase ═══ -->
+    <journal code="INV" name="Customer Invoices" type="SALE"
+             default_credit_account_code="400000" sequence="1"/>
+
+    <journal code="BILL" name="Vendor Bills" type="PURCHASE"
+             default_debit_account_code="500000" sequence="1"/>
+
+    <!-- ═══ Banks (outstanding / suspense use dedicated accounts, not 215000 / 220000) ═══ -->
+    <journal code="CRDB" name="CRDB Bank" type="BANK"
+             default_debit_account_code="101000" default_credit_account_code="101000"
+             suspense_account_code="105000"
+             outstanding_receipts_account_code="105100"
+             outstanding_payments_account_code="105200"
+             requires_outstanding_reconciliation="true"
+             sequence="1"/>
+
+    <journal code="NMB" name="NMB Bank" type="BANK"
+             default_debit_account_code="101100" default_credit_account_code="101100"
+             suspense_account_code="105000"
+             outstanding_receipts_account_code="105100"
+             outstanding_payments_account_code="105200"
+             requires_outstanding_reconciliation="true"
+             sequence="2"/>
+
+    <journal code="NBC" name="NBC Bank" type="BANK"
+             default_debit_account_code="101200" default_credit_account_code="101200"
+             suspense_account_code="105000"
+             outstanding_receipts_account_code="105100"
+             outstanding_payments_account_code="105200"
+             requires_outstanding_reconciliation="true"
+             sequence="3"/>
+
+    <!-- ═══ Cash ═══ -->
+    <journal code="CSH" name="Cash" type="CASH"
+             default_debit_account_code="100000" default_credit_account_code="100000"
+             requires_outstanding_reconciliation="false"
+             sequence="1"/>
+
+    <!-- ═══ Mobile money ═══ -->
+    <journal code="MPESA" name="M-Pesa (Vodacom)" type="CASH"
+             default_debit_account_code="102000" default_credit_account_code="102000"
+             requires_outstanding_reconciliation="false"
+             sequence="2"/>
+
+    <journal code="TIGO" name="Tigo Pesa" type="CASH"
+             default_debit_account_code="102100" default_credit_account_code="102100"
+             requires_outstanding_reconciliation="false"
+             sequence="3"/>
+
+    <journal code="AIRTEL" name="Airtel Money" type="CASH"
+             default_debit_account_code="102200" default_credit_account_code="102200"
+             requires_outstanding_reconciliation="false"
+             sequence="4"/>
+
+    <journal code="HALO" name="HaloPesa (Halotel)" type="CASH"
+             default_debit_account_code="102300" default_credit_account_code="102300"
+             requires_outstanding_reconciliation="false"
+             sequence="5"/>
+
+    <!-- ═══ Stock ═══ -->
+    <!-- REQUIRED: delivery and receipt valuation look up Journal(type="INVENTORY") and raise without it -->
+    <journal code="STJ" name="Stock Valuation" type="INVENTORY" sequence="1"/>
+
+    <!-- ═══ Returns / store credit (targets of default_return_journal, default_store_credit_journal) ═══ -->
+    <journal code="RET" name="Customer Returns" type="MISC" sequence="2"/>
+    <journal code="SCR" name="Store Credit" type="MISC" sequence="3"/>
+
+    <!-- ═══ Other ═══ -->
+    <journal code="MISC" name="Miscellaneous Operations" type="MISC" sequence="1"/>
+
+    <journal code="PAY" name="Payroll" type="GENERAL"
+             default_credit_account_code="230000" sequence="1"/>
+</journals>

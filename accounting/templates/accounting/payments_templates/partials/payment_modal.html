@@ -1,0 +1,17 @@
+<div class="modal fade" id="paymentModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-3">
+      <!-- Header -->
+      <div class="modal-header bg-light">
+        <h5 class="modal-title fw-semibold">
+            {% if partner_type == 'customer' %} Customer Payment
+          {% else %}Vendor Payment {% endif %}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <!-- Body -->
+        {% include "accounting/payments_templates/partials/payment_form_partial.html" %}
+        
+    </div>
+  </div>
+</div>

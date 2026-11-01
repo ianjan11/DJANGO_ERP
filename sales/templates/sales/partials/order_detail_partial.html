@@ -1,0 +1,50 @@
+{% load group_tags %}
+{% load humanize %}
+
+
+
+<div class="main-wrapper">
+    
+    <div class="invoice-card">
+ <div class="action-card">
+  {% include "sales/partials/action_buttons.html" %}
+ </div>
+
+
+
+
+<div class="invoice-header-card">
+
+    <div class="invoice-header-title">
+<div>
+    <label>Customer Sales Order </label>
+    </div>
+
+<div>
+    <span class="invoice-number">  {{ order.order_number }}
+            </span>
+    </div>
+
+   </div>
+       <div class="invoice-header-title">
+<div>
+    {% if order.can_confirm %}
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'sales:order_refresh' order.id %}"
+            hx-target="#sales-display"
+            hx-swap="innerHTML"
+            hx-disabled="this">
+            <i class="bi bi-arrow-clockwise"></i> Refresh
+        </button>
+{% endif %}
+    </div>
+   </div>
+
+</div>
+                        <div id="sales-document" data-swap-on-error>
+  {% include "sales/partials/order_form.html" %}
+                        </div>
+</div>
+</div>

@@ -1,0 +1,164 @@
+{% load humanize %}
+<div class="main-wrapper">
+
+<div class="invoice-card">
+
+  {# ── Product header ── #}
+  <div class="inv-header-section">
+
+    <div class="inv-header-col">
+      <div class="inv-field">
+        <span class="inv-field-label">Product</span>
+        <span class="inv-field-value" style="font-size: var(--text-heading-sm);">
+          {{ product.name }}
+        </span>
+      </div>
+      <div class="inv-field">
+        <span class="inv-field-label">SKU</span>
+        <span class="inv-field-value td-mono">{{ product.sku }}</span>
+      </div>
+      <div class="inv-field">
+        <span class="inv-field-label">Category</span>
+        <span class="inv-field-value">{{ product.category.name }}</span>
+      </div>
+      <div class="inv-field">
+        <span class="inv-field-label">Unit</span>
+        <span class="inv-field-value">{{ product.unit_of_measure }}</span>
+      </div>
+    </div>
+
+    <div class="inv-header-col">
+      <div class="inv-field">
+        <span class="inv-field-label">Stock Status</span>
+        <span class="inv-field-value" id="stock-status">
+          {% if product.available_stock <= 0 %}
+            <span class="badge badge--cancelled"><span class="badge-dot"></span>Out of Stock</span>
+          {% elif product.available_stock <= 50 %}
+            <span class="badge badge--overdue"><span class="badge-dot"></span>Low Stock</span>
+          {% else %}
+            <span class="badge badge--paid"><span class="badge-dot"></span>In Stock</span>
+          {% endif %}
+        </span>
+      </div>
+      <div class="inv-field">
+        <span class="inv-field-label">Default Price</span>
+        <span class="inv-field-value td-amount" id="current-price">
+          {{ product.default_price|floatformat:2|intcomma }}
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  {# ── Stock position summary ── #}
+  <div class="inv-summary-row">
+
+    <div class="inv-summary-card">
+      <span class="inv-summary-label">On Hand</span>
+      {# On Hand = Available + Reserved — this is the balance sheet figure #}
+      <span class="inv-summary-value td-mono" id="current-on-hand">
+        {{ product.available_stock|floatformat:2 }}
+      </span>
+      <span class="inv-summary-sub">{{ product.unit_of_measure }}</span>
+    </div>
+
+    <div class="inv-summary-card">
+      <span class="inv-summary-label">Available</span>
+      <span class="inv-summary-value td-mono" id="current-stock">
+        {{ product.available_to_sale|floatformat:2 }}
+      </span>
+      <span class="inv-summary-sub">{{ product.unit_of_measure }}</span>
+    </div>
+
+    <div class="inv-summary-card">
+      <span class="inv-summary-label">Reserved</span>
+      {# Reserved = committed to pending deliveries — still an asset, not yet delivered #}
+      <span class="inv-summary-value td-mono" id="current-reserved"
+            style="color: var(--color-slate);">
+        {{ product.reserved_stock|floatformat:2 }}
+      </span>
+      <span class="inv-summary-sub">{{ product.unit_of_measure }}</span>
+    </div>
+
+    <div class="inv-summary-card">
+      <span class="inv-summary-label">Cost</span>
+      <span class="inv-summary-value td-mono">
+        {{ product.product_cost|floatformat:2|intcomma|default:"—" }}
+      </span>
+      <span class="inv-summary-sub">per {{ product.unit_of_measure }}</span>
+    </div>
+
+  </div>
+
+  {# ── Stock by location (quants) ── #}
+  {# Odoo shows quants in a sub-list — each quant is a location-level stock record #}
+  {% if stock_quants %}
+  <div class="table-toolbar">
+    <h5 class="table-toolbar-title">
+      Stock by Location
+      <span class="badge badge--count">
+        {{ stock_quants|length }} location{{ stock_quants|length|pluralize }}
+      </span>
+    </h5>
+  </div>
+
+  <div class="inv-table-wrap">
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th style="width:220px">Location</th>
+          <th style="width:160px">Warehouse</th>
+          <th style="width:120px" class="col-right">On Hand</th>
+          <th style="width:120px" class="col-right">Reserved</th>
+          <th style="width:120px" class="col-right">Available</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for quant in stock_quants %}
+        <tr>
+          <td class="td-primary">{{ quant.location.name }}</td>
+          <td style="color: var(--color-slate);">
+            {{ quant.location.warehouse.name|default:"—" }}
+          </td>
+          <td class="col-right">
+            {# On Hand at this location = quantity + reserved #}
+            <span class="td-mono">
+              {{ quant.quantity|add:quant.reserved_quantity|floatformat:2 }}
+            </span>
+          </td>
+          <td class="col-right">
+  {# Integrity check: reserved cannot exceed on hand #}
+  {# If it does, stock has been oversold or adjusted incorrectly #}
+  {% if quant.reserved_quantity > quant.quantity %}
+    <i class="bi bi-exclamation-triangle-fill"
+       style="color: #dd0e0e; font-size: 12px; margin-right: 4px;"
+       title="Integrity violation: reserved quantity exceeds on hand.
+       Pending deliveries cannot be fulfilled from this location.">
+    </i>
+  {% endif %}
+  <span class="td-mono" style="color: var(--color-slate);">
+    {{ quant.reserved_quantity|floatformat:2 }}
+  </span>
+</td>
+          <td class="col-right">
+            <span class="td-mono">{{ quant.quantity|floatformat:2 }}</span>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="table-empty">
+            <div class="table-empty-icon"><i class="bi bi-geo-alt"></i></div>
+            <div class="table-empty-title">No stock locations</div>
+            <div class="table-empty-desc">
+              This product has no stock records across any location.
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+</div>
+</div>

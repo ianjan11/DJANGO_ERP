@@ -1,0 +1,87 @@
+{% load group_tags %}
+{% load humanize %}
+
+     <div>
+    {# ── INFO CARD ────────────────────────────────── #}
+        <button
+    type="button"
+    class="btn btn-secondary open-payment-modal"
+    data-bs-toggle="modal"
+    data-bs-target="#paymentModal"
+    data-partner-id="{{ invoice.partner.id }}"
+    data-id="{{ invoice.account_move.id }}"
+    data-amount="{{ invoice.amount_residual }}"
+    data-type="{{ invoice.payment_direction }}"
+    data-currency="{{ invoice.currency.id }}"
+    data-memo="{{ invoice.invoice_number }}"
+    data-invoice-id="{{ invoice.id }}">
+    <i class="bi bi-cash"></i> Register Payment
+</button>
+
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'accounting:post_invoice' invoice.id %}"
+            hx-target="#accounting-display"
+            hx-confirm="Post this Invoice?"
+            hx-swap="innerHTML"
+            hx-disabled="this">
+            <i class="bi bi-check-circle"></i> Post
+        </button>
+
+         <button
+    type="button"
+    class="btn btn-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#CreditNoteModal">
+    <i class="bi bi-receipt"></i>
+    Issue Credit Note
+    </button>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'accounting:reset_invoice' invoice.id %}"
+            hx-target="#accounting-display"
+            hx-confirm="Reset this Invoice? Once confirmed all stock and accounting entries will be reversed"
+            hx-swap="innerHTML"
+            hx-disabled="this">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset
+        </button>
+
+
+
+         <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'accounting:cancel_invoice' invoice.id %}"
+            hx-target="#accounting-display"
+            hx-confirm="Cancel this Invoice? Once confirmed all stock and accounting entries will be reversed"
+            hx-swap="innerHTML"
+            hx-disabled="this">
+            <i class="bi bi-x-circle"></i> Cancel
+        </button>
+
+
+
+
+     </div>
+
+             <span class="po-invoice-number">
+                       {% if invoice.state == "DRAFT" %}
+                        <span class="badge badge--draft"><i class="bi bi-pencil-square"></i>Draft</span>
+                        {% elif invoice.state == "POSTED" %}
+                        <span class="badge badge-posted"><i class="bi bi-send-fill"></i>Posted</span>
+                        {% elif invoice.state == "CANCELLED" %}
+                        <span class="badge badge--cancelled"><span><i class="bi bi-x-circle-fill"></i></span>Cancelled</span>
+                        {% else %}
+                        <span class="badge"><span></span>{{ invoice.state }}</span>
+                        {% endif %}
+             </span>
+
+
+
+
+
+

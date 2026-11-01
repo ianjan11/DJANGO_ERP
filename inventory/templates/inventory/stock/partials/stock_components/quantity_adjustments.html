@@ -1,0 +1,160 @@
+<div class="stock-content-inner">
+  <div class="invoice-card">
+
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        Adjust Stock
+        <span class="badge badge--count">{{ product.name }}</span>
+      </h5>
+    </div>
+
+    {# Current stock position — accountant must see this before adjusting #}
+    <div class="inv-summary-row">
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">On Hand</span>
+        <span class="inv-summary-value td-mono">
+            {{ product.available_stock|floatformat:2 }}
+        </span>
+        <span class="inv-summary-sub">{{ product.unit_of_measure }}</span>
+      </div>
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Reserved</span>
+        <span class="inv-summary-value td-mono"
+              style="color: var(--color-slate);">
+          {{ product.reserved_stock }}
+        </span>
+        <span class="inv-summary-sub">{{ product.unit_of_measure }}</span>
+      </div>
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Available</span>
+        <span class="inv-summary-value td-mono">
+          {{ product.available_to_sale|floatformat:2 }}
+        </span>
+        <span class="inv-summary-sub">{{ product.unit_of_measure }}</span>
+      </div>
+    </div>
+
+
+    <form id="adjust-stock-form"
+          style="padding: var(--spacing-16); display:flex; flex-direction:column; gap: var(--spacing-16);">
+
+<div id="errorbox"
+     style="display:none;
+            padding:10px;
+            background:#ffe6e6;
+            color:#b30000;
+            border:1px solid #ffb3b3;
+            border-radius:6px;
+            font-size:13px;">
+  Source and Destination cannot be the same location.
+</div>
+      <div class="inv-field">
+        <label class="inv-field-label" for="adjustment-type">
+          Adjustment Type
+        </label>
+        <select class="toolbar-select"
+                id="adjustment-type"
+                name="adjustment_type"
+                style="width: 200px;"
+                required>
+          <option value="">— Select type —</option>
+          <option value="INCREASE">
+            Stock In — increases inventory asset
+          </option>
+          <option value="DECREASE">
+            Stock Out — decreases inventory asset
+          </option>
+          <option value="TRANSFER">
+            Transfer — moves between locations, no P&amp;L impact
+          </option>
+        </select>
+      </div>
+
+
+      <div class="inv-field" id="source-location-wrapper" style="display: none;">
+        <label class="inv-field-label" for="source-location-select">
+          Source Location
+        </label>
+        <select class="toolbar-select"
+                name="source_location"
+                id="source-location-select"
+                style="width: 200px;">
+          <option value="">— Select location —</option>
+           {% for location in locations %}
+        <option value="{{ location.id }}">
+            {{ location.name }} • Available: {{ location.available_to_sale }}
+        </option>
+    {% endfor %}
+        </select>
+      </div>
+
+      {# Destination location — only shown for TRANSFER type #}
+      <div class="inv-field"
+           id="destination-location-wrapper"
+           style="display:none;">
+        <label class="inv-field-label" for="destination-location-select">
+          Destination Location
+        </label>
+        <select class="toolbar-select"
+                id="destination-location-select"
+                name="destination_location"
+                style="width: 200px;">
+          <option value="">— Select destination —</option>
+                    {% for location in locations %}
+        <option value="{{ location.id }}">
+            {{ location.name }} • Available: {{ location.available_to_sale }}
+        </option>
+    {% endfor %}
+        </select>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="adjust-quantity">
+          Quantity
+          <span class="inv-field-sub">Delta — how much to add or remove</span>
+        </label>
+        <input type="number"
+               class="toolbar-search"
+               id="adjust-quantity"
+               name="quantity"
+               style="width: 200px;"
+               min="0.01"
+               step="any"
+               required>
+        {# fixed: min="1" prevents fractional adjustments for kg/litre products #}
+      </div>
+
+      <div class="inv-field" style="align-items: flex-start;">
+        <label class="inv-field-label" for="adjust-reason" style="padding-top: var(--spacing-8);">
+          Reason
+          <span class="inv-field-sub">Becomes journal entry narration</span>
+        </label>
+        <textarea class="toolbar-search"
+                  id="adjust-reason"
+                  name="reason"
+                  style="height: 80px; resize: vertical; padding: var(--spacing-8) var(--spacing-12); width: 100%;"
+                  placeholder="e.g. Physical count correction — annual stocktake 2026"
+                  required></textarea>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap: var(--spacing-8);
+                  padding-top: var(--spacing-12);
+                  border-top: 1px solid var(--color-mist);">
+
+        <button type="button"
+                hx-post="{% url 'inventory:stock_adjustment' product.id %}"
+                hx-target="#stock-content"
+                id="adjust-stock-btn"
+                hx-disabled-elt="this"
+                class="btn btn-primary">
+          <i class="bi bi-check-circle"></i> Post Adjustment
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+
+

@@ -1,0 +1,369 @@
+/* ============================================================
+   TOOLBAR — Search, Select, Clear
+   toolbar.css
+   Depends on: invoice.css (design tokens)
+   ============================================================ */
+
+
+/* ── Toolbar wrapper ──────────────────────────────────────── */
+/*
+  Horizontal row of controls. Wraps to a second line on narrow
+  viewports. Direct children: .toolbar-search-wrap, any number
+  of .toolbar-select elements, and one .toolbar-clear-btn.
+*/
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  flex-wrap: wrap;
+  margin: 4px 0;
+}
+
+
+/* ── Search input ─────────────────────────────────────────── */
+
+/*
+  Wrapper needed for the leading icon and the inline clear ×.
+  Set flex: 1 so the search field grows to fill available space.
+  Give it a min-width so it never collapses completely.
+*/
+.toolbar-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 180px;
+}
+
+/* Leading search icon — purely decorative, pointer-events off */
+.toolbar-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: var(--color-fog);
+  pointer-events: none;
+}
+
+.toolbar-search {
+  width: 100%;
+  height: 36px;
+  padding: 0 32px 0 32px;     /* room for icon left, clear button right */
+  font-family: var(--font-suisseintl);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-deep-ink);
+  background: var(--surface-card);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-inputs);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.toolbar-search::placeholder {
+  color: var(--color-fog);
+}
+
+.toolbar-search:hover {
+  border-color: var(--color-fog);
+}
+
+.toolbar-search:focus {
+  border-color: var(--color-fog);
+}
+
+
+/* ── Inline clear button (inside search wrap) ─────────────── */
+/*
+  Hidden by default. Add .is-visible via JS when input has a value.
+  Sits inside .toolbar-search-wrap at the right edge of the input.
+*/
+.toolbar-search-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 18px;
+  height: 18px;
+  display: none;              /* shown via .is-visible */
+  align-items: center;
+  justify-content: center;
+
+  background: var(--color-mist);
+  border: none;
+  border-radius: var(--radius-badges);
+  cursor: pointer;
+  color: var(--color-slate);
+  font-size: 11px;
+  padding: 0;
+  line-height: 1;
+
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.toolbar-search-clear.is-visible {
+  display: flex;
+}
+
+.toolbar-search-clear:hover {
+  background: var(--color-fog);
+  color: var(--surface-card);
+}
+
+.toolbar-search-clear i {
+  font-size: 9px;
+  line-height: 1;
+}
+
+
+/* ── Select dropdowns ─────────────────────────────────────── */
+/*
+  Custom chevron via background-image (no extra wrapper needed).
+  Add .has-value via JS when a non-empty option is selected —
+  this darkens the border to signal an active filter.
+*/
+.toolbar-select {
+  height: 36px;
+  padding: 0 30px 0 var(--spacing-12);
+  font-family: var(--font-suisseintl);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-slate);
+  background-color: var(--surface-card);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-inputs);
+  outline: none;
+  cursor: pointer;
+  white-space: nowrap;
+
+  /* custom chevron */
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a9acb6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.toolbar-select:hover {
+  border-color: var(--color-fog);
+}
+
+.toolbar-select:focus {
+  border-color: var(--color-slate);
+}
+
+/* Active filter state — border darkens, text shifts to ink */
+.toolbar-select.has-value {
+  color: var(--color-deep-indigo);
+  border-color: var(--color-slate);
+}
+
+
+/* ── Clear all button ─────────────────────────────────────── */
+/*
+  Hidden by default. Add .is-visible via JS when any filter
+  (search or select) has an active value.
+*/
+.toolbar-clear-btn {
+  height: 36px;
+  padding: 0 var(--spacing-16);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+
+  font-family: var(--font-suisseintl);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-slate);
+  white-space: nowrap;
+
+  background: transparent;
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-buttons);
+  cursor: pointer;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease,
+              background 0.15s ease,
+              color 0.15s ease,
+              border-color 0.15s ease;
+}
+
+.toolbar-clear-btn.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.toolbar-clear-btn:hover {
+  background: #fdf1ec;                 /* ember-orange 50 */
+  color: var(--color-ember-orange);
+  border-color:var(--color-ember-orange);              /* ember-orange 100 */
+}
+
+.toolbar-clear-btn:active {
+  transform: scale(0.98);
+}
+
+.toolbar-clear-icon {
+  font-size: 14px;
+}
+
+
+/* ═══════════════════════════════════════════
+   DATE SELECT BAR
+   ═══════════════════════════════════════════ */
+.date-select-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-8);
+  flex-wrap: wrap;
+}
+
+.date-select-label {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-slate);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.date-select-presets {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.date-select-preset {
+  height: 26px;
+  padding: 0 10px;
+  font-family: var(--font-suisseintl);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-slate);
+  background: var(--surface-card);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-buttons);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease;
+}
+
+.date-select-preset:hover,
+.date-select-preset.active {
+  background: var(--color-deep-indigo);
+  color: #ffffff;
+  border-color: var(--color-deep-indigo);
+}
+
+.date-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.date-select-icon {
+  position: absolute;
+  left: 9px;
+  font-size: 13px;
+  color: var(--color-fog);
+  pointer-events: none;
+}
+
+.date-select-input {
+  height: 34px;
+  padding: 0 var(--spacing-12) 0 28px;
+  font-family: var(--font-suisseintlmono);
+  font-size: var(--text-caption);
+  color: var(--color-deep-indigo);
+  background: var(--surface-card);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-inputs);
+  outline: none;
+  cursor: pointer;
+  width: 148px;
+  transition: border-color 0.12s ease;
+}
+
+.date-select-input:hover { border-color: var(--color-fog); }
+.date-select-input:focus { border-color: var(--color-slate); }
+
+.date-select-input::-webkit-calendar-picker-indicator {
+  opacity: 0.4;
+  cursor: pointer;
+}
+.date-select-input::-webkit-calendar-picker-indicator:hover { opacity: 0.8; }
+
+.date-select-separator {
+  font-size: var(--text-caption);
+  color: var(--color-fog);
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   SUMMARY ROW
+   ═══════════════════════════════════════════ */
+.inv-summary-row {
+  display: flex;
+  gap: var(--spacing-12);
+  flex-wrap: wrap;
+  padding: var(--spacing-16);
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.inv-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 120px;
+  padding: var(--spacing-12) var(--spacing-16);
+  background: var(--color-paper-white);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-cards);
+}
+
+.inv-summary-label {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-slate);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.inv-summary-value {
+  font-size: var(--text-heading-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-indigo);
+  font-family: var(--font-suisseintlmono);
+}
+
+.inv-summary-sub {
+  font-size: var(--text-caption);
+  color: var(--color-fog);
+}
+
+
+
+
+/* ── Responsive: stack on narrow screens ──────────────────── */
+@media (max-width: 480px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar-search-wrap {
+    min-width: 0;
+  }
+
+  .toolbar-select,
+  .toolbar-clear-btn {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

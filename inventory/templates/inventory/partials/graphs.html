@@ -1,0 +1,61 @@
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="main-wrapper">
+  <div class="dashboard">
+
+    {# ── Best Selling Products ── #}
+    <div class="best-selling-grid">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <div class="chart-card-meta">
+            <span class="chart-eyebrow">Analytics</span>
+            <span class="chart-title">Best Selling Products</span>
+          </div>
+        </div>
+        <div class="chart-body">
+          <div id="myChart" style="width:100%; height:300px;"></div>
+        </div>
+      </div>
+    </div>
+
+    {# ── Delivery + Stock Movement ── #}
+    <div class="chart-grid">
+
+      <div class="chart-col">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Deliveries</span>
+              <span class="chart-title">Monthly Status</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="D-Chart" style="width:100%; height:180px;"></div>
+          </div>
+          <div class="chart-footer">
+            <span class="chart-footer-label">Pending Deliveries</span>
+            <span class="chart-footer-value">{{ pending_deliveries|default:0 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-col">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Inventory</span>
+              <span class="chart-title">Stock Movement Trend</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="stockMovementChartDashboard" style="width:100%; height:260px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

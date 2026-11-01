@@ -1,0 +1,234 @@
+{% load humanize %}
+
+<div class="main-wrapper">
+  <div class="inv-card">
+    <div class="table-wrap">
+
+      {# ── TOOLBAR ────────────────────────────────────── #}
+      <div class="table-toolbar">
+        <h5 class="table-toolbar-title">
+          Journal Entries
+          <span class="badge badge--count">
+            {{ page_obj.paginator.count }} Entr{{ page_obj.paginator.count|pluralize:"y,ies" }}
+          </span>
+        </h5>
+
+        <button
+          class="btn btn-primary btn-sm"
+          hx-post="{% url 'accounting:create_journal' %}"
+          hx-target="#accounting-display"
+          hx-push-url="true"
+        >
+          <i class="bi bi-plus-lg"></i> New
+        </button>
+
+        <form
+          data-toolbar
+          class="toolbar"
+          id="journal-filters"
+          hx-get="{% url 'accounting:journal_entries' %}"
+          hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
+          hx-target="#accounting-display"
+          hx-replace-url="true"
+        >
+          {% include "core/date_filters.html" %}
+
+          <div class="toolbar-search-wrap">
+            <i class="ti ti-search toolbar-search-icon"></i>
+            <input
+              type="text"
+              class="toolbar-search"
+              name="search_move"
+              placeholder="Search entries..."
+              value="{{ search_move }}"
+            >
+            <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+              <i class="ti ti-x"></i>
+            </button>
+          </div>
+
+          <select class="toolbar-select" name="move_status">
+            <option value="">All Statuses</option>
+            <option value="draft" {% if move_status == "draft" %}selected{% endif %}>Draft</option>
+            <option value="posted" {% if move_status == "posted" %}selected{% endif %}>Posted</option>
+            <option value="cancel" {% if move_status == "cancel" %}selected{% endif %}>Cancelled</option>
+          </select>
+
+          <button type="button" class="toolbar-clear-btn">
+            <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
+          </button>
+        </form>
+      </div>
+
+      {# ── DATA TABLE ────────────────────────────────── #}
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Number / Ref</th>
+            <th>Date</th>
+            <th>Partner</th>
+            <th>Journal</th>
+            <th class="col-right">Total Amount</th>
+            <th class="col-center">Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for move in page_obj %}
+          <tr
+            hx-get="{% url 'accounting:journal_detail' move.id %}"
+            hx-target="#accounting-display"
+            hx-push-url="true"
+            style="cursor: pointer;"
+          >
+            <td class="td-mono">
+              <strong>{{ move.name|default:"Draft Entry" }}</strong>
+              {% if move.ref %}
+                <span class="td-muted" style="font-size: 11px; display: block;">{{ move.ref }}</span>
+              {% endif %}
+            </td>
+
+            <td>{{ move.date|date:'M d, Y' }}</td>
+
+            <td class="td-primary">
+              {{ move.partner.name|default:"—" }}
+            </td>
+
+            <td>
+              <span class="badge" style="background: var(--color-mist); color: var(--color-slate);">
+                {{ move.journal.name|default:"General" }}
+              </span>
+            </td>
+
+            <td class="col-right">
+              <span class="td-amount">
+                {{ move.company.currency.symbol|default:"TSh" }} {{ move.amount_total|default:0|floatformat:2|intcomma }}
+              </span>
+            </td>
+
+            <td class="col-center">
+              {% if move.state == "draft" or move.status == "draft" %}
+                <span class="badge badge--draft"><i class="bi bi-pencil-square"></i> Draft</span>
+              {% elif move.state == "posted" or move.status == "posted" %}
+                <span class="badge badge--paid"><i class="bi bi-check-circle-fill"></i> Posted</span>
+              {% elif move.state == "cancel" or move.status == "cancel" %}
+                <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
+              {% else %}
+                <span class="badge">{{ move.status|default:move.state }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="table-empty">
+              <div class="table-empty-icon">
+                <i class="bi bi-journal-text"></i>
+              </div>
+              <div class="table-empty-title">No journal entries found</div>
+              <div class="table-empty-desc">There are no records matching your current filter criteria.</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {# ── PAGINATION ───────────────────────────────── #}
+      {% if page_obj.paginator.num_pages > 1 %}
+      <div class="table-footer">
+        <small class="table-footer-count">
+          Showing {{ page_obj.start_index }}–{{ page_obj.end_index }}
+          of {{ page_obj.paginator.count }} entr{{ page_obj.paginator.count|pluralize:"y,ies" }}
+        </small>
+
+        <div class="table-pagination" hx-include="#journal-filters">
+
+          {# First Page #}
+          {% if page_obj.has_previous %}
+            <a
+              class="page-btn page-btn--arrow"
+              hx-get="{% url 'accounting:journal_entries' %}?page=1"
+              hx-target="#accounting-display"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+            >
+              <i class="bi bi-chevron-double-left"></i>
+            </a>
+          {% else %}
+            <span class="page-btn page-btn--arrow" aria-disabled="true">
+              <i class="bi bi-chevron-double-left"></i>
+            </span>
+          {% endif %}
+
+          {# Previous Page #}
+          {% if page_obj.has_previous %}
+            <a
+              class="page-btn page-btn--arrow"
+              hx-get="{% url 'accounting:journal_entries' %}?page={{ page_obj.previous_page_number }}"
+              hx-target="#accounting-display"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+            >
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          {% else %}
+            <span class="page-btn page-btn--arrow" aria-disabled="true">
+              <i class="bi bi-chevron-left"></i>
+            </span>
+          {% endif %}
+
+          {# Page Numbers #}
+          {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+              <span class="page-btn active">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+              <a
+                class="page-btn"
+                hx-get="{% url 'accounting:journal_entries' %}?page={{ num }}"
+                hx-target="#accounting-display"
+                hx-swap="innerHTML"
+                hx-push-url="true"
+              >{{ num }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {# Next Page #}
+          {% if page_obj.has_next %}
+            <a
+              class="page-btn page-btn--arrow"
+              hx-get="{% url 'accounting:journal_entries' %}?page={{ page_obj.next_page_number }}"
+              hx-target="#accounting-display"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+            >
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          {% else %}
+            <span class="page-btn page-btn--arrow" aria-disabled="true">
+              <i class="bi bi-chevron-right"></i>
+            </span>
+          {% endif %}
+
+          {# Last Page #}
+          {% if page_obj.has_next %}
+            <a
+              class="page-btn page-btn--arrow"
+              hx-get="{% url 'accounting:journal_entries' %}?page={{ page_obj.paginator.num_pages }}"
+              hx-target="#accounting-display"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+            >
+              <i class="bi bi-chevron-double-right"></i>
+            </a>
+          {% else %}
+            <span class="page-btn page-btn--arrow" aria-disabled="true">
+              <i class="bi bi-chevron-double-right"></i>
+            </span>
+          {% endif %}
+
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>

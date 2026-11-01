@@ -1,0 +1,142 @@
+<tr id="order-row-{{ form.prefix }}"
+    class="order-row {% if form.errors %}table-danger{% endif %}"
+    hx-post="{% url 'sales:sales_order_update' %}"
+    hx-vals='{"row_prefix": "{{ form.prefix }}"}'
+    hx-swap="none"
+    data-row-type="order"
+    hx-include="#order-row-{{ form.prefix }}, .order-header-field, #currency-select"
+    hx-trigger="save-row, change[rowReady(event, false)], keyup[rowReady(event, true)] changed delay:600ms"
+    >
+
+    <td style="display:none">
+    {{ form.id }}
+    <input
+        type="hidden"
+        name="{{ form.prefix }}-taxes_touched"
+        value="0"
+        class="taxes-touched"
+    >
+</td>
+
+  <td class="td-editable">
+    {{ form.product }}
+    {% if form.product.errors %}
+      <div class="invalid-feedback d-block">{{ form.product.errors.0 }}</div>
+    {% endif %}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger py-1 px-2 mt-2 mb-0 small">{{ form.non_field_errors.0 }}</div>
+    {% endif %}
+  </td>
+
+  <td class="td-editable">
+    {{ form.description }}
+    {% if form.description.errors %}
+      <div class="invalid-feedback d-block">{{ form.description.errors.0 }}</div>
+    {% endif %}
+  </td>
+
+  <td class="td-editable">
+    <input
+      type="number"
+      name="{{ form.quantity.html_name }}"
+      value="{{ form.quantity.value|default:'' }}"
+      class="td-input {% if form.quantity.errors %}is-invalid{% endif %}"
+      step="1"
+    >
+    {% if form.quantity.errors %}
+      <div class="invalid-feedback d-block mt-1">{{ form.quantity.errors.0 }}</div>
+    {% endif %}
+  </td>
+    
+      
+      <td class="td-editable">
+    {{ form.product_uom }}
+    {% if form.product_uom.errors %}
+      <div class="invalid-feedback d-block">{{ form.product_uom.errors.0 }}</div>
+    {% endif %}
+
+  </td>
+
+  <td class="td-editable">
+    {{ form.price_unit }}
+    {% if form.price_unit.errors %}
+      <div class="invalid-feedback d-block mt-1">{{ form.price_unit.errors.0 }}</div>
+    {% endif %}
+  </td>
+
+  <td class="td-editable">
+    {{ form.discount_percent }}
+    {% if form.discount_percent.errors %}
+      <div class="invalid-feedback d-block">{{ form.discount_percent.errors.0 }}</div>
+    {% endif %}
+  </td>
+    
+
+  <td class="td-editable">
+    <div class="tax-dropdown-wrapper">
+
+      <input type="checkbox" class="tax-toggle item-taxes" id="tax-toggle-{{ forloop.counter }}">
+
+      <label class="tax-dropdown-trigger" for="tax-toggle-{{ forloop.counter }}">
+        <span class="tax-selected-label">
+          {% with selected=form.taxes.value %}
+            {% if selected %}
+              {% for value, label in form.taxes.field.choices %}
+                {% if value in selected %}
+                  <span class="tax-badge">{{ label }}</span>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              <span class="tax-placeholder">Taxes...</span>
+            {% endif %}
+          {% endwith %}
+        </span>
+        <i class="bi bi-chevron-down tax-chevron"></i>
+      </label>
+
+      <div class="tax-dropdown-menu">
+        {% for value, label in form.taxes.field.choices %}
+          <label class="tax-option">
+              <input
+    type="checkbox"
+    name="{{ form.taxes.html_name }}"
+    value="{{ value }}"
+    {% if value in form.taxes.value %}checked{% endif %}
+    onchange="updateTaxLabel(this); this.closest('[data-row-type]').querySelector('.taxes-touched').value = '1'; ">
+            {{ label }}
+          </label>
+          
+        {% endfor %}
+      </div>
+
+    </div>
+  </td>
+  
+
+  <td class="td-editable col-left">
+    {% if form.instance.pk %}
+      <span class="td-amount">    {{order.currency.symbol}}
+{{ form.instance.subtotal|floatformat:2 }}</span>
+    {% else %}
+      <span class="td-muted">0.00</span>
+    {% endif %}
+  </td>
+
+
+   <td class="col-left">
+    <button
+      type="button"
+      class="page-btn text-danger"
+      hx-post="{% url 'sales:sales_order_update' %}"
+      hx-include="#order-row-{{ form.prefix }}"
+      hx-vals='{"row_prefix": "{{ form.prefix }}", "{{ form.prefix }}-DELETE": "on"}'
+      hx-swap="none"
+      hx-confirm="Remove this item?"
+      aria-label="Remove row"
+    >
+      <i class="bi bi-trash"></i>
+    </button>
+  </td>
+
+
+</tr>

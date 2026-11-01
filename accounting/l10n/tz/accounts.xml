@@ -1,0 +1,105 @@
+<accounts>
+    <!-- ═══ ASSETS ═══ -->
+    <account code="100000" account_type="account_type_liquidity" internal_type="liquidity">Cash on Hand</account>
+    <account code="100100" account_type="account_type_liquidity" internal_type="liquidity" parent="100000">Cash - Petty Cash</account>
+    <account code="101000" account_type="account_type_liquidity" internal_type="liquidity" allow_reconciliation="true">Bank - CRDB</account>
+    <account code="101100" account_type="account_type_liquidity" internal_type="liquidity" allow_reconciliation="true">Bank - NMB</account>
+    <account code="101200" account_type="account_type_liquidity" internal_type="liquidity" allow_reconciliation="true">Bank - NBC</account>
+    <account code="102000" account_type="account_type_liquidity" internal_type="liquidity">Mobile Money - M-Pesa</account>
+    <!-- NEW: other Tanzanian mobile wallets -->
+    <account code="102100" account_type="account_type_liquidity" internal_type="liquidity">Mobile Money - Tigo Pesa</account>
+    <account code="102200" account_type="account_type_liquidity" internal_type="liquidity">Mobile Money - Airtel Money</account>
+    <account code="102300" account_type="account_type_liquidity" internal_type="liquidity">Mobile Money - HaloPesa</account>
+
+    <!-- NEW: bank journal transit accounts (replace the 215000 / 220000 mappings, which are
+         NSSF Payable and Accrued Expenses). Must allow reconciliation. -->
+    <account code="105000" account_type="account_type_current_assets" internal_type="other"
+             allow_reconciliation="true">Bank Suspense Account</account>
+    <account code="105100" account_type="account_type_current_assets" internal_type="other"
+             allow_reconciliation="true">Outstanding Receipts</account>
+    <account code="105200" account_type="account_type_current_assets" internal_type="other"
+             allow_reconciliation="true">Outstanding Payments</account>
+
+    <account code="110000" account_type="account_type_receivable" internal_type="receivable"
+             allow_reconciliation="true" is_control_account="true">Accounts Receivable - Trade Debtors</account>
+
+    <account code="111000" account_type="account_type_current_assets" internal_type="other">VAT Input (Recoverable)</account>
+    <account code="112000" account_type="account_type_current_assets" internal_type="other">Withholding Tax Receivable</account>
+    <account code="113000" account_type="account_type_current_assets" internal_type="other">Staff Advances</account>
+    <!-- NEW: supplier advances (default_vendor_advances) -->
+    <account code="114000" account_type="account_type_current_assets" internal_type="other">Vendor Advances (Prepayments to Suppliers)</account>
+    <account code="120000" account_type="account_type_current_assets" internal_type="other">Inventory - Finished Goods</account>
+    <account code="120100" account_type="account_type_current_assets" internal_type="other">Inventory - Raw Materials</account>
+    <!-- NEW: GDNI. Debited on delivery, cleared by the customer invoice. MUST allow reconciliation. -->
+    <account code="121000" account_type="account_type_current_assets" internal_type="other"
+             allow_reconciliation="true">Stock Output - Goods Delivered Not Invoiced (GDNI)</account>
+    <account code="130000" account_type="account_type_prepayments" internal_type="other">Prepaid Expenses</account>
+
+    <account code="150000" account_type="account_type_fixed_assets" internal_type="other">Land</account>
+    <account code="150100" account_type="account_type_fixed_assets" internal_type="other">Buildings</account>
+    <account code="150200" account_type="account_type_fixed_assets" internal_type="other">Motor Vehicles</account>
+    <account code="150300" account_type="account_type_fixed_assets" internal_type="other">Furniture &amp; Fittings</account>
+    <account code="150400" account_type="account_type_fixed_assets" internal_type="other">Computer Equipment</account>
+    <account code="159000" account_type="account_type_fixed_assets" internal_type="other">Accumulated Depreciation</account>
+
+    <!-- ═══ LIABILITIES ═══ -->
+    <account code="200000" account_type="account_type_payable" internal_type="payable"
+             allow_reconciliation="true" is_control_account="true">Accounts Payable - Trade Creditors</account>
+
+    <account code="210000" account_type="account_type_current_liabilities" internal_type="other">VAT Output (Payable)</account>
+    <account code="211000" account_type="account_type_current_liabilities" internal_type="other">VAT Payable to TRA</account>
+    <account code="212000" account_type="account_type_current_liabilities" internal_type="other">Withholding Tax Payable (WHT)</account>
+    <account code="213000" account_type="account_type_current_liabilities" internal_type="other">PAYE Payable</account>
+    <account code="214000" account_type="account_type_current_liabilities" internal_type="other">Skills &amp; Development Levy (SDL) Payable</account>
+    <account code="215000" account_type="account_type_current_liabilities" internal_type="other">NSSF Contributions Payable</account>
+    <account code="216000" account_type="account_type_current_liabilities" internal_type="other">WCF (Workers Compensation Fund) Payable</account>
+    <account code="217000" account_type="account_type_current_liabilities" internal_type="other">Corporate Income Tax Payable</account>
+    <!-- NEW: GRNI. Credited on receipt, cleared by the vendor bill. MUST allow reconciliation. -->
+    <account code="218000" account_type="account_type_current_liabilities" internal_type="other"
+             allow_reconciliation="true">Stock Input - Goods Received Not Invoiced (GRNI)</account>
+    <account code="220000" account_type="account_type_current_liabilities" internal_type="other">Accrued Expenses</account>
+    <!-- NEW: customer-side liabilities (default_unearned_revenue, default_customer_prepayments) -->
+    <account code="221000" account_type="account_type_current_liabilities" internal_type="other">Unearned Revenue</account>
+    <account code="222000" account_type="account_type_current_liabilities" internal_type="other">Customer Prepayments (Deposits Received)</account>
+    <account code="230000" account_type="account_type_current_liabilities" internal_type="other">Salaries Payable</account>
+    <account code="250000" account_type="account_type_non_current_liabilities" internal_type="other">Long-Term Loans</account>
+
+    <!-- ═══ EQUITY ═══ -->
+    <account code="300000" account_type="account_type_equity" internal_type="other">Share Capital</account>
+    <account code="310000" account_type="account_type_equity" internal_type="other">Retained Earnings</account>
+    <account code="320000" account_type="account_type_equity_unaffected" internal_type="other">Current Year Earnings</account>
+
+    <!-- ═══ INCOME ═══ -->
+    <account code="400000" account_type="account_type_revenue" internal_type="other">Sales Revenue - Standard Rated</account>
+    <account code="400100" account_type="account_type_revenue" internal_type="other" parent="400000">Sales Revenue - Zero Rated</account>
+    <account code="400200" account_type="account_type_revenue" internal_type="other" parent="400000">Sales Revenue - Exempt</account>
+    <account code="400300" account_type="account_type_revenue" internal_type="other" parent="400000">Export Sales</account>
+    <account code="410000" account_type="account_type_other_income" internal_type="other">Other Operating Income</account>
+    <!-- NEW: stock gain / cash difference income -->
+    <account code="410100" account_type="account_type_other_income" internal_type="other">Inventory Revaluation Gain</account>
+    <account code="410200" account_type="account_type_other_income" internal_type="other">Inventory Adjustment Gain</account>
+    <account code="410300" account_type="account_type_other_income" internal_type="other">Cash Difference Gain</account>
+    <account code="420000" account_type="account_type_other_income" internal_type="other">Foreign Exchange Gain</account>
+
+    <!-- ═══ EXPENSES ═══ -->
+    <account code="500000" account_type="account_type_direct_costs" internal_type="other">Cost of Goods Sold</account>
+    <!-- NEW: stock-related expenses -->
+    <account code="500100" account_type="account_type_direct_costs" internal_type="other">Inventory Adjustment Expense (Scrap / Shrinkage)</account>
+    <account code="500200" account_type="account_type_direct_costs" internal_type="other">Inventory Revaluation Expense</account>
+    <account code="500300" account_type="account_type_direct_costs" internal_type="other">Purchase Price Difference</account>
+    <account code="510000" account_type="account_type_expenses" internal_type="other">Salaries &amp; Wages</account>
+    <account code="510100" account_type="account_type_expenses" internal_type="other" parent="510000">SDL Expense</account>
+    <account code="510200" account_type="account_type_expenses" internal_type="other" parent="510000">NSSF Employer Contribution</account>
+    <account code="510300" account_type="account_type_expenses" internal_type="other" parent="510000">WCF Employer Contribution</account>
+    <account code="520000" account_type="account_type_expenses" internal_type="other">Rent Expense</account>
+    <account code="530000" account_type="account_type_expenses" internal_type="other">Utilities - Electricity &amp; Water</account>
+    <account code="540000" account_type="account_type_expenses" internal_type="other">Communication - Airtime &amp; Internet</account>
+    <account code="550000" account_type="account_type_expenses" internal_type="other">Transport &amp; Fuel</account>
+    <account code="560000" account_type="account_type_depreciation" internal_type="other">Depreciation Expense</account>
+    <account code="570000" account_type="account_type_expenses" internal_type="other">Professional &amp; Audit Fees</account>
+    <account code="580000" account_type="account_type_expenses" internal_type="other">Bank Charges</account>
+    <!-- NEW -->
+    <account code="580100" account_type="account_type_expenses" internal_type="other">Cash Difference Loss</account>
+    <account code="590000" account_type="account_type_other_expense" internal_type="other">Foreign Exchange Loss</account>
+    <account code="595000" account_type="account_type_expenses" internal_type="other">Corporate Income Tax Expense</account>
+</accounts>

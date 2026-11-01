@@ -1,0 +1,172 @@
+{% load humanize %}
+
+<div class="table-toolbar">
+  <h5 class="table-toolbar-title">
+    {% if journal and journal.pk %}Edit Journal{% else %}New Journal{% endif %}
+  </h5>
+</div>
+
+
+<form id="journalForm"
+      hx-post="{% if journal and journal.pk %}{% url 'accounting:journal_edit' journal.id %}{% else %}{% url 'accounting:journal_create' %}{% endif %}"
+      hx-target="#accounting-display"
+      method="post"
+      hx-push-url="true"
+      style="padding:var(--spacing-16); display:flex; flex-direction:column; gap:var(--spacing-16);">
+  {% csrf_token %}
+
+  <div class="inv-header-section" style="border:none;">
+
+    {# Left column - Identity & General Settings #}
+    <div class="inv-header-col">
+      <div class="chart-card-header" style="border-bottom:none; padding:0 0 var(--spacing-8);">
+        <span class="chart-eyebrow">Identity & Details</span>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_name">Name <span style="color:#b91c1c">*</span></label>
+        <div style="flex:1;">
+          {{ form.name }}
+          {% if form.name.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ form.name.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_code">Code <span style="color:#b91c1c">*</span></label>
+        <div style="flex:1;">
+          {{ form.code }}
+          {% if form.code.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ form.code.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_type">Type <span style="color:#b91c1c">*</span></label>
+        <div style="flex:1;">
+          {{ form.type }}
+          {% if form.type.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ form.type.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_currency">Currency</label>
+        <div style="flex:1;">
+          {{ form.currency }}
+          <span class="inv-field-sub">Leave blank to default to company currency.</span>
+          {% if form.currency.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ form.currency.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <span class="inv-field-label">Reconciliation</span>
+        <div style="flex:1; display:flex; align-items:center; gap:var(--spacing-8);">
+          {{ form.requires_outstanding_reconciliation }}
+          <span class="inv-field-sub">
+            Requires statement matching for payment confirmation.
+          </span>
+        </div>
+      </div>
+
+      <div class="inv-field" style="align-items:flex-start;">
+        <label class="inv-field-label" for="id_notes" style="padding-top:var(--spacing-8);">Notes</label>
+        <div style="flex:1;">
+          {{ form.notes }}
+          {% if form.notes.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ form.notes.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    {# Right column - Default Accounts Config #}
+    <div class="inv-header-col">
+      <div class="chart-card-header" style="border-bottom:none; padding:0 0 var(--spacing-8);">
+        <span class="chart-eyebrow">Default Accounts</span>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_default_debit_account">Default Debit Account</label>
+        <div style="flex:1;">
+          {{ form.default_debit_account }}
+          {% if form.default_debit_account.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ form.default_debit_account.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_default_credit_account">Default Credit Account</label>
+        <div style="flex:1;">
+          {{ form.default_credit_account }}
+          {% if form.default_credit_account.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ form.default_credit_account.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_suspense_account">Suspense Account</label>
+        <div style="flex:1;">
+          {{ form.suspense_account }}
+          <span class="inv-field-sub">Temporary account for unmatched statement lines.</span>
+          {% if form.suspense_account.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ form.suspense_account.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_outstanding_receipts_account">Outstanding Receipts</label>
+        <div style="flex:1;">
+          {{ form.outstanding_receipts_account }}
+          <span class="inv-field-sub">Clearing account for incoming payments.</span>
+          {% if form.outstanding_receipts_account.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ form.outstanding_receipts_account.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-field">
+        <label class="inv-field-label" for="id_outstanding_payments_account">Outstanding Payments</label>
+        <div style="flex:1;">
+          {{ form.outstanding_payments_account }}
+          <span class="inv-field-sub">Clearing account for outgoing payments.</span>
+          {% if form.outstanding_payments_account.errors %}
+            <div class="inv-field-sub" style="color:#9b2626;">{{ form.outstanding_payments_account.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  {# ── Actions ── #}
+  <div style="display:flex; justify-content:flex-end; gap:var(--spacing-8);
+              padding-top:var(--spacing-12);
+              border-top:1px solid var(--color-mist);">
+        <button type="button"
+        class="btn btn-secondary"
+        hx-get="{% url 'accounting:journals_list' %}"
+        hx-target="#accounting-display"
+        hx-swap="innerHTML"
+        hx-push-url="true">
+    <i class="bi bi-arrow-left me-1"></i> Back
+</button>
+      
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-check-circle"></i>
+      {% if journal and journal.pk %}Save Changes{% else %}Create Journal{% endif %}
+    </button>
+  </div>
+
+</form>
+

@@ -1,0 +1,29 @@
+{% if swap.header %}
+<hx-partial hx-target="#header-form-wrapper" hx-swap="outerHTML">
+  <div id="header-form-wrapper" class="form-header">
+   {% include 'inventory/pickings/partials/picking_header_form.html' %}
+  </div>
+</hx-partial>
+{% endif %}
+
+{% if swap.items or swap.item_row %}
+<hx-partial hx-target="#items-management-form" hx-swap="innerHTML">
+  {{ formset.management_form }}
+</hx-partial>
+{% endif %}
+
+{% if swap.items %}
+<hx-partial hx-target="#move-items" hx-swap="outerHTML">
+  <tbody id="move-items">
+    {% for form in formset %}
+                        {% include 'inventory/pickings/partials/item_row.html' with form=form %}
+    {% endfor %}
+  </tbody>
+</hx-partial>
+
+{% elif swap.item_row and form %}
+<hx-partial hx-target="#move-row-{{ form.prefix }}" hx-swap="outerHTML">
+                        {% include 'inventory/pickings/partials/item_row.html' with form=form %}
+</hx-partial>
+{% endif %}
+

@@ -1,0 +1,866 @@
+{% load static %}
+{% load humanize %}
+
+<div class="main-wrapper">
+  <div class="invoice-card">
+
+    {# ── Report header ── #}
+    <div class="table-toolbar">
+
+      <h5 class="table-toolbar-title">
+        {{ tittle }}
+        <span class="badge badge--count">
+          As of {{ as_of|date:"d M Y" }}
+        </span>
+      </h5>
+
+      <form
+  data-toolbar
+  class="toolbar"
+  id="report-filters"
+  hx-get="{{ report_url }}"
+  hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
+  hx-target="#accounting-display"
+  hx-replace-url="true"
+>
+
+
+
+  <div class="toolbar-search-wrap">
+
+    <i class="ti ti-search toolbar-search-icon"></i>
+
+    <input
+      type="text"
+      class="toolbar-search"
+      name="search_partner"
+      placeholder="Search partners..."
+      value="{{ request.GET.search_partner }}"
+    >
+
+     <button
+      type="button"
+      class="toolbar-search-clear"
+      aria-label="Clear search"
+    >
+      <i class="ti ti-x"></i>
+    </button>
+
+  </div>
+
+
+          {# ── Date filter ── #}
+        <div class="date-select-wrap">
+          <i class="bi bi-calendar3 date-select-icon"></i>
+
+          <input
+            type="date"
+            class="date-select-input"
+            name="as_of"
+            value="{{ as_of|date:'Y-m-d' }}"
+          >
+        </div>
+
+
+  <button
+    type="button"
+    class="toolbar-clear-btn"
+  >
+    <i
+      class="ti ti-x toolbar-clear-icon"
+      aria-hidden="true"
+    ></i>
+    Clear
+  </button>
+
+</form>
+
+    </div>
+
+
+    {# ── Summary cards ── #}
+    <div class="inv-summary-row">
+
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Current</span>
+
+        <span class="inv-summary-value td-mono">
+          {{ totals.current|floatformat:0|intcomma }}
+        </span>
+
+        <span class="inv-summary-sub">
+          Not yet due
+        </span>
+      </div>
+
+
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">1 – 30 days</span>
+
+        <span
+          class="inv-summary-value td-mono"
+          {% if totals.b_1_30 > 0 %}
+            style="color:#854f0b"
+          {% endif %}
+        >
+          {{ totals.b_1_30|floatformat:2|intcomma }}
+        </span>
+
+        <span class="inv-summary-sub">
+          Slightly overdue
+        </span>
+      </div>
+
+
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">31 – 60 days</span>
+
+        <span
+          class="inv-summary-value td-mono"
+          {% if totals.b_31_60 > 0 %}
+            style="color:#854f0b"
+          {% endif %}
+        >
+          {{ totals.b_31_60|floatformat:2|intcomma }}
+        </span>
+
+        <span class="inv-summary-sub">
+          Overdue
+        </span>
+      </div>
+
+
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">61 – 90 days</span>
+
+        <span
+          class="inv-summary-value td-mono"
+          {% if totals.b_61_90 > 0 %}
+            style="color:#9b2626"
+          {% endif %}
+        >
+          {{ totals.b_61_90|floatformat:2|intcomma }}
+        </span>
+
+        <span class="inv-summary-sub">
+          Seriously overdue
+        </span>
+      </div>
+
+
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">91+ days</span>
+
+        <span
+          class="inv-summary-value td-mono"
+          {% if totals.b_91_plus > 0 %}
+            style="color:#9b2626"
+          {% endif %}
+        >
+          {{ totals.b_91_plus|floatformat:2|intcomma }}
+        </span>
+
+        <span class="inv-summary-sub">
+          Critical
+        </span>
+      </div>
+
+
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">
+          Total Outstanding
+        </span>
+
+        <span class="inv-summary-value td-amount">
+          {{ totals.total|floatformat:2|intcomma }}
+        </span>
+
+        <span class="inv-summary-sub">
+          All buckets
+        </span>
+      </div>
+
+    </div>
+
+
+    {# ── Main table ── #}
+    {% if partners %}
+
+      <div class="inv-table-wrap">
+
+        <table class="inv-table">
+
+          <thead>
+            <tr>
+              <th style="width:220px">Partner</th>
+              <th style="width:120px" class="col-right">Current</th>
+              <th style="width:110px" class="col-right">1–30</th>
+              <th style="width:110px" class="col-right">31–60</th>
+              <th style="width:110px" class="col-right">61–90</th>
+              <th style="width:110px" class="col-right">91+</th>
+              <th style="width:130px" class="col-right">Total</th>
+            </tr>
+          </thead>
+
+
+          <tbody>
+
+            {% for row in partners %}
+
+              {# ── Partner summary row ── #}
+              <tr
+                class="partner-row"
+                style="cursor:pointer;"
+                onclick="toggleAgingDetail({{ row.partner_id }})"
+              >
+
+                <td>
+
+                  <div
+                    style="
+                      display:flex;
+                      align-items:center;
+                      gap:var(--spacing-8);
+                    "
+                  >
+
+                    <i
+                      class="bi bi-chevron-right"
+                      id="chevron-{{ row.partner_id }}"
+                      style="
+                        font-size:10px;
+                        color:var(--color-fog);
+                        transition:transform 0.15s ease;
+                      "
+                    ></i>
+
+                    <span class="td-primary">
+                      {{ row.partner_name }}
+                    </span>
+
+                  </div>
+
+                </td>
+
+
+                <td class="col-right">
+
+                  {% if row.current == 0 %}
+
+                    <span class="td-muted">—</span>
+
+                  {% else %}
+
+                    <span class="td-mono">
+                      {{ row.current|floatformat:0|intcomma }}
+                    </span>
+
+                  {% endif %}
+
+                </td>
+
+
+                <td class="col-right">
+
+                  {% if row.b_1_30 == 0 %}
+
+                    <span class="td-muted">—</span>
+
+                  {% else %}
+
+                    <span
+                      class="td-mono"
+                      style="color:#854f0b;"
+                    >
+                      {{ row.b_1_30|floatformat:0|intcomma }}
+                    </span>
+
+                  {% endif %}
+
+                </td>
+
+
+                <td class="col-right">
+
+                  {% if row.b_31_60 == 0 %}
+
+                    <span class="td-muted">—</span>
+
+                  {% else %}
+
+                    <span
+                      class="td-mono"
+                      style="color:#854f0b;"
+                    >
+                      {{ row.b_31_60|floatformat:0|intcomma }}
+                    </span>
+
+                  {% endif %}
+
+                </td>
+
+
+                <td class="col-right">
+
+                  {% if row.b_61_90 == 0 %}
+
+                    <span class="td-muted">—</span>
+
+                  {% else %}
+
+                    <span
+                      class="td-mono"
+                      style="color:#9b2626;"
+                    >
+                      {{ row.b_61_90|floatformat:0|intcomma }}
+                    </span>
+
+                  {% endif %}
+
+                </td>
+
+
+                <td class="col-right">
+
+                  {% if row.b_91_plus == 0 %}
+
+                    <span class="td-muted">—</span>
+
+                  {% else %}
+
+                    <span
+                      class="td-mono"
+                      style="
+                        color:#9b2626;
+                        font-weight:var(--font-weight-semibold);
+                      "
+                    >
+                      {{ row.b_91_plus|floatformat:0|intcomma }}
+                    </span>
+
+                  {% endif %}
+
+                </td>
+
+
+                <td class="col-right">
+
+                  <span class="td-amount">
+                    {{ row.total|floatformat:0|intcomma }}
+                  </span>
+
+                </td>
+
+              </tr>
+
+
+              {# ── Invoice detail rows ── #}
+              <tr
+                id="detail-{{ row.partner_id }}"
+                style="display:none;"
+              >
+
+                <td
+                  colspan="7"
+                  style="
+                    padding:0;
+                    background:var(--color-paper-white);
+                    border-bottom:1px solid var(--color-mist);
+                  "
+                >
+
+                  <table
+                    style="
+                      width:100%;
+                      border-collapse:collapse;
+                    "
+                  >
+
+                    <tbody>
+
+                      {% for inv in row.invoices %}
+
+                        <tr
+                          style="
+                            border-bottom:1px solid var(--color-mist);
+                          "
+                        >
+
+                          <td
+                            style="
+                              width:220px;
+                              padding:
+                                var(--spacing-8)
+                                var(--spacing-16)
+                                var(--spacing-8)
+                                44px;
+                            "
+                          >
+
+                            <span
+                              class="td-mono"
+                              style="font-size:var(--text-caption);"
+                            >
+                              {{ inv.name }}
+                            </span>
+
+                          </td>
+
+
+                          <td
+                            style="
+                              width:140px;
+                              padding:
+                                var(--spacing-8)
+                                var(--spacing-12);
+                              color:var(--color-slate);
+                              font-size:var(--text-caption);
+                            "
+                          >
+
+                            Due:
+                            {{ inv.due_date|date:"d M Y" }}
+
+                          </td>
+
+
+                          <td
+                            style="
+                              width:100px;
+                              padding:
+                                var(--spacing-8)
+                                var(--spacing-12);
+                            "
+                          >
+
+                            {% if inv.days_overdue == 0 %}
+
+                              <span
+                                class="badge badge--paid"
+                                style="font-size:11px;"
+                              >
+                                <span class="badge-dot"></span>
+                                Current
+                              </span>
+
+                            {% elif inv.days_overdue <= 30 %}
+
+                              <span
+                                class="badge badge--overdue"
+                                style="font-size:11px;"
+                              >
+                                <span class="badge-dot"></span>
+                                {{ inv.days_overdue }}d
+                              </span>
+
+                            {% elif inv.days_overdue <= 60 %}
+
+                              <span
+                                class="badge badge--overdue"
+                                style="font-size:11px;"
+                              >
+                                <span class="badge-dot"></span>
+                                {{ inv.days_overdue }}d
+                              </span>
+
+                            {% else %}
+
+                              <span
+                                class="badge badge--cancelled"
+                                style="font-size:11px;"
+                              >
+                                <span class="badge-dot"></span>
+                                {{ inv.days_overdue }}d
+                              </span>
+
+                            {% endif %}
+
+                          </td>
+
+
+                          {# Empty spacer columns #}
+                          <td colspan="3"></td>
+
+
+                          <td
+                            style="
+                              padding:
+                                var(--spacing-8)
+                                var(--spacing-16);
+                              text-align:right;
+                            "
+                          >
+
+                            <span
+                              class="td-amount"
+                              style="font-size:var(--text-caption);"
+                            >
+                              {{ inv.currency }}
+                              {{ inv.residual|floatformat:0|intcomma }}
+                            </span>
+
+                          </td>
+
+                        </tr>
+
+                      {% endfor %}
+
+                    </tbody>
+
+                  </table>
+
+                </td>
+
+              </tr>
+
+            {% endfor %}
+
+          </tbody>
+
+
+          {# ── Totals footer ── #}
+          <tfoot>
+
+            <tr
+              style="
+                border-top:2px solid var(--color-mist);
+                background:var(--color-paper-white);
+              "
+            >
+
+              <td
+                style="
+                  padding:
+                    var(--spacing-12)
+                    var(--spacing-16);
+                  font-weight:var(--font-weight-semibold);
+                  color:var(--color-deep-indigo);
+                "
+              >
+                Total
+              </td>
+
+
+              <td
+                class="col-right"
+                style="
+                  padding:
+                    var(--spacing-12)
+                    var(--spacing-16);
+                "
+              >
+                <span class="td-amount">
+                  {{ totals.current|floatformat:0|intcomma }}
+                </span>
+              </td>
+
+
+              <td
+                class="col-right"
+                style="
+                  padding:
+                    var(--spacing-12)
+                    var(--spacing-16);
+                "
+              >
+                <span class="td-amount">
+                  {{ totals.b_1_30|floatformat:0|intcomma }}
+                </span>
+              </td>
+
+
+              <td
+                class="col-right"
+                style="
+                  padding:
+                    var(--spacing-12)
+                    var(--spacing-16);
+                "
+              >
+                <span class="td-amount">
+                  {{ totals.b_31_60|floatformat:0|intcomma }}
+                </span>
+              </td>
+
+
+              <td
+                class="col-right"
+                style="
+                  padding:
+                    var(--spacing-12)
+                    var(--spacing-16);
+                "
+              >
+                <span class="td-amount">
+                  {{ totals.b_61_90|floatformat:0|intcomma }}
+                </span>
+              </td>
+
+
+              <td
+                class="col-right"
+                style="
+                  padding:
+                    var(--spacing-12)
+                    var(--spacing-16);
+                "
+              >
+                <span class="td-amount">
+                  {{ totals.b_91_plus|floatformat:0|intcomma }}
+                </span>
+              </td>
+
+
+              <td
+                class="col-right"
+                style="
+                  padding:
+                    var(--spacing-12)
+                    var(--spacing-16);
+                "
+              >
+
+                <span
+                  class="td-amount"
+                  style="font-size:var(--text-body);"
+                >
+                  {{ totals.total|floatformat:0|intcomma }}
+                </span>
+
+              </td>
+
+            </tr>
+
+          </tfoot>
+
+        </table>
+
+
+        {# ── Table footer / pagination ── #}
+        <div
+          style="
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:var(--spacing-16);
+          "
+        >
+
+          <small class="table-footer-count">
+
+            Showing
+            {{ partners.start_index }}–{{ partners.end_index }}
+            of
+            {{ partners.paginator.count }}
+            partner{{ partners.paginator.count|pluralize }}
+
+          </small>
+
+
+          {% if partners.paginator.num_pages > 1 %}
+
+            <div class="table-pagination">
+
+              {# ── First ── #}
+              {% if partners.has_previous %}
+
+                <a
+                  class="page-btn page-btn--arrow"
+                  href="?page=1"
+                  hx-get="{{ report_url }}?page=1"
+                  hx-include="#report-filters"
+                  hx-target="#accounting-display"
+                  hx-swap="innerHTML"
+                  hx-push-url="true"
+                  aria-label="First page"
+                >
+                  <i class="bi bi-chevron-double-left"></i>
+                </a>
+
+              {% else %}
+
+                <span
+                  class="page-btn page-btn--arrow"
+                  aria-disabled="true"
+                >
+                  <i class="bi bi-chevron-double-left"></i>
+                </span>
+
+              {% endif %}
+
+
+              {# ── Previous ── #}
+              {% if partners.has_previous %}
+
+                <a
+                  class="page-btn page-btn--arrow"
+                  href="?page={{ partners.previous_page_number }}"
+                  hx-get="{{ report_url }}?page={{ partners.previous_page_number }}"
+                  hx-include="#report-filters"
+                  hx-target="#accounting-display"
+                  hx-swap="innerHTML"
+                  hx-push-url="true"
+                  aria-label="Previous page"
+                >
+                  <i class="bi bi-chevron-left"></i>
+                </a>
+
+              {% else %}
+
+                <span
+                  class="page-btn page-btn--arrow"
+                  aria-disabled="true"
+                >
+                  <i class="bi bi-chevron-left"></i>
+                </span>
+
+              {% endif %}
+
+
+              {# ── Page numbers ── #}
+              {% for num in partners.paginator.page_range %}
+
+                {% if partners.number == num %}
+
+                  <span
+                    class="page-btn active"
+                    aria-current="page"
+                  >
+                    {{ num }}
+                  </span>
+
+                {% elif num > partners.number|add:'-3' and num < partners.number|add:'3' %}
+
+                  <a
+                    class="page-btn"
+                    href="?page={{ num }}"
+                    hx-get="{{ report_url }}?page={{ num }}"
+                    hx-include="#report-filters"
+                    hx-target="#accounting-display"
+                    hx-swap="innerHTML"
+                    hx-push-url="true"
+                  >
+                    {{ num }}
+                  </a>
+
+                {% endif %}
+
+              {% endfor %}
+
+
+              {# ── Next ── #}
+              {% if partners.has_next %}
+
+                <a
+                  class="page-btn page-btn--arrow"
+                  href="?page={{ partners.next_page_number }}"
+                  hx-get="{{ report_url }}?page={{ partners.next_page_number }}"
+                  hx-include="#report-filters"
+                  hx-target="#accounting-display"
+                  hx-swap="innerHTML"
+                  hx-push-url="true"
+                  aria-label="Next page"
+                >
+                  <i class="bi bi-chevron-right"></i>
+                </a>
+
+              {% else %}
+
+                <span
+                  class="page-btn page-btn--arrow"
+                  aria-disabled="true"
+                >
+                  <i class="bi bi-chevron-right"></i>
+                </span>
+
+              {% endif %}
+
+
+              {# ── Last ── #}
+              {% if partners.has_next %}
+
+                <a
+                  class="page-btn page-btn--arrow"
+                  href="?page={{ partners.paginator.num_pages }}"
+                  hx-get="{{ report_url }}?page={{ partners.paginator.num_pages }}"
+                  hx-include="#report-filters"
+                  hx-target="#accounting-display"
+                  hx-swap="innerHTML"
+                  hx-push-url="true"
+                  aria-label="Last page"
+                >
+                  <i class="bi bi-chevron-double-right"></i>
+                </a>
+
+              {% else %}
+
+                <span
+                  class="page-btn page-btn--arrow"
+                  aria-disabled="true"
+                >
+                  <i class="bi bi-chevron-double-right"></i>
+                </span>
+
+              {% endif %}
+
+            </div>
+
+          {% endif %}
+
+        </div>
+
+      </div>
+
+
+    {% else %}
+
+      <div style="padding:var(--spacing-64) var(--spacing-24);">
+
+        <div class="table-empty">
+
+          <div class="table-empty-icon">
+            <i class="bi bi-check-circle"></i>
+          </div>
+
+          <div class="table-empty-title">
+            All clear
+          </div>
+
+          <div class="table-empty-desc">
+            No outstanding invoices as of
+            {{ as_of|date:"d M Y" }}.
+          </div>
+
+        </div>
+
+      </div>
+
+    {% endif %}
+
+  </div>
+</div>
+
+
+<script>
+function toggleAgingDetail(partnerId) {
+
+  const detail =
+    document.getElementById('detail-' + partnerId);
+
+  const chevron =
+    document.getElementById('chevron-' + partnerId);
+
+  if (!detail || !chevron) {
+    return;
+  }
+
+  const isOpen =
+    detail.style.display !== 'none';
+
+  detail.style.display =
+    isOpen ? 'none' : 'table-row';
+
+  chevron.style.transform =
+    isOpen ? '' : 'rotate(90deg)';
+}
+</script>

@@ -1,0 +1,14 @@
+{% extends 'inventory/base.html' %}
+{% load static %}
+
+{# ============================================================
+   DELIVERY LIST PAGE
+   Depends on: css/purchase_table.css
+   Partial:    delivery/partials/delivery_table.html
+   Scripts:    js/delivery/delivery_search.js
+   ============================================================ #}
+
+{% block content %}
+        {% include 'inventory/pickings/partials/pickings_table.html' %}
+{% endblock %}
+

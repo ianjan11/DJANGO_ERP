@@ -1,0 +1,80 @@
+{% load humanize %}
+
+<div class="main-wrapper">
+  <div class="inv-card">
+    <div class="table-wrap">
+
+      {# ── TOOLBAR ────────────────────────────────────── #}
+      <div class="table-toolbar">
+        <h5 class="table-toolbar-title">
+          Companies
+          <span class="badge badge--count">
+            {{ companies.count }}
+          </span>
+        </h5>
+
+        <button type="button"
+                class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm"
+                hx-get="{% url 'core:get_company_form' %}"
+                hx-target="#settings-display"
+                hx-push-url="true">
+          <i class="bi bi-plus-circle-fill"></i>
+          <span> New </span>
+        </button>
+      </div>
+
+      {# ── DATA TABLE ────────────────────────────────── #}
+      <table class="data-table" data-checkbox-table>
+        <thead>
+          <tr>
+            <th style="text-align: center; padding: 4px 4px 8px 16px; width: 32px;">
+              <input type="checkbox" data-select-all>
+            </th>
+            <th>Name</th>
+            <th>Code</th>
+            <th>Partner</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        
+        <tbody id="table-body">
+          {% for company in companies %}
+            <tr>
+              <td style="text-align: center;">
+                <input type="checkbox"
+                       name="company_ids"
+                       value="{{ company.id }}"
+                       data-select-row
+                       data-row-id="{{ company.id }}">
+              </td>
+              <td class="td-mono">{{ company.name }}</td>
+              <td class="td-mono">{{ company.code }}</td>
+              <td class="td-primary">{{ company.partner }}</td>
+              <td>
+                <button type="button"
+                        class="btn btn-secondary btn-sm"
+                        hx-get="{% url 'core:company_details' company.id %}"
+                        hx-target="#settings-display"
+                        hx-push-url="true"
+                        hx-disable-elt="this">
+                  <i class="ti ti-eye"></i> View
+                </button>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="table-empty">
+                <div class="table-empty-icon">
+                  <i class="bi bi-building"></i>
+                </div>
+                <div class="table-empty-title">No Companies found</div>
+                <div class="table-empty-desc">There are no company records available.</div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>

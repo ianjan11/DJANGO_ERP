@@ -1,0 +1,28 @@
+{% load static %}
+{% load humanize %}
+
+
+<div class="main-wrapper active">
+    <div class="invoice-card">
+        
+        <div style="display: none"
+             hx-get="{% url 'accounting:payment_details' payment.id %}"
+             hx-trigger="payment:refresh from:body"
+             hx-target="#accounting-display"
+             hx-swap="innerHTML"
+        >
+        </div>
+
+        {# ── Action buttons ── #}
+        <div class="action-card">
+            {% include "accounting/payments_templates/partials/action_buttons.html" %}
+        </div>
+        
+        {% include "accounting/payments_templates/partials/payment_form_partial.html" %}
+        
+    </div>
+</div>
+
+
+
+

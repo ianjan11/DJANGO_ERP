@@ -1,0 +1,240 @@
+{% load humanize %}
+
+<div class="main-wrapper">
+    <div class="inv-card">
+
+        {# ── TABLE ────────────────────────────────────── #}
+        <div class="table-wrap">
+
+            {# ── Table Toolbar ────────────────────────────── #}
+            <div class="table-toolbar">
+                <h5 class="table-toolbar-title">
+                    {% if partner_type == 'CUSTOMER' %} Customers
+                    {% elif partner_type == 'VENDOR' %} Vendors
+                    {% else %} Partners
+                    {% endif %}
+
+                    <span class="badge badge--count">
+                        {{ partners.paginator.count }} Partner{{ partners.paginator.count|pluralize }}
+                    </span>
+                </h5>
+                
+                <button type="button"
+        class="btn btn-primary btn-sm"
+        data-bs-toggle="modal"
+        data-bs-target="#partnerModal">
+    <i class="bi bi-plus-lg"></i> New
+</button>
+
+
+
+                <form data-toolbar
+                      class="toolbar"
+                      id="partner-filters"
+                      hx-get="{% if partner_type == 'CUSTOMER' %}{% url 'accounting:customers' %}{% else %}{% url 'accounting:vendors' %}{% endif %}"
+                      hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
+                      hx-target="#accounting-display"
+                      hx-replace-url="true">
+
+                    <input type="hidden"
+                           name="partner_type"
+                           id="partner_type"
+                           value="{{ partner_type }}">
+
+                    <div class="toolbar-search-wrap">
+                        <i class="ti ti-search toolbar-search-icon"></i>
+                        <input type="text" class="toolbar-search"
+                               name="search_partner" placeholder="Search name, phone, email..."
+                               value="{{ request.GET.search_partner }}">
+                        <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+                            <i class="ti ti-x"></i>
+                        </button>
+                    </div>
+
+                    <button type="button" class="toolbar-clear-btn">
+                        <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
+                    </button>
+                </form>
+            </div>
+
+            {# ── Data Table ──────────────────────────────── #}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Contact Info</th>
+                        <th>City / Country</th>
+                        <th>Payment Term</th>
+                        <th class="col-center">Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for partner in partners %}
+                    <tr hx-get="{% url 'accounting:partner_detail' partner.id %}"
+                        hx-target="#accounting-display"
+                        hx-push-url="true">
+
+                        <td class="td-primary">
+                            <strong>{{ partner.name }}</strong>
+                            {% if partner.tax_id %}
+                                <br><small class="text-muted">TIN: {{ partner.tax_id }}</small>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if partner.partner_type == 'CUSTOMER' %}
+                                <span class="badge badge--paid">Customer</span>
+                            {% elif partner.partner_type == 'VENDOR' %}
+                                <span class="badge badge--pending">Vendor</span>
+                            {% elif partner.partner_type == 'BOTH' %}
+                                <span class="badge badge--partial">Customer & Vendor</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if partner.phone %}<div><i class="bi bi-telephone"></i> {{ partner.phone }}</div>{% endif %}
+                            {% if partner.email %}<div><i class="bi bi-envelope"></i> {{ partner.email }}</div>{% endif %}
+                            {% if not partner.phone and not partner.email %}
+                                <span style="color:var(--color-fog);">—</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if partner.city or partner.country %}
+                                {{ partner.city }}{% if partner.city and partner.country %}, {% endif %}{{ partner.country }}
+                            {% else %}
+                                <span style="color:var(--color-fog);">—</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if partner_type == 'VENDOR' and partner.supplier_payment_term %}
+                                {{ partner.supplier_payment_term.name }}
+                            {% elif partner.payment_term %}
+                                {{ partner.payment_term.name }}
+                            {% else %}
+                                <span style="color:var(--color-fog);">—</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="col-center">
+                            {% if partner.is_active %}
+                                <span class="badge badge--paid"><i class="bi bi-check-circle-fill"></i> Active</span>
+                            {% else %}
+                                <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="table-empty">
+                            <div class="table-empty-icon">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div class="table-empty-title">No partners found</div>
+                            <div class="table-empty-desc">There are no partners matching your search criteria.</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {# ── Pagination ────────────────────────────────── #}
+            {% if partners.paginator.num_pages > 1 %}
+            <div class="table-footer">
+
+                <small class="table-footer-count">
+                    Showing {{ partners.start_index }}–{{ partners.end_index }}
+                    of {{ partners.paginator.count }} partner{{ partners.paginator.count|pluralize }}
+                </small>
+
+                <div class="table-pagination" hx-include="#partner-filters">
+
+                    {# First #}
+                    {% if partners.has_previous %}
+                    <a class="page-btn page-btn--arrow"
+                       hx-get="?page=1"
+                       hx-target="#accounting-display"
+                       hx-swap="innerHTML"
+                       hx-push-url="true">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                    {% else %}
+                    <span class="page-btn page-btn--arrow" aria-disabled="true">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </span>
+                    {% endif %}
+
+                    {# Prev #}
+                    {% if partners.has_previous %}
+                    <a class="page-btn page-btn--arrow"
+                       hx-get="?page={{ partners.previous_page_number }}"
+                       hx-target="#accounting-display"
+                       hx-swap="innerHTML"
+                       hx-push-url="true">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                    {% else %}
+                    <span class="page-btn page-btn--arrow" aria-disabled="true">
+                        <i class="bi bi-chevron-left"></i>
+                    </span>
+                    {% endif %}
+
+                    {# Page numbers #}
+                    {% for num in partners.paginator.page_range %}
+                        {% if partners.number == num %}
+                            <span class="page-btn active">{{ num }}</span>
+                        {% elif num > partners.number|add:'-3' and num < partners.number|add:'3' %}
+                            <a class="page-btn"
+                               hx-get="?page={{ num }}"
+                               hx-target="#accounting-display"
+                               hx-swap="innerHTML"
+                               hx-push-url="true">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {# Next #}
+                    {% if partners.has_next %}
+                    <a class="page-btn page-btn--arrow"
+                       hx-get="?page={{ partners.next_page_number }}"
+                       hx-target="#accounting-display"
+                       hx-swap="innerHTML"
+                       hx-push-url="true">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                    {% else %}
+                    <span class="page-btn page-btn--arrow" aria-disabled="true">
+                        <i class="bi bi-chevron-right"></i>
+                    </span>
+                    {% endif %}
+
+                    {# Last #}
+                    {% if partners.has_next %}
+                    <a class="page-btn page-btn--arrow"
+                       hx-get="?page={{ partners.paginator.num_pages }}"
+                       hx-target="#accounting-display"
+                       hx-swap="innerHTML"
+                       hx-push-url="true">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                    {% else %}
+                    <span class="page-btn page-btn--arrow" aria-disabled="true">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </span>
+                    {% endif %}
+
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+            {% include "accounting/partners/partials/partners_modal_form.html" %}
+
+
+</div>
+
+

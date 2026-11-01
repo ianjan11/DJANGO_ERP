@@ -1,0 +1,93 @@
+<div class="form-card">
+  <!-- Header -->
+  <div class="mb-4">
+    <h1>Edit User Profile</h1>
+    <p class="text-muted small">Managing settings for <strong>{{ membership.user.email }}</strong></p>
+  </div>
+
+  <form method="post"
+        hx-post="{% url 'core:user_profile_update' membership.id %}"
+        hx-target="#settings-display"
+        novalidate>
+    {% csrf_token %}
+
+    {# Non-field errors #}
+    {% if profile_form.non_field_errors or membership_form.non_field_errors %}
+      <div class="form-errors alert alert-danger mb-3">
+        {% for error in profile_form.non_field_errors %}
+          <p class="error mb-0">{{ error }}</p>
+        {% endfor %}
+        {% for error in membership_form.non_field_errors %}
+          <p class="error mb-0">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="form-header-content">
+      <h6 class="text-uppercase text-muted fw-bold mb-3 small">Preferences</h6>
+      
+      <!-- Default Location Field -->
+      <div class="form-group mb-3 {% if profile_form.default_location.errors %}has-error{% endif %}">
+        {{ profile_form.default_location.label_tag }}
+        {{ profile_form.default_location }}
+        {% if profile_form.default_location.help_text %}
+          <small class="help-text text-muted d-block mt-1">{{ profile_form.default_location.help_text|safe }}</small>
+        {% endif %}
+        {% for error in profile_form.default_location.errors %}
+          <p class="error text-danger small mt-1 mb-0">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <!-- Default Currency Field -->
+      <div class="form-group mb-3 {% if profile_form.default_currency.errors %}has-error{% endif %}">
+        {{ profile_form.default_currency.label_tag }}
+        {{ profile_form.default_currency }}
+        {% if profile_form.default_currency.help_text %}
+          <small class="help-text text-muted d-block mt-1">{{ profile_form.default_currency.help_text|safe }}</small>
+        {% endif %}
+        {% for error in profile_form.default_currency.errors %}
+          <p class="error text-danger small mt-1 mb-0">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <!-- Default Payment Term Field -->
+      <div class="form-group mb-3 {% if profile_form.default_payment_term.errors %}has-error{% endif %}">
+        {{ profile_form.default_payment_term.label_tag }}
+        {{ profile_form.default_payment_term }}
+        {% if profile_form.default_payment_term.help_text %}
+          <small class="help-text text-muted d-block mt-1">{{ profile_form.default_payment_term.help_text|safe }}</small>
+        {% endif %}
+        {% for error in profile_form.default_payment_term.errors %}
+          <p class="error text-danger small mt-1 mb-0">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <hr class="my-4">
+
+      <h6 class="text-uppercase text-muted fw-bold mb-3 small">Membership Details</h6>
+      
+      <!-- Company Field -->
+      <div class="form-group mb-3 {% if membership_form.company.errors %}has-error{% endif %}">
+        {{ membership_form.company.label_tag }}
+        {{ membership_form.company }}
+        {% if membership_form.company.help_text %}
+          <small class="help-text text-muted d-block mt-1">{{ membership_form.company.help_text|safe }}</small>
+        {% endif %}
+        {% for error in membership_form.company.errors %}
+          <p class="error text-danger small mt-1 mb-0">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="d-flex gap-2 mt-4">
+      <button type="submit" class="btn btn-primary flex-grow-1">Save Changes</button>
+      <a href="{% url 'core:tenant_user_list' %}"
+         class="btn btn-outline-secondary"
+         hx-get="{% url 'core:tenant_user_list' %}"
+         hx-target="#settings-display"
+         hx-push-url="true">Cancel</a>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,18 @@
+{% extends 'purchases/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+{# ── INVOICE TABLE (partial) ───────────────────── #}
+        {% include 'purchases/partials/purchases_table.html' %}
+{% endblock %}
+
+
+{% block scripts %}
+
+
+{{block.super}}
+{% endblock %}
+
+

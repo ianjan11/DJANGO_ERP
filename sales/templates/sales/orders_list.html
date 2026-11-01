@@ -1,0 +1,18 @@
+{% extends 'sales/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+{# ── INVOICE TABLE (partial) ───────────────────── #}
+        {% include 'sales/partials/orders_table.html' %}
+{% endblock %}
+
+
+{% block scripts %}
+
+
+{{block.super}}
+{% endblock %}
+
+

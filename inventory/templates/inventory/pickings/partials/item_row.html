@@ -1,0 +1,88 @@
+<tr id="move-row-{{ form.prefix }}"
+    class="move-row {% if form.errors %}table-danger{% endif %}"
+    hx-post="{% url 'inventory:picking_update' %}"
+    hx-trigger="save-row, change[moveRowReady(event, false)], keyup[moveRowReady(event, true)] changed delay:600ms"
+    hx-include="#move-row-{{ form.prefix }}, .picking-header-field"
+    hx-vals='{"row_prefix": "{{ form.prefix }}"}'
+    hx-swap="none"
+    hx-sync="closest form:queue last"
+    data-row-type="stock_move"
+>
+    {# ── HIDDEN FIELDS ── #}
+    <td style="display:none">
+    {{ form.id }}
+    </td>
+
+    {# ── PRODUCT ── #}
+    <td class="td-editable">
+        {{ form.product }}
+        {% if form.product.errors %}
+            <div class="invalid-feedback d-block">{{ form.product.errors.0 }}</div>
+        {% endif %}
+      
+    </td>
+    
+        {# ── DEMAND ── #}
+    {# ── DEMAND ── #}
+   <td class="td-editable">
+    {% if form.instance.sale_line.quantity %}
+        {{ form.instance.sale_line.quantity }}
+    {% elif form.instance.purchase_line.quantity %}
+        {{ form.instance.purchase_line.quantity }}
+    {% elif form.instance.account_move_line.quantity %}
+        {{ form.instance.account_move_line.quantity }}
+    {% else %}
+        {{ form.instance.quantity }}
+    {% endif %}
+   </td>
+    
+
+    {# ── QUANTITY ── #}
+    <td class="td-editable">
+        {{ form.quantity }}
+        {% if form.quantity.errors %}
+            <div class="invalid-feedback d-block mt-1">{{ form.quantity.errors.0 }}</div>
+        {% endif %}
+    </td>
+
+    {# ── UOM ── #}
+    <td class="td-editable">
+        {{ form.product_uom }}
+        {% if form.product_uom.errors %}
+            <div class="invalid-feedback d-block">{{ form.product_uom.errors.0 }}</div>
+        {% endif %}
+        
+    </td>
+
+    {# ── SOURCE LOCATION ── #}
+    <td class="td-editable">
+        {{ form.source_location }}
+        {% if form.source_location.errors %}
+            <div class="invalid-feedback d-block">{{ form.source_location.errors.0 }}</div>
+        {% endif %}
+    </td>
+
+    {# ── DESTINATION LOCATION ── #}
+    <td class="td-editable">
+        {{ form.dest_location }}
+        {% if form.dest_location.errors %}
+            <div class="invalid-feedback d-block">{{ form.dest_location.errors.0 }}</div>
+        {% endif %}
+    </td>
+
+    {# ── ACTIONS ── #}
+    <td class="col-left">
+        <button
+            type="button"
+            class="page-btn text-danger"
+            hx-post="{% url 'inventory:picking_update' %}"
+            hx-include="#move-row-{{ form.prefix }}"
+            hx-vals='{"row_prefix": "{{ form.prefix }}", "{{ form.prefix }}-DELETE": "on"}'
+            hx-swap="none"
+            hx-confirm="Remove this item?"
+            aria-label="Remove item"
+        >
+            <i class="bi bi-trash"></i>
+        </button>
+    </td>
+</tr>

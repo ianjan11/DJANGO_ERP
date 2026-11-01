@@ -1,0 +1,37 @@
+<div class="main-wrapper">
+  
+  <!-- Action Bar / Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Warehouses</h4>
+    <button class="btn btn-primary btn-sm"
+            hx-get="{% url 'inventory:warehouse_create_form' %}"
+            hx-target="#inventory-display"
+            hx-push-url="true">
+      <i class="bi bi-plus-lg"></i> New Warehouse
+    </button>
+  </div>
+
+  <!-- Warehouse Cards Container -->
+ <div class="inv-card">
+  {% for warehouse in warehouses %}
+    <div
+      class="invoice-card mb-3 cursor-pointer"
+      hx-get="{% url 'inventory:warehouse_detail' warehouse.id %}"
+      hx-target="#inventory-display"
+      hx-swap="innerHTML"
+      role="button"
+    >
+      <div class="card-body">
+        <h5>{{ warehouse.name }}</h5>
+        <p class="text-muted mb-2">Code: {{ warehouse.code }}</p>
+        <span class="badge bg-primary">{{ warehouse.locations_count }} Active Locations</span>
+      </div>
+    </div>
+  {% empty %}
+    <div class="empty-state text-center p-4">
+      <p class="text-muted mb-0">No active warehouses found.</p>
+    </div>
+  {% endfor %}
+</div>
+
+</div>

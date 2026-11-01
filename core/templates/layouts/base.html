@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="htmx-config" content='{"responseHandling": [{"code":"400", "swap": true}]}'>
+    {% load static %}
+    {% load bootstrap5 %}
+    {% load group_tags %}
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+
+    <!-- App CSS -->
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/notification.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/p.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/components/outstanding_credits.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/modal.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/components/forms.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/components/buttons.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/components/cards.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/components/invoice.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/components/table.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/components/inv_tables.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/components/toolbar.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/components/confirmation.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/components/badges.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/components/htmx.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/components/inventory_dashboard.css' %}?v=1">
+        <link rel="stylesheet" href="{% static 'css/components/stock.css' %}?v=1">
+
+
+
+
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="body" hx-headers:inherited='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+         {% include "layouts/navbar.html" %}
+
+         
+   {% block app_wrapper %}
+
+   {% block content %}
+   {% endblock %}
+   {% endblock %}
+
+{# ── CONFIRMATION BOX ─────────────────────────── #}
+<div id="confirmBox" class="confirmation-card" style="display:none; position:fixed; top:40%; left:50%; transform:translate(-50%,-50%); z-index:1050;">
+
+  <div class="confirm-icon">
+    <i class="bi bi-exclamation-triangle"></i>
+  </div>
+
+  <div>
+    <p class="confirm-title">Are you sure?</p>
+    <p class="confirm-message" id="confirmMessage">This action cannot be undone.</p>
+  </div>
+
+  <div class="confirm-actions">
+    <button id="cancelConfirm" class="confirm-btn confirm-btn--cancel">Cancel</button>
+    <button id="acceptConfirm" class="confirm-btn confirm-btn--danger">Confirm</button>
+  </div>
+
+</div>
+
+    <!-- Notifications -->
+   <div id="notification-container" class="mb-3 " ></div>
+
+
+
+    <!-- Core JS -->
+         <script src="https://unpkg.com/htmx.org@4.0.0/dist/htmx.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+    <!-- App JS -->
+    <script src="{% static 'js/general/UI/notification.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/UI/confirmation.js' %}"></script>
+       <script src="{% static 'js/general/UI/htmx-ui.js' %}"></script>
+          <script src="{% static 'js/general/form_errors.js' %}"></script>
+
+
+    <script>
+  // Allow HTMX to swap server-rendered validation HTML returned with 400/422.
+  // Opt-in: only for requests made from inside an element with data-swap-on-error.
+  document.addEventListener('htmx:beforeSwap', (e) => {
+    const { xhr, elt } = e.detail;
+    if ((xhr.status === 400 || xhr.status === 422) && elt.closest('[data-swap-on-error]')) {
+      e.detail.shouldSwap = true;
+      e.detail.isError = false;
+    }
+  });
+</script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                        notify("{{ message|escapejs }}", "error");
+                    {% elif message.tags == 'success' %}
+                        notify("{{ message|escapejs }}", "success");
+                    {% else %}
+                        notify("{{ message|escapejs }}", "info");
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        });
+    </script>
+
+
+
+
+    {% block scripts %}
+        {{ block.super }}
+         <script src="{% static 'js/general/select2.js' %}?v={{ now|date:'U' }}"></script>
+
+    {% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,140 @@
+{# templates/partials/_navbar.html #}
+<nav class="app-navbar" id="app-navbar">
+  <div class="nav-group">
+    {# ── Home Link ── #}
+    <a href="{% url 'users:home' %}"
+       class="app-nav-link"
+       data-nav-url="{% url 'users:home' %}"
+       hx-get="{% url 'users:home' %}"
+       hx-target="body"
+       hx-push-url="true">
+      <i class="bi bi-house"></i> <span>Home</span>
+    </a>
+
+    {% if nav_items %}<div class="nav-divider"></div>{% endif %}
+
+    {# ── Dynamic Navigation Items ── #}
+    {% for item in nav_items %}
+      {% if item.sections %}
+        {# ── Dropdown / Mega Menu Item ── #}
+        <div class="nav-dropdown-wrap">
+          <button type="button"
+                  class="app-nav-link nav-dropdown-btn{% if item.is_active %} selected{% endif %}"
+                  data-dropdown="{{ item.key }}"
+                  aria-expanded="false">
+            {% if item.icon %}<i class="bi bi-{{ item.icon }}"></i>{% endif %}
+            <span>{{ item.label }}</span>
+            <i class="bi bi-chevron-down ms-1 text-xs"></i>
+          </button>
+
+          <div class="nav-dropdown" id="dropdown-{{ item.key }}">
+            <div class="nav-dropdown-menu">
+              {% for section in item.sections %}
+                <div class="nav-dropdown-section">
+                  {% if section.label %}
+                    <div class="nav-dropdown-header">{{ section.label }}</div>
+                  {% endif %}
+                  {% for sub in section.items %}
+                    <a href="{{ sub.href }}"
+                       class="nav-dd-link{% if sub.is_active %} selected{% endif %}"
+                       data-nav-url="{{ sub.href }}"
+                       hx-get="{{ sub.href }}"
+                       hx-target="{{ sub.target }}"
+                       hx-push-url="true">
+                      {% if sub.icon %}<i class="bi bi-{{ sub.icon }}"></i>{% endif %}
+                      <span>{{ sub.label }}</span>
+                    </a>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+      {% else %}
+        {# ── Standard Single Link ── #}
+        <a href="{{ item.href }}"
+           class="app-nav-link{% if item.css_class %} {{ item.css_class }}{% endif %}{% if item.is_active %} selected{% endif %}"
+           data-nav-url="{{ item.href }}"
+           {% if item.resolved_data_urls %}
+             {% for key, val in item.resolved_data_urls.items %}
+               data-{{ key }}="{{ val }}"
+             {% endfor %}
+           {% endif %}
+           hx-get="{{ item.href }}"
+           hx-target="{{ item.target }}"
+           hx-push-url="true">
+          {% if item.icon %}<i class="bi bi-{{ item.icon }}"></i>{% endif %}
+          <span>{{ item.label }}</span>
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  {# ── User Pill & Logout ── #}
+  <div class="nav-group">
+    <div class="app-user-pill">
+      <div class="app-user-avatar">{{ request.user.username|first|upper }}</div>
+      <span>{{ request.user.username }}</span>
+    </div>
+    <form method="POST" action="{% url 'users:logout' %}" style="margin:0">
+      {% csrf_token %}
+      <button type="submit" class="app-logout-btn">
+        <i class="bi bi-box-arrow-right"></i> <span>Log Out</span>
+      </button>
+    </form>
+  </div>
+</nav>
+
+<script>
+// static/js/navbar.js — load once in base.html
+(function () {
+  if (window.__navbarBound) return;
+  window.__navbarBound = true;
+
+  const closeAll = () => {
+    document.querySelectorAll("[data-dropdown].open, .nav-dropdown.open").forEach(el => {
+      el.classList.remove("open");
+      if (el.matches("[data-dropdown]")) el.setAttribute("aria-expanded", "false");
+    });
+  };
+
+  // Open / toggle / click-outside in one event handler
+  document.addEventListener("click", e => {
+    const btn = e.target.closest("[data-dropdown]");
+    if (!btn) return closeAll();
+
+    const dd = document.getElementById("dropdown-" + btn.dataset.dropdown);
+    const wasOpen = dd && dd.classList.contains("open");
+    closeAll();
+    if (dd && !wasOpen) {
+      dd.classList.add("open");
+      btn.classList.add("open");
+      btn.setAttribute("aria-expanded", "true");
+    }
+  });
+
+  document.addEventListener("keydown", e => e.key === "Escape" && closeAll());
+  document.addEventListener("htmx:afterRequest", closeAll);
+
+  // Active state synchronization for links and parent dropdown buttons
+  function syncNav() {
+    const path = location.pathname;
+    const links = [...document.querySelectorAll("#app-navbar [data-nav-url]")];
+    const best = links
+      .filter(l => path.startsWith(l.dataset.navUrl))
+      .sort((a, b) => b.dataset.navUrl.length - a.dataset.navUrl.length)[0];
+
+    links.forEach(l => l.classList.toggle("selected", l === best));
+    document.querySelectorAll("#app-navbar .nav-dropdown-wrap").forEach(wrap => {
+      const hasActive = !!wrap.querySelector(".nav-dd-link.selected");
+      const btn = wrap.querySelector("[data-dropdown]");
+      if (btn) btn.classList.toggle("selected", hasActive);
+    });
+  }
+
+  ["DOMContentLoaded", "htmx:pushedIntoHistory", "htmx:historyRestore", "htmx:afterSettle"]
+    .forEach(evt => document.addEventListener(evt, syncNav));
+  window.addEventListener("popstate", syncNav);
+})();
+</script>

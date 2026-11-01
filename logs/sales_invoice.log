@@ -1,0 +1,216 @@
+[INFO] 2026-11-01 12:38:48,184 sales.invoice handle_order_created: Invoice created handled: 1
+[INFO] 2026-11-01 12:38:52,069 sales.invoice sales_order_update: {'doc_type': 'sales_order', 'header': {'status': 'DRAFT', 'payment_term': '1', 'partner': '1', 'fulfillment_location': '1', 'issue_date': '2026-11-01', 'narration': None, 'ref': None, 'currency': '1'}, 'items': [], 'meta': {'source': 'htmx', 'row_prefix': None, 'active_prefix': None, 'row_mode': False, 'total_forms': 0}, 'updatable_fields': {'partner': <class 'core.models.partner.Partner'>, 'payment_term': <class 'accounting.models.payment_term.PaymentTerm'>, 'fulfillment_location': <class 'inventory.models.warehouse.Warehouse'>, 'currency': <class 'core.models.currency.Currency'>, 'issue_date': 'date', 'status': <class 'str'>, 'narration': <class 'str'>, 'ref': <class 'str'>}}
+[DEBUG] 2026-11-01 12:38:52,161 sales.invoice apply_state: After sync — errors: {} | row_errors: {}
+[DEBUG] 2026-11-01 12:38:52,175 sales.invoice apply_state: Snapshot diff: {'header_changed': True, 'rows_changed': False, 'state_changed': False, 'amounts_changed': False, 'any_changed': True, 'changes': {'state': {'before': 'DRAFT', 'after': 'DRAFT', 'changed': False}, 'totals': {'before': {'subtotal': Decimal('0.00'), 'total_tax': Decimal('0.00'), 'total': Decimal('0.00'), 'total_debit': Decimal('0.00'), 'total_credit': Decimal('0.00'), 'balance': Decimal('0.00'), 'is_balanced': True, 'lines': []}, 'after': {'subtotal': Decimal('0.00'), 'total_tax': Decimal('0.00'), 'total': Decimal('0.00'), 'total_debit': Decimal('0.00'), 'total_credit': Decimal('0.00'), 'balance': Decimal('0.00'), 'is_balanced': True, 'lines': []}, 'changed': False}, 'header': {'partner': {'old_value': None, 'new_value': <Partner: JANI GENERAL ENTERPRISES>}}, 'rows': {'created': [], 'updated': [], 'deleted': [], 'reordered': []}}}
+[DEBUG] 2026-11-01 12:38:52,176 sales.invoice apply_state: rows_changed=False row_changes={'created': [], 'updated': [], 'deleted': [], 'reordered': []}
+[INFO] 2026-11-01 12:38:52,176 sales.invoice apply_state: ui plan: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-01 12:38:52,183 sales.invoice apply_state: Pre-save — errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:38:52,189 sales.invoice apply_state: Document type=sales_order pk=1 saved successfully.
+[DEBUG] 2026-11-01 12:39:07,204 sales.invoice apply_state: After sync — errors: {} | row_errors: {}
+[DEBUG] 2026-11-01 12:39:07,211 sales.invoice apply_state: Snapshot diff: {'header_changed': True, 'rows_changed': False, 'state_changed': False, 'amounts_changed': False, 'any_changed': True, 'changes': {'state': {'before': 'draft', 'after': 'draft', 'changed': False}, 'totals': {'before': {'subtotal': Decimal('0.00'), 'total_tax': Decimal('0.00'), 'total': Decimal('0.00'), 'total_debit': Decimal('0.00'), 'total_credit': Decimal('0.00'), 'balance': Decimal('0.00'), 'is_balanced': True, 'lines': []}, 'after': {'subtotal': Decimal('0.00'), 'total_tax': Decimal('0.00'), 'total': Decimal('0.00'), 'total_debit': Decimal('0.00'), 'total_credit': Decimal('0.00'), 'balance': Decimal('0.00'), 'is_balanced': True, 'lines': []}, 'changed': False}, 'header': {'partner': {'old_value': None, 'new_value': <Partner: JANI GENERAL ENTERPRISES>}}, 'rows': {'created': [], 'updated': [], 'deleted': [], 'reordered': []}}}
+[DEBUG] 2026-11-01 12:39:07,211 sales.invoice apply_state: rows_changed=False row_changes={'created': [], 'updated': [], 'deleted': [], 'reordered': []}
+[INFO] 2026-11-01 12:39:07,212 sales.invoice apply_state: ui plan: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-01 12:39:07,215 sales.invoice apply_state: Pre-save — errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:39:07,220 sales.invoice apply_state: Document type=sales_invoice pk=1 saved successfully.
+[DEBUG] 2026-11-01 12:39:28,866 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:39:28,866 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:39:28,887 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-01 12:39:28,935 sales.invoice apply_state: StockPicking pk=1 saved successfully.
+[DEBUG] 2026-11-01 12:47:43,220 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [1], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:47:43,221 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:47:43,251 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:47:43,301 sales.invoice apply_state: StockPicking pk=1 saved successfully.
+[DEBUG] 2026-11-01 12:47:48,333 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [2], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:47:48,333 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:47:48,348 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:47:48,383 sales.invoice apply_state: StockPicking pk=1 saved successfully.
+[DEBUG] 2026-11-01 12:47:56,820 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [], 'deleted': [2]}
+[DEBUG] 2026-11-01 12:47:56,821 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:47:56,853 sales.invoice apply_state: UI plan built: {'swap': ['header', 'items'], 'triggers': []}
+[INFO] 2026-11-01 12:47:56,905 sales.invoice apply_state: StockPicking pk=1 saved successfully.
+[DEBUG] 2026-11-01 12:47:59,603 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 1, 'changes': {'product_uom_id': {'old': 1, 'new': 3}}}], 'deleted': []}
+[DEBUG] 2026-11-01 12:47:59,603 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:47:59,615 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:47:59,656 sales.invoice apply_state: StockPicking pk=1 saved successfully.
+[DEBUG] 2026-11-01 12:48:12,780 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 1, 'changes': {'quantity': {'old': Decimal('1.000000'), 'new': Decimal('10.000000')}}}], 'deleted': []}
+[DEBUG] 2026-11-01 12:48:12,781 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:48:12,791 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:48:12,812 sales.invoice apply_state: StockPicking pk=1 saved successfully.
+[DEBUG] 2026-11-01 12:49:05,925 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:49:05,926 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:49:05,935 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-01 12:49:05,978 sales.invoice apply_state: StockPicking pk=2 saved successfully.
+[DEBUG] 2026-11-01 12:49:08,314 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [3], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:49:08,314 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:49:08,329 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:49:08,355 sales.invoice apply_state: StockPicking pk=2 saved successfully.
+[DEBUG] 2026-11-01 12:49:11,967 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [4], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:49:11,967 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:49:11,982 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:49:12,010 sales.invoice apply_state: StockPicking pk=2 saved successfully.
+[DEBUG] 2026-11-01 12:49:17,766 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [], 'deleted': [4]}
+[DEBUG] 2026-11-01 12:49:17,766 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:49:17,792 sales.invoice apply_state: UI plan built: {'swap': ['header', 'items'], 'triggers': []}
+[INFO] 2026-11-01 12:49:17,830 sales.invoice apply_state: StockPicking pk=2 saved successfully.
+[DEBUG] 2026-11-01 12:49:23,053 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 3, 'changes': {'quantity': {'old': Decimal('1.000000'), 'new': Decimal('3.000000')}}}], 'deleted': []}
+[DEBUG] 2026-11-01 12:49:23,054 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:49:23,078 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:49:23,124 sales.invoice apply_state: StockPicking pk=2 saved successfully.
+[DEBUG] 2026-11-01 12:49:24,984 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 3, 'changes': {'product_uom_id': {'old': 1, 'new': 3}}}], 'deleted': []}
+[DEBUG] 2026-11-01 12:49:24,985 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:49:25,015 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:49:25,069 sales.invoice apply_state: StockPicking pk=2 saved successfully.
+[DEBUG] 2026-11-01 12:49:29,448 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [5], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:49:29,448 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:49:29,486 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:49:29,532 sales.invoice apply_state: StockPicking pk=2 saved successfully.
+[DEBUG] 2026-11-01 12:49:33,368 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 5, 'changes': {'product_uom_id': {'old': 1, 'new': 3}}}], 'deleted': []}
+[DEBUG] 2026-11-01 12:49:33,368 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:49:33,383 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:49:33,418 sales.invoice apply_state: StockPicking pk=2 saved successfully.
+[DEBUG] 2026-11-01 12:49:37,153 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [], 'deleted': [5]}
+[DEBUG] 2026-11-01 12:49:37,154 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:49:37,166 sales.invoice apply_state: UI plan built: {'swap': ['items'], 'triggers': []}
+[INFO] 2026-11-01 12:49:37,215 sales.invoice apply_state: StockPicking pk=2 saved successfully.
+[DEBUG] 2026-11-01 12:51:09,145 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:51:09,145 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:51:09,158 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-01 12:51:09,193 sales.invoice apply_state: StockPicking pk=3 saved successfully.
+[DEBUG] 2026-11-01 12:51:12,547 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [6], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:51:12,548 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:51:12,562 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:51:12,607 sales.invoice apply_state: StockPicking pk=3 saved successfully.
+[DEBUG] 2026-11-01 12:51:16,951 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 6, 'changes': {'quantity': {'old': Decimal('1.000000'), 'new': Decimal('10.000000')}}}], 'deleted': []}
+[DEBUG] 2026-11-01 12:51:16,952 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:51:16,967 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:51:16,997 sales.invoice apply_state: StockPicking pk=3 saved successfully.
+[DEBUG] 2026-11-01 12:52:08,222 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:52:08,223 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:52:08,231 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-01 12:52:08,251 sales.invoice apply_state: StockPicking pk=4 saved successfully.
+[DEBUG] 2026-11-01 12:52:26,915 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [7], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:52:26,915 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:52:26,922 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:52:26,938 sales.invoice apply_state: StockPicking pk=4 saved successfully.
+[DEBUG] 2026-11-01 12:52:27,135 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [8], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:52:27,136 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:52:27,156 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:52:27,191 sales.invoice apply_state: StockPicking pk=4 saved successfully.
+[DEBUG] 2026-11-01 12:53:12,305 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 7, 'changes': {'product_uom_id': {'old': 1, 'new': 3}}}], 'deleted': []}
+[DEBUG] 2026-11-01 12:53:12,306 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:53:12,340 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:53:12,383 sales.invoice apply_state: StockPicking pk=4 saved successfully.
+[DEBUG] 2026-11-01 12:53:14,929 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 7, 'changes': {'quantity': {'old': Decimal('1.000000'), 'new': Decimal('10.000000')}}}], 'deleted': []}
+[DEBUG] 2026-11-01 12:53:14,929 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:53:14,943 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:53:14,970 sales.invoice apply_state: StockPicking pk=4 saved successfully.
+[DEBUG] 2026-11-01 12:56:46,338 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:56:46,338 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:56:46,345 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-01 12:56:46,362 sales.invoice apply_state: StockPicking pk=6 saved successfully.
+[DEBUG] 2026-11-01 12:56:49,269 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [10], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 12:56:49,269 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:56:49,299 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:56:49,327 sales.invoice apply_state: StockPicking pk=6 saved successfully.
+[DEBUG] 2026-11-01 12:56:54,706 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 10, 'changes': {'quantity': {'old': Decimal('1.000000'), 'new': Decimal('100.000000')}}}], 'deleted': []}
+[DEBUG] 2026-11-01 12:56:54,707 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 12:56:54,716 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 12:56:54,733 sales.invoice apply_state: StockPicking pk=6 saved successfully.
+[DEBUG] 2026-11-01 13:00:01,136 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 13:00:01,137 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:00:01,155 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-01 13:00:01,200 sales.invoice apply_state: StockPicking pk=7 saved successfully.
+[DEBUG] 2026-11-01 13:00:04,698 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [11], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 13:00:04,698 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:00:04,709 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:00:04,731 sales.invoice apply_state: StockPicking pk=7 saved successfully.
+[DEBUG] 2026-11-01 13:00:10,824 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 11, 'changes': {'quantity': {'old': Decimal('1.000000'), 'new': Decimal('10.000000')}}}], 'deleted': []}
+[DEBUG] 2026-11-01 13:00:10,824 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:00:10,849 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:00:10,896 sales.invoice apply_state: StockPicking pk=7 saved successfully.
+[DEBUG] 2026-11-01 13:00:13,414 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 11, 'changes': {'product_uom_id': {'old': 1, 'new': 3}}}], 'deleted': []}
+[DEBUG] 2026-11-01 13:00:13,414 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:00:13,425 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:00:13,446 sales.invoice apply_state: StockPicking pk=7 saved successfully.
+[DEBUG] 2026-11-01 13:01:19,773 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 13:01:19,773 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:01:19,785 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-01 13:01:19,823 sales.invoice apply_state: StockPicking pk=8 saved successfully.
+[DEBUG] 2026-11-01 13:01:23,056 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [12], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 13:01:23,057 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:01:23,070 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:01:23,093 sales.invoice apply_state: StockPicking pk=8 saved successfully.
+[DEBUG] 2026-11-01 13:01:26,828 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 12, 'changes': {'quantity': {'old': Decimal('1.000000'), 'new': Decimal('10.000000')}}}], 'deleted': []}
+[DEBUG] 2026-11-01 13:01:26,828 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:01:26,840 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:01:26,861 sales.invoice apply_state: StockPicking pk=8 saved successfully.
+[DEBUG] 2026-11-01 13:01:30,531 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 12, 'changes': {'product_uom_id': {'old': 1, 'new': 3}}}], 'deleted': []}
+[DEBUG] 2026-11-01 13:01:30,531 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:01:30,562 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:01:30,593 sales.invoice apply_state: StockPicking pk=8 saved successfully.
+[DEBUG] 2026-11-01 13:02:02,200 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 13:02:02,201 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:02:02,221 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-01 13:02:02,246 sales.invoice apply_state: StockPicking pk=9 saved successfully.
+[DEBUG] 2026-11-01 13:02:05,321 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [13], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 13:02:05,321 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:02:05,361 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:02:05,423 sales.invoice apply_state: StockPicking pk=9 saved successfully.
+[DEBUG] 2026-11-01 13:02:09,536 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 13, 'changes': {'quantity': {'old': Decimal('1.000000'), 'new': Decimal('100.000000')}}}], 'deleted': []}
+[DEBUG] 2026-11-01 13:02:09,536 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:02:09,556 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:02:09,581 sales.invoice apply_state: StockPicking pk=9 saved successfully.
+[DEBUG] 2026-11-01 13:04:51,320 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 13:04:51,320 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:04:51,341 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-01 13:04:51,385 sales.invoice apply_state: StockPicking pk=11 saved successfully.
+[DEBUG] 2026-11-01 13:04:55,163 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [15], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 13:04:55,163 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:04:55,175 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:04:55,197 sales.invoice apply_state: StockPicking pk=11 saved successfully.
+[DEBUG] 2026-11-01 13:05:02,372 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [16], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 13:05:02,372 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:05:02,387 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:05:02,414 sales.invoice apply_state: StockPicking pk=11 saved successfully.
+[DEBUG] 2026-11-01 13:05:05,965 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 15, 'changes': {'product_uom_id': {'old': 1, 'new': 3}}}], 'deleted': []}
+[DEBUG] 2026-11-01 13:05:05,965 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:05:05,980 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:05:06,006 sales.invoice apply_state: StockPicking pk=11 saved successfully.
+[DEBUG] 2026-11-01 13:05:09,893 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 16, 'changes': {'quantity': {'old': Decimal('1.000000'), 'new': Decimal('10.000000')}}}], 'deleted': []}
+[DEBUG] 2026-11-01 13:05:09,893 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:05:09,902 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:05:09,916 sales.invoice apply_state: StockPicking pk=11 saved successfully.
+[DEBUG] 2026-11-01 13:05:13,870 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 15, 'changes': {'quantity': {'old': Decimal('1.000000'), 'new': Decimal('10.000000')}}}], 'deleted': []}
+[DEBUG] 2026-11-01 13:05:13,871 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:05:13,906 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:05:13,968 sales.invoice apply_state: StockPicking pk=11 saved successfully.
+[DEBUG] 2026-11-01 13:05:54,771 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 13:05:54,771 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:05:54,782 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-01 13:05:54,812 sales.invoice apply_state: StockPicking pk=12 saved successfully.
+[DEBUG] 2026-11-01 13:05:57,070 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [17], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-01 13:05:57,070 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:05:57,082 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:05:57,104 sales.invoice apply_state: StockPicking pk=12 saved successfully.
+[DEBUG] 2026-11-01 13:06:01,281 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 17, 'changes': {'quantity': {'old': Decimal('1.000000'), 'new': Decimal('10.000000')}}}], 'deleted': []}
+[DEBUG] 2026-11-01 13:06:01,281 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:06:01,292 sales.invoice apply_state: UI plan built: {'swap': ['header', 'item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:06:01,315 sales.invoice apply_state: StockPicking pk=12 saved successfully.
+[DEBUG] 2026-11-01 13:06:03,450 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [], 'updated': [{'id': 17, 'changes': {'product_uom_id': {'old': 1, 'new': 3}}}], 'deleted': []}
+[DEBUG] 2026-11-01 13:06:03,450 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-01 13:06:03,461 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-01 13:06:03,483 sales.invoice apply_state: StockPicking pk=12 saved successfully.
+[INFO] 2026-11-01 14:20:22,065 sales.invoice sales_order_update: {'doc_type': 'sales_order', 'header': {'status': 'DRAFT', 'payment_term': '1', 'partner': '1', 'fulfillment_location': '1', 'issue_date': '2026-11-01', 'narration': None, 'ref': None, 'currency': '1'}, 'items': [{'id': None, 'product_id': 1, 'description': 'Masking Tape 3"', 'quantity': Decimal('1'), 'price_unit': Decimal('2500.00'), 'discount_percent': Decimal('0'), 'product_uom_id': None, 'memo': None, 'partner_id': None, 'debit': None, 'credit': None, 'taxes': [], 'delete': False, 'index': 0, 'prefix': 'items-0', 'is_active': True, 'taxes_touched': False, 'line_type': 'product', 'quant_id': 1}], 'meta': {'source': 'htmx', 'row_prefix': 'items-0', 'active_prefix': 'items-0', 'row_mode': True, 'total_forms': 1}, 'updatable_fields': {'partner': <class 'core.models.partner.Partner'>, 'payment_term': <class 'accounting.models.payment_term.PaymentTerm'>, 'fulfillment_location': <class 'inventory.models.warehouse.Warehouse'>, 'currency': <class 'core.models.currency.Currency'>, 'issue_date': 'date', 'status': <class 'str'>, 'narration': <class 'str'>, 'ref': <class 'str'>}}
+[DEBUG] 2026-11-01 14:20:22,293 sales.invoice apply_state: After sync — errors: {} | row_errors: {}
+[DEBUG] 2026-11-01 14:20:22,344 sales.invoice apply_state: Snapshot diff: {'header_changed': False, 'rows_changed': True, 'state_changed': False, 'amounts_changed': False, 'any_changed': True, 'changes': {'state': {'before': 'DRAFT', 'after': 'DRAFT', 'changed': False}, 'totals': {'before': {'subtotal': Decimal('0.00'), 'total_tax': Decimal('0.00'), 'total': Decimal('0.00'), 'total_debit': Decimal('0.00'), 'total_credit': Decimal('0.00'), 'balance': Decimal('0.00'), 'is_balanced': True, 'lines': []}, 'after': {'subtotal': Decimal('2500.00'), 'total_tax': Decimal('0.00'), 'total': Decimal('2500.00'), 'total_debit': Decimal('0.00'), 'total_credit': Decimal('0.00'), 'balance': Decimal('0.00'), 'is_balanced': True, 'lines': [{'item_id': 1, 'line_type': None, 'subtotal': Decimal('2500.00'), 'total_tax': Decimal('0.00'), 'total_with_tax': Decimal('2500.00'), 'debit': Decimal('0'), 'credit': Decimal('0')}]}, 'changed': False}, 'header': {}, 'rows': {'created': [1], 'updated': [], 'deleted': [], 'reordered': []}}}
+[DEBUG] 2026-11-01 14:20:22,345 sales.invoice apply_state: rows_changed=True row_changes={'created': [1], 'updated': [], 'deleted': [], 'reordered': []}
+[INFO] 2026-11-01 14:20:22,346 sales.invoice apply_state: ui plan: {'swap': ['item-row', 'totals'], 'triggers': []}
+[INFO] 2026-11-01 14:20:22,352 sales.invoice apply_state: Pre-save — errors: {} | row_errors: {}
+[INFO] 2026-11-01 14:20:22,365 sales.invoice apply_state: Document type=sales_order pk=1 saved successfully.
+[INFO] 2026-11-01 14:20:26,161 sales.invoice sales_order_update: {'doc_type': 'sales_order', 'header': {'status': 'DRAFT', 'payment_term': '1', 'partner': '1', 'fulfillment_location': '1', 'issue_date': '2026-11-01', 'narration': None, 'ref': None, 'currency': '1'}, 'items': [{'id': 1, 'product_id': 1, 'description': 'Masking Tape 3"', 'quantity': Decimal('1.00'), 'price_unit': Decimal('2500.00'), 'discount_percent': Decimal('0.00'), 'product_uom_id': '1', 'memo': None, 'partner_id': None, 'debit': None, 'credit': None, 'taxes': [], 'delete': False, 'index': 0, 'prefix': 'items-0', 'is_active': False, 'taxes_touched': False, 'line_type': 'product', 'quant_id': 1}, {'id': None, 'product_id': 1, 'description': 'Masking Tape 3"', 'quantity': Decimal('1'), 'price_unit': Decimal('2500.00'), 'discount_percent': Decimal('0'), 'product_uom_id': None, 'memo': None, 'partner_id': None, 'debit': None, 'credit': None, 'taxes': [], 'delete': False, 'index': 1, 'prefix': 'items-1', 'is_active': True, 'taxes_touched': False, 'line_type': 'product', 'quant_id': 1}], 'meta': {'source': 'htmx', 'row_prefix': 'items-1', 'active_prefix': 'items-1', 'row_mode': True, 'total_forms': 2}, 'updatable_fields': {'partner': <class 'core.models.partner.Partner'>, 'payment_term': <class 'accounting.models.payment_term.PaymentTerm'>, 'fulfillment_location': <class 'inventory.models.warehouse.Warehouse'>, 'currency': <class 'core.models.currency.Currency'>, 'issue_date': 'date', 'status': <class 'str'>, 'narration': <class 'str'>, 'ref': <class 'str'>}}
+[DEBUG] 2026-11-01 14:20:26,247 sales.invoice apply_state: After sync — errors: {} | row_errors: {}
+[DEBUG] 2026-11-01 14:20:26,284 sales.invoice apply_state: Snapshot diff: {'header_changed': False, 'rows_changed': True, 'state_changed': False, 'amounts_changed': False, 'any_changed': True, 'changes': {'state': {'before': 'DRAFT', 'after': 'DRAFT', 'changed': False}, 'totals': {'before': {'subtotal': Decimal('2500.00'), 'total_tax': Decimal('0.00'), 'total': Decimal('2500.00'), 'total_debit': Decimal('0.00'), 'total_credit': Decimal('0.00'), 'balance': Decimal('0.00'), 'is_balanced': True, 'lines': [{'item_id': 1, 'line_type': None, 'subtotal': Decimal('2500.00'), 'total_tax': Decimal('0.00'), 'total_with_tax': Decimal('2500.00'), 'debit': Decimal('0'), 'credit': Decimal('0')}]}, 'after': {'subtotal': Decimal('5000.00'), 'total_tax': Decimal('0.00'), 'total': Decimal('5000.00'), 'total_debit': Decimal('0.00'), 'total_credit': Decimal('0.00'), 'balance': Decimal('0.00'), 'is_balanced': True, 'lines': [{'item_id': 1, 'line_type': None, 'subtotal': Decimal('2500.00'), 'total_tax': Decimal('0.00'), 'total_with_tax': Decimal('2500.00'), 'debit': Decimal('0'), 'credit': Decimal('0')}, {'item_id': 2, 'line_type': None, 'subtotal': Decimal('2500.00'), 'total_tax': Decimal('0.00'), 'total_with_tax': Decimal('2500.00'), 'debit': Decimal('0'), 'credit': Decimal('0')}]}, 'changed': False}, 'header': {}, 'rows': {'created': [2], 'updated': [], 'deleted': [], 'reordered': []}}}
+[DEBUG] 2026-11-01 14:20:26,285 sales.invoice apply_state: rows_changed=True row_changes={'created': [2], 'updated': [], 'deleted': [], 'reordered': []}
+[INFO] 2026-11-01 14:20:26,285 sales.invoice apply_state: ui plan: {'swap': ['item-row', 'totals'], 'triggers': []}
+[INFO] 2026-11-01 14:20:26,289 sales.invoice apply_state: Pre-save — errors: {} | row_errors: {}
+[INFO] 2026-11-01 14:20:26,296 sales.invoice apply_state: Document type=sales_order pk=1 saved successfully.

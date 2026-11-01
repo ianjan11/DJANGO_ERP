@@ -1,0 +1,72 @@
+<input type="hidden"
+       id="move-id-input"
+       name="move_id"
+       value="{{ move.id }}">
+
+<!-- Column 1 -->
+<div class="form-header-content">
+
+    <div class="form-group">
+        <label for="{{ header_form.journal.id_for_label }}" class="form-label mb-0">Journal</label>
+        {{ header_form.journal }}
+        {% for error in header_form.journal.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ header_form.partner.id_for_label }}" class="form-label mb-0">Partner</label>
+        {{ header_form.partner }}
+        {% for error in header_form.partner.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ header_form.payment_term.id_for_label }}" class="form-label mb-0">Payment Term</label>
+        {{ header_form.payment_term }}
+        {% for error in header_form.payment_term.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+</div>
+
+
+<!-- Column 2 -->
+<div class="form-header-content">
+
+    <div class="form-group">
+        {# FIX: was header_form.date, which doesn't exist #}
+        <label for="{{ header_form.issue_date.id_for_label }}" class="form-label mb-0">Date</label>
+        {{ header_form.issue_date }}
+        {% for error in header_form.issue_date.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ header_form.ref.id_for_label }}" class="form-label mb-0">Reference</label>
+        {{ header_form.ref }}
+        {% for error in header_form.ref.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ header_form.narration.id_for_label }}" class="form-label mb-0">Notes</label>
+        {{ header_form.narration }}
+        {% for error in header_form.narration.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="form-group" style="display: none">
+        <label for="{{ header_form.currency.id_for_label }}" class="form-label mb-0">Currency</label>
+        {{ header_form.currency }}
+        {% for error in header_form.currency.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+</div>

@@ -1,0 +1,6 @@
+<chart>
+    <name>Tanzania - General Chart of Accounts (TRA Compliant)</name>
+    <country_code>TZ</country_code>
+    <currency_code>TZS</currency_code>
+    <code_digits>6</code_digits>
+</chart>

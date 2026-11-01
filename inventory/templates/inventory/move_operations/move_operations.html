@@ -1,0 +1,19 @@
+{% extends 'inventory/base.html' %}
+{% load static %}
+
+{# ============================================================
+   DELIVERY LIST PAGE
+   Depends on: css/purchase_table.css
+   Partial:    delivery/partials/delivery_table.html
+   Scripts:    js/delivery/delivery_search.js
+   ============================================================ #}
+
+{% block content %}
+
+    {# ── DELIVERY TABLE (partial) ──────────────────── #}
+    <div id=move-table">
+        {% include 'inventory/move_operations/partials/move_operations_partial.html' %}
+    </div>
+
+{% endblock %}
+

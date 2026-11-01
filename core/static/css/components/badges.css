@@ -1,0 +1,53 @@
+/* ═══════════════════════════════════════════
+   BADGES
+   ═══════════════════════════════════════════ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-badges);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.badge-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Invoice Status ── */
+.badge--draft     { background: #f1efe8; color: #5f5e5a; }
+.badge--draft     .badge-dot { background: var(--color-fog); }
+
+.badge--posted    { background: #eef1fb; color: #2a3a8c; }
+.badge--posted    .badge-dot { background: var(--color-sky-blue); }
+
+.badge--partial    { background: #f7eee2; color: #db7f0ee0; }
+.badge--partial    .badge-dot { background: var(--color-sky-blue); }
+
+.badge--completed { background: #e1f5ee; color: #0f6e56; }
+.badge--completed .badge-dot { background: var(--color-mint); }
+
+/* ── Payment Status ── */
+.badge--paid      { background: #e1f5ee; color: #0f6e56; }
+.badge--paid      .badge-dot { background: var(--color-mint); }
+
+.badge--not-paid  { background: #fce8e8; color: #9b2626; }
+.badge--not-paid  .badge-dot { background: #e24b4a; }
+
+.badge--pending   { background: #e6f1fb; color: #185fa5; }
+.badge--pending   .badge-dot { background: var(--color-sky-blue); }
+
+.badge--overdue   { background: #faeeda; color: #854f0b; }
+.badge--overdue   .badge-dot { background: #ef9f27; }
+
+.badge--cancelled { background: #fce8e8; color: #9b2626; }
+.badge--cancelled .badge-dot { background: #e05555; }
+
+/* ── UI ── */
+.badge--count     { background: var(--color-mist); color: var(--color-deep-indigo); }

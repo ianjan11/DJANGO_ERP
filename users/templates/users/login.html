@@ -1,0 +1,368 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/purchase_table.css' %}">
+
+<style>
+    /* ── LOGIN PAGE LAYOUT ───────────────────────── */
+    .login-page {
+        min-height: calc(100vh - 56px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8fafc;
+        padding: 24px;
+    }
+
+    /* ── LOGIN CARD ──────────────────────────────── */
+    .login-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
+        width: 100%;
+        max-width: 420px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Top accent bar */
+    .login-card::before {
+        content: '';
+        display: block;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent), var(--info));
+    }
+
+    /* ── HEADER ──────────────────────────────────── */
+    .login-header {
+        padding: 32px 32px 24px;
+        text-align: center;
+    }
+
+    .login-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-sm);
+        background: var(--accent-light);
+        color: var(--accent);
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+    }
+
+    .login-header h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 6px;
+    }
+
+    .login-header p {
+        font-size: 13.5px;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    /* ── FORM ────────────────────────────────────── */
+    .login-form {
+        padding: 0 32px 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .login-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .login-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-tertiary);
+    }
+
+    .login-input-wrap {
+        position: relative;
+    }
+
+    .login-input-wrap .input-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-tertiary);
+        font-size: 15px;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* Override Django form widget styles.
+       NOTE: with USERNAME_FIELD = "email", AuthenticationForm renders the
+       username input as type="email" — it MUST be included here or the
+       field falls through unstyled. */
+    .login-form input[type="text"],
+    .login-form input[type="email"],
+    .login-form input[type="password"] {
+        width: 100%;
+        padding: 9px 12px 9px 36px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 13.5px;
+        font-family: 'DM Sans', sans-serif;
+        color: var(--text-primary);
+        background: var(--surface-2);
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+        box-sizing: border-box;
+        /* Prevent iOS zoom-on-focus and keep height consistent */
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    .login-form input[type="text"]:focus,
+    .login-form input[type="email"]:focus,
+    .login-form input[type="password"]:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+        background: var(--surface);
+    }
+
+    /* Invalid state after server-side validation */
+    .login-form input.is-invalid {
+        border-color: var(--danger);
+    }
+
+    .login-form input.is-invalid:focus {
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+    }
+
+    /* Password toggle */
+    .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-tertiary);
+        cursor: pointer;
+        padding: 4px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        transition: color 0.15s;
+        z-index: 1;
+    }
+
+    .password-toggle:hover { color: var(--text-secondary); }
+
+    /* Error messages */
+    .login-error {
+        font-size: 12px;
+        color: var(--danger);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* Django form errors */
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 12px;
+        color: var(--danger);
+    }
+
+    .non-field-errors {
+        background: var(--danger-light);
+        border: 1px solid #fca5a5;
+        border-radius: var(--radius-sm);
+        padding: 10px 14px;
+        font-size: 13px;
+        color: #b91c1c;
+        margin-bottom: 4px;
+    }
+
+    /* ── SUBMIT BUTTON ───────────────────────────── */
+    .login-btn {
+        width: 100%;
+        padding: 10px 16px;
+        background: var(--accent);
+        color: var(--color-deep-indigo);
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer;
+        transition: all 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 4px;
+    }
+
+    .login-btn:hover {
+        background: var(--color-fog);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .login-btn:active {
+        transform: translateY(0);
+    }
+    
+        /* ── ALT LINK (register / forgot password) ─── */
+    .auth-alt {
+        text-align: center;
+        font-size: 13.5px;
+        color: var(--text-secondary);
+        margin: 4px 0 0;
+    }
+
+    .auth-alt a {
+        color: var(--accent);
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.15s;
+    }
+
+    .auth-alt a:hover {
+        color: #1d4ed8;
+        text-decoration: underline;
+    }
+    
+    .auth-links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13.5px;
+}
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 480px) {
+        .login-header { padding: 24px 20px 20px; }
+        .login-form   { padding: 0 20px 24px; }
+    }
+</style>
+
+<div class="login-page">
+    <div class="login-card">
+
+        {# ── HEADER ───────────────────────────────── #}
+        <div class="login-header">
+            <div class="login-logo">
+                <i class="bi bi-box-arrow-in-right"></i>
+            </div>
+            <h2>Sign In</h2>
+            <p>Enter your email and password to access your account</p>
+        </div>
+
+        {# ── NON-FIELD ERRORS ─────────────────────── #}
+        {% if form.non_field_errors %}
+        <div class="px-4 pb-2">
+            <div class="non-field-errors">
+                <i class="bi bi-exclamation-circle me-1"></i>
+                {{ form.non_field_errors }}
+            </div>
+        </div>
+        {% endif %}
+
+        {# ── MESSAGES ─────────────────────────────── #}
+        {% if messages %}
+        <div class="px-4 pb-2">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }} alert-dismissible fade show py-2" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {# ── LOGIN FORM ───────────────────────────── #}
+        <form method="POST" class="login-form" id="loginForm" novalidate>
+            {% csrf_token %}
+
+            {# Email (the form field is still called "username") #}
+            <div class="login-field">
+                <label class="login-label" for="{{ form.username.id_for_label }}">Email</label>
+                <div class="login-input-wrap">
+                    <i class="bi bi-envelope input-icon"></i>
+                    {{ form.username }}
+                </div>
+                {% if form.username.errors %}
+                <span class="login-error">
+                    <i class="bi bi-exclamation-circle"></i>
+                    {{ form.username.errors|join:", " }}
+                </span>
+                {% endif %}
+            </div>
+
+            {# Password #}
+            <div class="login-field">
+                <label class="login-label" for="{{ form.password.id_for_label }}">Password</label>
+                <div class="login-input-wrap">
+                    <i class="bi bi-lock input-icon"></i>
+                    {{ form.password }}
+                    <button type="button"
+                            class="password-toggle"
+                            id="passwordToggle"
+                            aria-label="Toggle password visibility">
+                        <i class="bi bi-eye" id="toggleIcon"></i>
+                    </button>
+                </div>
+                {% if form.password.errors %}
+                <span class="login-error">
+                    <i class="bi bi-exclamation-circle"></i>
+                    {{ form.password.errors|join:", " }}
+                </span>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="login-btn">
+                <i class="bi bi-box-arrow-in-right"></i>
+                Sign In
+            </button>
+            
+
+        </form>
+        
+        
+        <div class="auth-links">
+    <a>Forgot password?</a>
+    <span class="auth-alt">Don't have an account? <a href="{% url 'users:register' %}">Register</a></span>
+</div>
+
+
+    </div>
+</div>
+
+<script>
+    // Password toggle — target the field by ID so this never breaks
+    // if a second password field is added to the page.
+    const toggle  = document.getElementById('passwordToggle');
+    const icon    = document.getElementById('toggleIcon');
+    const pwField = document.getElementById('{{ form.password.id_for_label }}');
+
+    if (toggle && pwField) {
+        toggle.addEventListener('click', () => {
+            const isHidden = pwField.type === 'password';
+            pwField.type = isHidden ? 'text' : 'password';
+            icon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
+        });
+    }
+</script>
+
+{% endblock %}

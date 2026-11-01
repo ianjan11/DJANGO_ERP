@@ -1,0 +1,34 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block app_wrapper %}
+<div class="main-container  accounting-container">
+
+
+
+    <div id="accounting-display"  hx-history-elt>
+        {% block content %}{% endblock %}
+    </div>
+
+
+</div>
+{% endblock %}
+{% block scripts %}
+
+
+{{ block.super }}
+  <script src="{% static 'js/general/select2.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/taxes.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/check_box_all.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/button-sync.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/clear_buton.js' %}?t={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/currency_select.js' %}?t={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/autofill_rows.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/row_duplicates_check.js' %}?v={{ now|date:'U' }}"></script>
+    <script src="{% static 'accounting/js/payments/autofill-payment.js' %}?t={{ now|date:'U' }}"></script>
+    <script src="{% static 'accounting/js/payments/payment-response.js' %}?t={{ now|date:'U' }}"></script>
+    <script src="{% static 'accounting/js/credit-note.js' %}?t={{ now|date:'U' }}"></script>
+    <script src="{% static 'accounting/js/partner.js' %}?t={{ now|date:'U' }}"></script>
+    <script src="{% static 'js/general/row_listener.js' %}?t={{ now|date:'U' }}"></script>
+
+{% endblock %}

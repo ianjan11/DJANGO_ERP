@@ -1,0 +1,27 @@
+{% extends "inventory/base.html" %}
+{% load humanize %}
+{% load static %}
+
+
+{% block content %}
+
+
+        {% include "inventory/partials/dashboard_contents.html" %}
+
+{% endblock %}
+
+
+
+{% block scripts %}
+{{ block.super }}
+<script>
+    window.CREATE_PRODUCT_URL = "{% url 'inventory:create_product' %}";
+    window.CHARTS_URL = "{% url 'inventory:stock_charts' %}";
+</script>
+    <script src="{% static 'js/stock/product_graphs_and_charts/dashboard_charts.js' %}?v={{ now|date:'U' }}"></script>
+
+{% endblock %}
+
+
+
+

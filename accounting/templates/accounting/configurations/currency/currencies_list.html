@@ -1,0 +1,15 @@
+{% extends 'accounting/base.html' %}
+{% load static %}
+
+
+{% block content %}
+{% include "accounting/configurations/currency/currencies_partial.html" %}
+{% endblock %}
+
+{% block scripts %}
+
+
+{{block.super}}
+{% endblock %}
+
+

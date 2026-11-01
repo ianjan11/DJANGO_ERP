@@ -1,0 +1,83 @@
+<form id="picking-form"
+            hx-post="{% url 'inventory:picking_update' %}"
+            hx-trigger="change[event.target.classList.contains('picking-header-field')] delay:300ms"
+            hx-swap="none"
+            hx-sync="this:queue last">
+        {% csrf_token %}
+
+    
+    
+        <div id="header-form-wrapper" class="form-header">
+        {% include 'inventory/pickings/partials/picking_header_form.html' %}
+        </div>
+
+
+        {# ── LINES (formset) ── #}
+        <div class="inv-table-wrap">
+          <div class="table-toolbar">
+            <h5 class="table-toolbar-title">Operations</h5>
+          </div>
+            
+            <div id="items-management-form">
+        {{ formset.management_form }}
+    </div>
+    
+      {% if formset.non_form_errors %}
+  <div style="margin: var(--spacing-12) var(--spacing-16);
+              padding: var(--spacing-12);
+              background: #fce8e8;
+              border: 1px solid #f7c1c1;
+              border-radius: var(--radius-cards);
+              font-size: var(--text-body-sm);
+              color: #9b2626;">
+    {{ formset.non_form_errors }}
+  </div>
+            {% endif %}
+
+          <table class="inv-table" id="move-lines"  data-default-source="{{ picking.source_location_id|default:'' }}"
+       data-default-dest="{{ picking.dest_location_id|default:'' }}">
+            
+            <thead>
+              <tr>
+                
+                <th style="width:300px">{{ formset.empty_form.product.label }}</th>
+                  <th style="width:150px"> Demand </th>
+                <th style="width:150px">{{ formset.empty_form.quantity.label }}</th>
+                <th style="width:150px">{{ formset.empty_form.product_uom.label }}</th>
+                <th style="width:200px">{{ formset.empty_form.source_location.label }}</th>
+                <th style="width:200px">{{ formset.empty_form.dest_location.label }}</th>
+                <th style="width:60px" class="col-center"></th>
+              </tr>
+            </thead>
+            <tbody id="move-items">
+              {% for form in formset %}
+                    {% include 'inventory/pickings/partials/item_row.html' with form=form %}
+              {% endfor %}
+            </tbody>
+          </table>
+          
+    <button
+        id="row-btn"
+        style="display:none"
+        class="btn btn-secondary m-1 btn-sm"
+        type="button"
+        hx-get="{% url 'inventory:picking_item_row' picking.id %}"
+        hx-target="#move-items"
+        hx-swap="beforeend"
+        hx-vals='js:{
+            total_forms: document.querySelector("[name=items-TOTAL_FORMS]").value,
+            partner_id: document.querySelector("#partner-select")?.value ?? ""
+        }'
+        hx-on::after:swap="
+            let total = document.querySelector('[name=items-TOTAL_FORMS]');
+            total.value = parseInt(total.value) + 1;
+        ">
+        <i class="bi bi-plus"></i> Add Row
+    </button>
+
+
+        
+        </div>
+
+
+      </form>

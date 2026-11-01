@@ -1,0 +1,192 @@
+{% block content %}
+<div class="container-fluid py-4" id="inventory-display">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+      {% if form.instance.pk %}Edit Location: {{ form.instance.complete_name }}{% else %}New Location{% endif %}
+    </h1>
+    <a href="{% url 'inventory:locations_list' %}"
+       class="btn btn-outline-secondary btn-sm"
+       hx-get="{% url 'inventory:locations_list' %}"
+       hx-target="#inventory-display"
+       hx-push-url="true">
+      <i class="bi bi-arrow-left"></i> Back to Locations
+    </a>
+  </div>
+
+  <form method="post"
+        hx-post="{% if form.instance.pk %}{% url 'inventory:edit_location' form.instance.pk %}{% else %}{% url 'inventory:create_location' %}{% endif %}"
+        hx-target="#inventory-display"
+        hx-swap="innerHTML"
+        class="needs-validation"
+        novalidate>
+    {% csrf_token %}
+
+    <div class="row">
+      <!-- Left Column: Core Definition -->
+      <div class="col-lg-7">
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Location Details</h6>
+            <div class="form-check form-switch mb-0">
+              {{ form.active }}
+              <label class="form-check-label ms-2" for="{{ form.is_active.id_for_label }}">Active</label>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="{{ form.name.id_for_label }}" class="form-label font-weight-bold">Location Name</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                  <div class="invalid-feedback d-block">{{ form.name.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.parent.id_for_label }}" class="form-label font-weight-bold">Parent Location</label>
+                {{ form.parent }}
+                <div class="form-text text-muted">Selecting a parent determines the warehouse link.</div>
+                {% if form.parent.errors %}
+                  <div class="invalid-feedback d-block">{{ form.parent.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-12">
+                <label for="{{ form.usage.id_for_label }}" class="form-label font-weight-bold">Location Type / Usage</label>
+                {{ form.usage }}
+                {% if form.usage.errors %}
+                  <div class="invalid-feedback d-block">{{ form.usage.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              {% if form.comment %}
+              <div class="col-12">
+                <label for="{{ form.comment.id_for_label }}" class="form-label font-weight-bold">Internal Notes</label>
+                {{ form.comment }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Physical Position / Corridors -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-white py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Physical Coordinates & Identification</h6>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="{{ form.barcode.id_for_label }}" class="form-label font-weight-bold">Barcode</label>
+                {{ form.barcode }}
+                {% if form.barcode.errors %}
+                  <div class="invalid-feedback d-block">{{ form.barcode.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              {% if form.removal_strategy %}
+              <div class="col-md-6">
+                <label for="{{ form.removal_strategy.id_for_label }}" class="form-label font-weight-bold">Removal Strategy</label>
+                {{ form.removal_strategy }}
+                <div class="form-text text-muted">Blank inherits from parent or category.</div>
+              </div>
+              {% endif %}
+
+              {% if form.posx %}
+              <div class="col-md-4">
+                <label for="{{ form.posx.id_for_label }}" class="form-label font-weight-bold">Corridor (X)</label>
+                {{ form.posx }}
+              </div>
+              <div class="col-md-4">
+                <label for="{{ form.posy.id_for_label }}" class="form-label font-weight-bold">Shelves (Y)</label>
+                {{ form.posy }}
+              </div>
+              <div class="col-md-4">
+                <label for="{{ form.posz.id_for_label }}" class="form-label font-weight-bold">Height (Z)</label>
+                {{ form.posz }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Flags & Hierarchy Read-Only Info -->
+      <div class="col-lg-5">
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-white py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Location Attributes</h6>
+          </div>
+          <div class="card-body">
+            {% if form.scrap_location %}
+            <div class="form-check mb-3">
+              {{ form.scrap_location }}
+              <label class="form-check-label ms-2" for="{{ form.scrap_location.id_for_label }}">
+                <strong>Is a Scrap Location?</strong>
+                <div class="text-muted small">Used to allocate damaged or written-off stock.</div>
+              </label>
+            </div>
+            {% endif %}
+
+            {% if form.return_location %}
+            <div class="form-check mb-3">
+              {{ form.return_location }}
+              <label class="form-check-label ms-2" for="{{ form.return_location.id_for_label }}">
+                <strong>Is a Return Location?</strong>
+                <div class="text-muted small">Default destination for customer returns.</div>
+              </label>
+            </div>
+            {% endif %}
+
+            {% if form.replenish_location %}
+            <div class="form-check mb-3">
+              {{ form.replenish_location }}
+              <label class="form-check-label ms-2" for="{{ form.replenish_location.id_for_label }}">
+                <strong>Replenish Location</strong>
+                <div class="text-muted small">Triggers automated reordering rules.</div>
+              </label>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Read-only Location Tree Metadata -->
+        <div class="card shadow-sm mb-4 bg-light">
+          <div class="card-body">
+            <h6 class="font-weight-bold text-dark mb-3">Tree Metadata</h6>
+            {% if form.instance.pk %}
+              <div class="mb-2">
+                <span class="text-muted small d-block">Complete Path:</span>
+                <code class="text-dark font-weight-bold">{{ form.instance.complete_name }}</code>
+              </div>
+              <div>
+                <span class="text-muted small d-block">Linked Warehouse:</span>
+                <strong class="text-primary">{{ form.instance.warehouse.name|default:"Shared / Virtual (None)" }}</strong>
+              </div>
+            {% else %}
+              <p class="text-muted small mb-0">
+                <i class="bi bi-info-circle me-1"></i>
+                The full path name and warehouse assignment will be generated automatically upon saving based on the chosen parent.
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions Footer -->
+    <div class="d-flex justify-content-end gap-2 mb-5">
+      <a href="{% url 'inventory:locations_list' %}"
+         class="btn btn-secondary"
+         hx-get="{% url 'inventory:locations_list' %}"
+         hx-target="#inventory-display"
+         hx-push-url="true">
+        Cancel
+      </a>
+      <button type="submit" class="btn btn-primary px-4">
+        <i class="bi bi-check-lg me-1"></i> Save Location
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,203 @@
+<form id="partner-form">
+
+                {% csrf_token %}
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="partnerModalLabel">
+                        {% if form.instance.pk %}Edit Partner{% else %}Add New Partner{% endif %}
+                    </h5>
+                </div>
+
+                <div class="modal-body">
+
+                    {% if form.non_field_errors %}
+                        <div style="padding: var(--spacing-12) var(--spacing-16);
+                                    background: #fef5f5;
+                                    border: 1px solid #f7c1c1;
+                                    border-radius: var(--radius-cards);
+                                    color: #9b2626;
+                                    font-size: var(--text-body-sm);
+                                    margin-bottom: var(--spacing-16);">
+                            {{ form.non_field_errors.0 }}
+                        </div>
+                    {% endif %}
+
+                    <!-- 2-Column Section Layout -->
+                    <div class="row g-4">
+
+                        {# ════════════════════ LEFT COLUMN: General Info ════════════════════ #}
+                        <div class="col-md-6" style="border-right: 1px solid var(--color-mist);">
+                            <h6 class="fw-bold mb-3" style="color: var(--color-text-main, #333);">
+                                <i class="bi bi-person-lines-fill me-1"></i> General Details
+                            </h6>
+
+                            <div class="inv-field" style="padding: var(--spacing-8) 0; border-bottom: 1px solid var(--color-mist);">
+                                <span class="inv-field-label">Name <span style="color:#b91c1c">*</span></span>
+                                <div style="flex:1;">
+                                    {{ form.name }}
+                                    {% if form.name.errors %}
+                                        <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                            {{ form.name.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="inv-field" style="padding: var(--spacing-8) 0; border-bottom: 1px solid var(--color-mist);">
+                                <span class="inv-field-label">Partner Type</span>
+                                <div style="flex:1;">
+                                    {{ form.partner_type }}
+                                    {% if form.partner_type.errors %}
+                                        <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                            {{ form.partner_type.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="inv-field" style="padding: var(--spacing-8) 0; border-bottom: 1px solid var(--color-mist);">
+                                <span class="inv-field-label">Tax ID (TIN)</span>
+                                <div style="flex:1;">
+                                    {{ form.tax_id }}
+                                    {% if form.tax_id.errors %}
+                                        <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                            {{ form.tax_id.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="inv-field" style="padding: var(--spacing-8) 0; border-bottom: 1px solid var(--color-mist);">
+                                <span class="inv-field-label">Email</span>
+                                <div style="flex:1;">
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                        <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                            {{ form.email.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="inv-field" style="padding: var(--spacing-8) 0; border-bottom: 1px solid var(--color-mist);">
+                                <span class="inv-field-label">Phone</span>
+                                <div style="flex:1;">
+                                    {{ form.phone }}
+                                    {% if form.phone.errors %}
+                                        <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                            {{ form.phone.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="inv-field" style="padding: var(--spacing-8) 0; border-bottom: 1px solid var(--color-mist);">
+                                <span class="inv-field-label">Address</span>
+                                <div style="flex:1;">
+                                    {{ form.address }}
+                                    {% if form.address.errors %}
+                                        <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                            {{ form.address.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="inv-field" style="padding: var(--spacing-8) 0;">
+                                <span class="inv-field-label">City / Country</span>
+                                <div style="flex:1; display:flex; gap: var(--spacing-8);">
+                                    <div style="flex:1;">
+                                        {{ form.city }}
+                                        {% if form.city.errors %}
+                                            <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                                {{ form.city.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div style="flex:1;">
+                                        {{ form.country }}
+                                        {% if form.country.errors %}
+                                            <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                                {{ form.country.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# ════════════════════ RIGHT COLUMN: Accounting & Terms ════════════════════ #}
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3" style="color: var(--color-text-main, #333);">
+                                <i class="bi bi-bank me-1"></i> Accounting & Terms
+                            </h6>
+
+                            <div class="inv-field" style="padding: var(--spacing-8) 0; border-bottom: 1px solid var(--color-mist);">
+                                <span class="inv-field-label">Customer Term</span>
+                                <div style="flex:1;">
+                                    {{ form.payment_term }}
+                                    {% if form.payment_term.errors %}
+                                        <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                            {{ form.payment_term.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="inv-field" style="padding: var(--spacing-8) 0; border-bottom: 1px solid var(--color-mist);">
+                                <span class="inv-field-label">Supplier Term</span>
+                                <div style="flex:1;">
+                                    {{ form.supplier_payment_term }}
+                                    {% if form.supplier_payment_term.errors %}
+                                        <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                            {{ form.supplier_payment_term.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="inv-field" style="padding: var(--spacing-8) 0; border-bottom: 1px solid var(--color-mist);">
+                                <span class="inv-field-label">Receivable Account</span>
+                                <div style="flex:1;">
+                                    {{ form.account_receivable }}
+                                    {% if form.account_receivable.errors %}
+                                        <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                            {{ form.account_receivable.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="inv-field" style="padding: var(--spacing-8) 0; border-bottom: 1px solid var(--color-mist);">
+                                <span class="inv-field-label">Payable Account</span>
+                                <div style="flex:1;">
+                                    {{ form.account_payable }}
+                                    {% if form.account_payable.errors %}
+                                        <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                            {{ form.account_payable.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="inv-field" style="padding: var(--spacing-8) 0;">
+                                <span class="inv-field-label">Status</span>
+                                <div style="flex:1; display:flex; align-items:center; gap:var(--spacing-8);">
+                                    {{ form.is_active }}
+                                    <label for="{{ form.is_active.id_for_label }}" style="font-size: var(--text-body-sm); cursor:pointer;">
+                                        Is Active
+                                    </label>
+                                    {% if form.is_active.errors %}
+                                        <div class="inv-field-sub" style="color:#9b2626; margin-top: var(--spacing-4);">
+                                            {{ form.is_active.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div> <!-- /.row -->
+
+                </div>
+
+            </form>

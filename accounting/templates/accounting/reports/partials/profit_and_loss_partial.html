@@ -1,0 +1,163 @@
+{% load static %}
+{% load humanize %}
+
+<div class="main-wrapper">
+  
+  <div class="invoice-card" style="margin-bottom: var(--spacing-16);">
+
+  
+
+  <div class="invoice-card">
+
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        Profit and Loss
+        <span class="badge badge--count">As of {{ target_date|date:"d M Y" }}</span>
+      </h5>
+              <form method="get"
+            hx-get="{% url 'accounting:profit_and_loss' %}"
+            hx-trigger="change from:.date-select-input"
+            hx-target="#accounting-display"
+            hx-push-url="true">
+        <div class="date-select-wrap">
+          <i class="bi bi-calendar3 date-select-icon"></i>
+          <input type="date"
+                 class="date-select-input"
+                 name="target_date"
+                 value="{{ target_date|date:'Y-m-d' }}">
+        </div>
+      </form>
+
+    </div>
+
+    {# Income #}
+    <div class="inv-table-wrap">
+      <table class="inv-table">
+        <thead>
+          <tr>
+            <th colspan="3" style="background:var(--color-paper-white);
+                                   color:var(--color-deep-indigo);
+                                   font-size:var(--text-body-sm);
+                                   text-transform:none;
+                                   letter-spacing:0;">
+              Income
+            </th>
+          </tr>
+          <tr>
+            <th style="width:80px">Code</th>
+            <th>Account</th>
+            <th class="col-right">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in sections.INCOME.accounts %}
+          <tr>
+            <td><span class="td-mono">{{ row.account_code }}</span></td>
+            <td class="td-primary">{{ row.account_name }}</td>
+            <td class="col-right">
+              <span class="td-amount">{{ row.balance|floatformat:2|intcomma }}</span>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3" class="table-empty">
+              <div class="table-empty-desc">No income accounts with balances.</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr style="border-top:1px solid var(--color-mist);
+                     background:var(--color-paper-white);">
+            <td colspan="2"
+                style="padding:var(--spacing-12) var(--spacing-16);
+                       font-weight:var(--font-weight-semibold);
+                       color:var(--color-deep-indigo);">
+              Total Income
+            </td>
+            <td class="col-right"
+                style="padding:var(--spacing-12) var(--spacing-16);">
+              <span class="td-amount">
+                {{ sections.INCOME.total|floatformat:2|intcomma }}
+              </span>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    {# Expenses #}
+    <div class="inv-table-wrap">
+      <table class="inv-table">
+        <thead>
+          <tr>
+            <th colspan="3" style="background:var(--color-paper-white);
+                                   color:var(--color-deep-indigo);
+                                   font-size:var(--text-body-sm);
+                                   text-transform:none;
+                                   letter-spacing:0;">
+              Expenses
+            </th>
+          </tr>
+          <tr>
+            <th style="width:80px">Code</th>
+            <th>Account</th>
+            <th class="col-right">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in sections.EXPENSE.accounts %}
+          <tr>
+            <td><span class="td-mono">{{ row.account_code }}</span></td>
+            <td class="td-primary">{{ row.account_name }}</td>
+            <td class="col-right">
+              <span class="td-amount td-amount--overdue">
+                {{ row.balance|floatformat:2|intcomma }}
+              </span>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3" class="table-empty">
+              <div class="table-empty-desc">No expense accounts with balances.</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr style="border-top:1px solid var(--color-mist);
+                     background:var(--color-paper-white);">
+            <td colspan="2"
+                style="padding:var(--spacing-12) var(--spacing-16);
+                       font-weight:var(--font-weight-semibold);
+                       color:var(--color-deep-indigo);">
+              Total Expenses
+            </td>
+            <td class="col-right"
+                style="padding:var(--spacing-12) var(--spacing-16);">
+              <span class="td-amount td-amount--overdue">
+                {{ sections.EXPENSE.total|floatformat:2|intcomma }}
+              </span>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    {# Net result #}
+    <div class="totals-container">
+      <div class="totals-row">
+        <span class="totals-label">
+          {% if net_income >= 0 %}Net Profit{% else %}Net Loss{% endif %}
+        </span>
+        <span class="totals-value totals-value--grand
+          {% if net_income < 0 %}td-amount--overdue{% endif %}">
+          {{ net_income|floatformat:2|intcomma }}
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</div>

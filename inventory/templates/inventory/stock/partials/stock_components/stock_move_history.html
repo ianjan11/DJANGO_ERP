@@ -1,0 +1,229 @@
+{% load humanize %}
+
+<div class="main-wrapper">
+  <div class="invoice-card">
+
+    {# ── Summary row ── #}
+    <div class="inv-summary-row">
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Pending <i class="bi bi-hourglass-top"></i></span>
+        <span class="inv-summary-value">{{ summary.pending_count }}</span>
+      </div>
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Completed <i class="bi bi-check-circle-fill"></i></span>
+        <span class="inv-summary-value">{{ summary.completed_count }}</span>
+      </div>
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Cancelled <i class="bi bi-x-circle-fill"></i></span>
+        <span class="inv-summary-value">{{ summary.cancelled_count }}</span>
+      </div>
+    </div>
+
+    {# ── Toolbar ── #}
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        Stock Moves
+        <span class="badge badge--count">
+          {{ stock_moves.paginator.count }} move{{ stock_moves.paginator.count|pluralize }}
+        </span>
+      </h5>
+
+      <form data-toolbar
+            id="history_form"
+            class="toolbar"
+            hx-get="{% url 'inventory:movement_history' product.id %}"
+            hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
+            hx-target="#stock-content">
+
+        {# Search #}
+        <div class="toolbar-search-wrap">
+          <i class="ti ti-search toolbar-search-icon" aria-hidden="true"></i>
+          <input type="text"
+                 class="toolbar-search"
+                 name="product_search"
+                 placeholder="Search product or SKU..."
+                 value="{{ request.GET.product_search }}">
+          <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+
+
+        {# Status filter #}
+        <select class="toolbar-select" name="move_status">
+          <option value="">All Status</option>
+          <option value="DRAFT"   {% if request.GET.move_status == "DRAFT"   %}selected{% endif %}>Draft</option>
+          <option value="PARTIALLY_AVAILABLE"   {% if request.GET.move_status == "PARTIALLY_AVAILABLE"   %}selected{% endif %}>Partial Available</option>
+          <option value="ASSIGNED"   {% if request.GET.move_status == "ASSIGNED"   %}selected{% endif %}>Assigned</option>
+          <option value="CONFIRMED"   {% if request.GET.move_status == "CONFIRMED"   %}selected{% endif %}>Confirmed</option>
+          <option value="COMPLETED" {% if request.GET.move_status == "COMPLETED" %}selected{% endif %}>Completed</option>
+          <option value="CANCELLED" {% if request.GET.move_status == "CANCELLED" %}selected{% endif %}>Cancelled</option>
+        </select>
+
+        <button type="button" class="toolbar-clear-btn">
+          <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
+        </button>
+
+      </form>
+    </div>
+
+    {# ── Table ── #}
+    <div class="inv-table-wrap">
+      <table class="inv-table">
+        <thead>
+          <tr>
+            {# Odoo column order: source doc → product → from → to → qty → type → date → status #}
+            <th style="width:80px">ID</th>
+            <th style="width:220px">Product</th>
+            <th style="width:120px">Move Type</th>
+            <th style="width:110px" class="col-right">Quantity</th>
+            <th style="width:160px">Source Location</th>
+            <th style="width:160px">Dest. Location</th>
+            <th style="width:140px">Warehouse</th>
+            <th style="width:130px">Date</th>
+            <th style="width:120px" class="col-center">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for move in stock_moves %}
+          <tr>
+            <td><span class="td-mono">#{{ move.id }}</span></td>
+
+            <td>
+              <div class="td-primary">{{ move.product.name }}</div>
+            </td>
+
+            <td>
+              {# Move type badge — each type maps to a different journal entry pattern #}
+              {% if move.picking.picking_type.code == 'DELIVERY' %}
+                <span class="badge badge--overdue"><span class="badge-dot"></span>Sales</span>
+              {% elif move.move_type == 'RECEIPT' %}
+                <span class="badge badge--paid"><span class="badge-dot"></span>Receipt</span>
+              {% elif move.move_type == 'TRANSFER' %}
+                <span class="badge badge--posted"><span class="badge-dot"></span>Transfer</span>
+              {% elif move.move_type == 'CUSTOMER RETURN' %}
+                <span class="badge badge--pending"><span class="badge-dot"></span>Customer Return</span>
+              {% elif move.move_type == 'RETURN TO SUPPLIER' %}
+                <span class="badge badge--draft"><span class="badge-dot"></span>Return to Supplier</span>
+              {% else %}
+                <span class="badge badge--draft"><span class="badge-dot"></span>{{ move.get_move_type_display }}</span>
+              {% endif %}
+            </td>
+
+            <td class="col-right">
+              <span class="td-mono">{{ move.quantity|floatformat:2 }}</span>
+            </td>
+
+            <td style="color:var(--color-slate)">
+              {{ move.source_location.name|default:"—" }}
+            </td>
+
+            <td style="color:var(--color-slate)">
+              {{ move.dest_location.name|default:"—" }}
+            </td>
+
+            <td style="color:var(--color-slate)">
+              {{ move.warehouse.name|default:"—" }}
+            </td>
+
+            <td style="color:var(--color-slate)">
+              {{ move.created_at|date:"M d, Y" }}
+            </td>
+
+            {# fixed: was using if/if/if — must be if/elif/elif so else catches correctly #}
+            <td class="col-center">
+              {% if move.status == 'DRAFT' %}
+                <span class="badge badge--draft"><span class="badge-dot"></span>Draft</span>
+              {% elif move.status == 'COMPLETED' %}
+                <span class="badge badge--paid"><span class="badge-dot"></span>Completed</span>
+                {% elif move.status == 'PARTIALLY_AVAILABLE' %}
+                <span class="badge badge--draft"><span class="badge-dot"></span>Partially Available</span>
+              {% elif move.status == 'CONFIRMED' %}
+                <span class="badge badge--confirmed"><span class="badge-dot"></span>Confirmed</span>
+                {% elif move.status == 'ASSIGNED' %}
+                <span class="badge badge--draft"><span class="badge-dot"></span>Assigned</span>
+              {% elif move.status == 'CANCELLED' %}
+                <span class="badge badge--cancelled"><span class="badge-dot"></span>Cancelled</span>
+              {% else %}
+                <span class="badge badge--overdue"><span class="badge-dot"></span>{{ move.get_status_display }}</span>
+              {% endif %}
+            </td>
+
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" class="table-empty">
+              <div class="table-empty-icon"><i class="bi bi-arrows-move"></i></div>
+              <div class="table-empty-title">No stock moves found</div>
+              <div class="table-empty-desc">No moves match your current filter criteria.</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {# ── Pagination — fixed: was using products paginator, now uses stock_moves ── #}
+    {% if stock_moves.paginator.num_pages > 1 %}
+    <div class="table-footer">
+      <small class="table-footer-count">
+        Showing {{ stock_moves.start_index }}–{{ stock_moves.end_index }}
+        of {{ stock_moves.paginator.count }} move{{ stock_moves.paginator.count|pluralize }}
+      </small>
+
+
+<div class="table-pagination" hx-include="#history-form">
+
+        {% if stock_moves.has_previous %}
+          <a class="page-btn page-btn--arrow"
+             hx-get="?page=1"
+             hx-target="#stock-content"
+             hx-push-url="true">
+            <i class="bi bi-chevron-double-left"></i>
+          </a>
+          <a class="page-btn page-btn--arrow"
+             hx-get="?page={{ stock_moves.previous_page_number }}"
+             hx-target="#stock-content"
+             hx-push-url="true">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        {% else %}
+          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-double-left"></i></span>
+          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-left"></i></span>
+        {% endif %}
+
+        {% for num in stock_moves.paginator.page_range %}
+          {% if stock_moves.number == num %}
+            <span class="page-btn active">{{ num }}</span>
+          {% elif num > stock_moves.number|add:'-3' and num < stock_moves.number|add:'3' %}
+            <a class="page-btn"
+               hx-get="?page={{ num }}"
+               hx-target="#stock-content"
+               hx-push-url="true">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if stock_moves.has_next %}
+          <a class="page-btn page-btn--arrow"
+             hx-get="?page={{ stock_moves.next_page_number }}"
+             hx-target="#stock-content"
+             hx-push-url="true">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+          <a class="page-btn page-btn--arrow"
+             hx-get="?page={{ stock_moves.paginator.num_pages }}"
+             hx-target="#stock-content"
+             hx-push-url="true">
+            <i class="bi bi-chevron-double-right"></i>
+          </a>
+        {% else %}
+          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-right"></i></span>
+          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-double-right"></i></span>
+        {% endif %}
+
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>

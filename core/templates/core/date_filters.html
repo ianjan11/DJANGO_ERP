@@ -1,0 +1,21 @@
+  <div class="date-select-bar">
+    <div class="date-select-presets">
+      <input type="hidden" class="preset-input" name="preset" value="{{ request.GET.preset }}">
+
+      <button type="button" class="date-select-preset {% if request.GET.preset == 'Today' %}active{% endif %} "
+              data-preset="Today">Today</button>
+      <button type="button" class="date-select-preset {% if request.GET.preset == 'ThisWeek' %}active{% endif %}"
+              data-preset="ThisWeek">This week</button>
+      <button type="button" class="date-select-preset {% if not request.GET.preset or request.GET.preset == 'ThisMonth' %}active{% endif %}"
+              data-preset="ThisMonth">This month</button>
+      <button type="button" class="date-select-preset {% if request.GET.preset == 'ThisYear' %}active{% endif %}"
+              data-preset="ThisYear">This year</button>
+    </div>
+    
+    <div class="date-select-wrap">
+      <i class="bi bi-calendar3 date-select-icon"></i>
+      <input type="date" class="date-select-input"
+             name="target_date"
+             value="{{ request.GET.target_date }}">
+    </div>
+  </div>

@@ -1,0 +1,18 @@
+{% extends 'accounting/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+{# ── CREDIT NOTE TABLE (partial) ───────────────────── #}
+        {% include "accounting/payments_templates/partials/table.html" %}
+{% endblock %}
+
+
+{% block scripts %}
+
+
+{{block.super}}
+{% endblock %}
+
+

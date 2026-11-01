@@ -1,0 +1,7 @@
+{% load static %}
+{% load humanize %}
+
+<div id="invoice-total">
+  <label>Total (Tax-Inclusive):</label>
+  <span>{{ invoice.currency.symbol }} {{ invoice.total_amount|intcomma }}</span>
+</div>

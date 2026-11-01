@@ -1,0 +1,70 @@
+<tr id="currency-row-{{ form_idx }}"
+    class="currency-row"
+    data-form-prefix="{{ form.prefix }}">
+
+    <input type="hidden"
+           name="form_prefix"
+           value="{{ form.prefix }}">
+
+    <!-- Currency -->
+    <td>
+        {{ form.currency }}
+
+        {% if form.currency.errors %}
+            <div class="invalid-feedback d-block">
+                {{ form.currency.errors|first }}
+            </div>
+        {% endif %}
+    </td>
+    
+       <!-- Name -->
+    <td class="td-primary currency-name">
+        —
+    </td>
+
+    <!-- Symbol -->
+    <td class="currency-symbol">
+        —
+    </td>
+
+
+    <!-- Is Active -->
+    <td class="text-center align-middle">
+        <div class="form-check form-switch d-flex justify-content-center m-0">
+            {{ form.is_active }}
+        </div>
+
+        {% if form.is_active.errors %}
+            <div class="invalid-feedback d-block">
+                {{ form.is_active.errors|first }}
+            </div>
+        {% endif %}
+    </td>
+
+    <!-- Exchange Rate -->
+    <td class="text-muted">
+        —
+    </td>
+
+    <!-- Actions -->
+    <td>
+        <button type="button"
+                class="btn btn-secondary btn-sm"
+                onclick="this.closest('tr').remove();">
+            <i class="bi bi-trash"></i>
+            
+        </button>
+
+        <button type="button"
+                class="btn btn-primary btn-sm"
+                hx-post="{% url 'accounting:add_currency' %}"
+                hx-include="closest tr"
+                hx-swap="none"
+                hx-disable-elt="this"
+        >
+            <i class="bi bi-check-circle me-1"></i>
+            Save
+        </button>
+    </td>
+
+</tr>

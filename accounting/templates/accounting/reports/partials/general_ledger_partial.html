@@ -1,0 +1,351 @@
+{% load humanize %}
+
+<div class="main-wrapper">
+  <div class="invoice-card">
+
+    {# ── Report header / Toolbar ── #}
+    <div class="table-toolbar">
+
+      <h5 class="table-toolbar-title">
+        {{ title|default:"General Ledger" }}
+        <span class="badge badge--count">
+          {{ start_date|date:"d M Y" }} – {{ end_date|date:"d M Y" }}
+        </span>
+      </h5>
+
+      <form
+        data-toolbar
+        class="toolbar"
+        id="report-filters"
+        hx-get="{{ report_url }}"
+        hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
+        hx-target="#accounting-display"
+        hx-replace-url="true"
+      >
+
+        {# ── Search account ── #}
+        <div class="toolbar-search-wrap">
+          <i class="ti ti-search toolbar-search-icon"></i>
+          <input
+            type="text"
+            class="toolbar-search"
+            name="search_account"
+            placeholder="Search account code or name..."
+            value="{{ request.GET.search_account }}"
+          >
+          <button
+            type="button"
+            class="toolbar-search-clear"
+            aria-label="Clear search"
+          >
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+
+        {# ── Date range selector ── #}
+          {% include "core/date_range_selector.html" %}
+          
+          
+          <div class="toolbar-select-wrap">
+  <select name="reconciled_status" class="toolbar-select">
+    <option value="">All Entries</option>
+    <option value="reconciled" {% if request.GET.reconciled_status == 'reconciled' %}selected{% endif %}>Reconciled Only</option>
+    <option value="unreconciled" {% if request.GET.reconciled_status == 'unreconciled' %}selected{% endif %}>Unreconciled Only</option>
+  </select>
+</div>
+
+        <button
+          type="button"
+          class="toolbar-clear-btn"
+        >
+          <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i>
+          Clear
+        </button>
+
+      </form>
+
+    </div>
+
+    {# ── Summary Cards ── #}
+    <div class="inv-summary-row">
+
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Total Debits</span>
+        <span class="inv-summary-value td-amount">
+          {{ grand_total_debit|floatformat:2|intcomma }}
+        </span>
+        <span class="inv-summary-sub">Period debits</span>
+      </div>
+
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Total Credits</span>
+        <span class="inv-summary-value td-amount">
+          {{ grand_total_credit|floatformat:2|intcomma }}
+        </span>
+        <span class="inv-summary-sub">Period credits</span>
+      </div>
+
+      <div class="inv-summary-card">
+        <span class="inv-summary-label">Balance Check</span>
+        {% if grand_total_debit == grand_total_credit %}
+          <span class="inv-summary-value td-mono" style="color: #15803d;">
+            Balanced
+          </span>
+          <span class="inv-summary-sub">Debits match credits</span>
+        {% else %}
+          <span class="inv-summary-value td-mono" style="color: #9b2626;">
+            Unbalanced
+          </span>
+          <span class="inv-summary-sub" style="color: #9b2626;">
+            ⚠ Difference detected
+          </span>
+        {% endif %}
+      </div>
+
+    </div>
+
+    {# ── Main General Ledger Table ── #}
+    {% if grouped_accounts %}
+
+      <div class="inv-table-wrap">
+
+        <table class="inv-table">
+
+          <thead>
+            <tr>
+              <th style="width:300px">Account</th>
+              <th style="width:140px" class="col-right">Opening Balance</th>
+              <th style="width:140px" class="col-right">Total Debit</th>
+              <th style="width:140px" class="col-right">Total Credit</th>
+              <th style="width:140px" class="col-right">Closing Balance</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            {% for group in grouped_accounts %}
+
+              {# ── Account Group Summary Row ── #}
+              <tr
+                class="partner-row"
+                style="cursor:pointer;"
+                onclick="toggleGlDetail('{{ group.account.id }}')"
+              >
+
+                <td>
+                  <div style="display:flex; align-items:center; gap:var(--spacing-8);">
+                    <i
+                      class="bi bi-chevron-right"
+                      id="chevron-{{ group.account.id }}"
+                      style="font-size:10px; color:var(--color-fog); transition:transform 0.15s ease;"
+                    ></i>
+                    <span class="td-primary">
+                      <strong class="td-mono">{{ group.account.code }}</strong> — {{ group.account.name }}
+                    </span>
+                  </div>
+                </td>
+
+                <td class="col-right">
+                  <span class="td-mono">
+                    {{ group.opening_balance|floatformat:2|intcomma }}
+                  </span>
+                </td>
+
+                <td class="col-right">
+                  {% if group.total_debit %}
+                    <span class="td-mono">{{ group.total_debit|floatformat:2|intcomma }}</span>
+                  {% else %}
+                    <span class="td-muted">—</span>
+                  {% endif %}
+                </td>
+
+                <td class="col-right">
+                  {% if group.total_credit %}
+                    <span class="td-mono">{{ group.total_credit|floatformat:2|intcomma }}</span>
+                  {% else %}
+                    <span class="td-muted">—</span>
+                  {% endif %}
+                </td>
+
+                <td class="col-right">
+                  <span class="td-amount">
+                    {{ group.closing_balance|floatformat:2|intcomma }}
+                  </span>
+                </td>
+
+              </tr>
+
+              {# ── Detailed Journal Entry Lines (Collapsible) ── #}
+            {# ── Detailed Journal Entry Lines (Collapsible) ── #}
+<tr id="detail-{{ group.account.id }}" style="display:none;">
+  <td colspan="5" style="padding:0; background:var(--color-paper-white); border-bottom:1px solid var(--color-mist);">
+
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:1px solid var(--color-mist); background:var(--color-paper-white); font-size:var(--text-caption); color:var(--color-slate);">
+          <th style="padding:var(--spacing-8) var(--spacing-16) var(--spacing-8) 44px; text-align:left;">Date</th>
+          <th style="padding:var(--spacing-8) var(--spacing-12); text-align:left;">Entry</th>
+          <th style="padding:var(--spacing-8) var(--spacing-12); text-align:left;">Description</th>
+          <th style="padding:var(--spacing-8) var(--spacing-12); text-align:center;">Reconciled</th>
+          <th style="padding:var(--spacing-8) var(--spacing-12); text-align:right;">Debit</th>
+          <th style="padding:var(--spacing-8) var(--spacing-12); text-align:right;">Credit</th>
+          <th style="padding:var(--spacing-8) var(--spacing-16); text-align:right;">Running Balance</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        {# Opening Balance Sub-row #}
+        <tr style="border-bottom:1px solid var(--color-mist); background:var(--color-paper-white);">
+          <td colspan="6" style="padding:var(--spacing-8) var(--spacing-16) var(--spacing-8) 44px; font-weight:var(--font-weight-semibold); color:var(--color-slate);">
+            Opening Balance
+          </td>
+          <td style="padding:var(--spacing-8) var(--spacing-16); text-align:right;">
+            <span class="td-mono" style="font-weight:var(--font-weight-semibold);">
+              {{ group.opening_balance|floatformat:2|intcomma }}
+            </span>
+          </td>
+        </tr>
+
+        {# Journal Entry Rows #}
+        {% for row in group.rows %}
+          <tr style="border-bottom:1px solid var(--color-mist);">
+            <td style="padding:var(--spacing-8) var(--spacing-16) var(--spacing-8) 44px;">
+              <span class="td-muted" style="font-size:var(--text-caption);">
+                {{ row.line.date|date:"M j, Y" }}
+              </span>
+            </td>
+
+            <td style="padding:var(--spacing-8) var(--spacing-12);">
+              <a href="" class="td-mono" style="font-size:var(--text-caption);">
+                {{ row.line.move.name|default:row.line.move_id }}
+              </a>
+            </td>
+
+            <td style="padding:var(--spacing-8) var(--spacing-12); font-size:var(--text-caption);">
+              {{ row.line.description|default:"—" }}
+            </td>
+
+            {# ── RECONCILIATION COLUMN ── #}
+            <td style="padding:var(--spacing-8) var(--spacing-12); text-align:center;">
+              {% if row.line.reconciled == True %}
+                <span class="badge badge--paid" style="font-size:10px; padding:2px 6px;" title="Fully Reconciled">
+                  <i class="bi bi-check-circle-fill me-1"></i> Reconciled
+                </span>
+              {% elif row.line.amount_residual and row.line.amount_residual != row.line.balance %}
+                <span class="badge badge--overdue" style="font-size:10px; padding:2px 6px;" title="Partially Reconciled">
+                  <span class="badge-dot"></span> Partial
+                </span>
+              {% else %}
+                <span class="td-muted" style="font-size:11px;">—</span>
+              {% endif %}
+            </td>
+
+            <td style="padding:var(--spacing-8) var(--spacing-12); text-align:right;">
+              {% if row.line.debit %}
+                <span class="td-mono" style="font-size:var(--text-caption);">
+                  {{ row.line.debit|floatformat:2|intcomma }}
+                </span>
+              {% else %}
+                <span class="td-muted">—</span>
+              {% endif %}
+            </td>
+
+            <td style="padding:var(--spacing-8) var(--spacing-12); text-align:right;">
+              {% if row.line.credit %}
+                <span class="td-mono" style="font-size:var(--text-caption);">
+                  {{ row.line.credit|floatformat:2|intcomma }}
+                </span>
+              {% else %}
+                <span class="td-muted">—</span>
+              {% endif %}
+            </td>
+
+            <td style="padding:var(--spacing-8) var(--spacing-16); text-align:right;">
+              <span class="td-mono" style="font-size:var(--text-caption);">
+                {{ row.running_balance|floatformat:2|intcomma }}
+              </span>
+            </td>
+          </tr>
+        {% endfor %}
+
+        {# Closing Balance Sub-row #}
+        <tr style="background:var(--color-paper-white);">
+          <td colspan="6" style="padding:var(--spacing-8) var(--spacing-16) var(--spacing-8) 44px; font-weight:var(--font-weight-semibold); color:var(--color-deep-indigo);">
+            Closing Balance
+          </td>
+          <td style="padding:var(--spacing-8) var(--spacing-16); text-align:right;">
+            <span class="td-amount" style="font-size:var(--text-caption);">
+              {{ group.closing_balance|floatformat:2|intcomma }}
+            </span>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+  </td>
+</tr>
+
+            {% endfor %}
+
+          </tbody>
+
+          {# ── Totals Footer ── #}
+          <tfoot>
+            <tr style="border-top:2px solid var(--color-mist); background:var(--color-paper-white);">
+              <td style="padding:var(--spacing-12) var(--spacing-16); font-weight:var(--font-weight-semibold); color:var(--color-deep-indigo);">
+                Grand Total
+              </td>
+              <td class="col-right" style="padding:var(--spacing-12) var(--spacing-16);"></td>
+              <td class="col-right" style="padding:var(--spacing-12) var(--spacing-16);">
+                <span class="td-amount">
+                  {{ grand_total_debit|floatformat:2|intcomma }}
+                </span>
+              </td>
+              <td class="col-right" style="padding:var(--spacing-12) var(--spacing-16);">
+                <span class="td-amount">
+                  {{ grand_total_credit|floatformat:2|intcomma }}
+                </span>
+              </td>
+              <td class="col-right" style="padding:var(--spacing-12) var(--spacing-16);"></td>
+            </tr>
+          </tfoot>
+
+        </table>
+        
+
+      </div>
+
+    {% else %}
+
+      <div style="padding:var(--spacing-64) var(--spacing-24);">
+        <div class="table-empty">
+          <div class="table-empty-icon">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <div class="table-empty-title">
+            No entries found
+          </div>
+          <div class="table-empty-desc">
+            No posted journal entries match the selected filters or date range.
+          </div>
+        </div>
+      </div>
+
+    {% endif %}
+
+  </div>
+</div>
+
+<script>
+function toggleGlDetail(accountId) {
+  const detail = document.getElementById('detail-' + accountId);
+  const chevron = document.getElementById('chevron-' + accountId);
+
+  if (!detail || !chevron) return;
+
+  const isOpen = detail.style.display !== 'none';
+  detail.style.display = isOpen ? 'none' : 'table-row';
+  chevron.style.transform = isOpen ? '' : 'rotate(90deg)';
+}
+</script>

@@ -1,0 +1,264 @@
+{% load humanize %}
+
+<div id="currency-display"
+     hx-get="{% url 'accounting:currency_view' %}"
+     hx-trigger="RefreshCurrencies from:body">
+
+<div class="main-wrapper">
+  
+  <div class="inv-card">
+    {# ── TABLE WRAPPER ────────────────────────────────────── #}
+    <div class="table-wrap">
+    
+
+      <div class="table-toolbar">
+        <h5 class="table-toolbar-title">
+          Company Currencies
+          <span class="badge badge--count">
+            {{ currencies.paginator.count }} Currencies
+          </span>
+        </h5>
+          
+              <div>
+            <button class="btn btn-primary btn-sm"
+        hx-get="{% url 'accounting:get_empty_currency_row' %}"
+        hx-vals="js:{
+            index: document.getElementById('id_form-TOTAL_FORMS')
+                ? document.getElementById('id_form-TOTAL_FORMS').value
+                : 0
+        }"
+        hx-target="#table-body"
+        hx-swap="afterbegin"
+        onclick="
+            setTimeout(() => {
+                const el = document.getElementById('id_form-TOTAL_FORMS');
+                if (el) {
+                    el.value = parseInt(el.value) + 1;
+                }
+            }, 50);
+        ">
+    <i class="bi bi-plus-lg"></i> New
+</button>
+              </div>
+        
+     <button type="button"
+        class="btn btn-primary btn-sm"
+        hx-post="{% url 'accounting:sync_rates' %}"
+        hx-swap="none">
+    <i class="bi bi-arrow-repeat me-1"></i>
+    Sync Rates
+    </button>
+        
+        <!-- Filter & Search Toolbar -->
+        <form data-toolbar
+              class="toolbar"
+              id="currency-filters"
+              hx-get="{% url 'accounting:currency_view' %}"
+              hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
+              hx-target="#accounting-display"
+              hx-replace-url="true">
+
+
+          <div class="toolbar-search-wrap">
+            <i class="ti ti-search toolbar-search-icon"></i>
+            <input type="text"
+                   id="toolbar-search-input"
+                   class="toolbar-search"
+                   name="search_currency"
+                   placeholder="Search currency..."
+                   value="{{ request.GET.search_currency }}">
+            <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+              <i class="ti ti-x"></i>
+            </button>
+          </div>
+  
+          <button type="button" class="toolbar-clear-btn">
+            <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
+          </button>
+        </form>
+      </div>
+        
+        {% if formset %}
+            {{ formset.management_form }}
+        {% endif %}
+        
+<table class="data-table" data-checkbox-table>
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Symbol</th>
+            <th>Is Active</th>
+            <th>Exchange Rate</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody id="table-body">
+        {% for c in currencies %}
+            <tr id="currency-row-{{ c.currency.id }}">
+
+                <!-- Code -->
+                <td class="td-mono">
+                    {{ c.currency.code }}
+                </td>
+
+                <!-- Name -->
+                <td class="td-primary">
+                    {{ c.currency.name }}
+                </td>
+
+                <!-- Symbol -->
+                <td>
+                    {{ c.currency.symbol }}
+                </td>
+
+                <!-- Is Active -->
+                <td>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               role="switch"
+                               id="currency-active-{{ c.currency.id }}"
+                               name="is_active"
+                               value="true"
+                               {% if c.is_active %}checked{% endif %}
+                               hx-post="{% url 'accounting:toggle_currency' c.currency.id %}"
+                               hx-trigger="change"
+                               hx-swap="none">
+                    </div>
+                </td>
+
+                <!-- Exchange Rate -->
+                <td class="col-center">
+                    {{ c.rates_form.rate }}
+                </td>
+
+                <!-- Actions -->
+                <td>
+                    <button type="button"
+                            class="btn btn-secondary btn-sm"
+                            hx-post="{% url 'accounting:save_rate' c.currency.id %}"
+                            hx-include="closest tr"
+                            hx-swap="none">
+                        <i class="bi bi-check-circle"></i>
+                        Save
+                    </button>
+                </td>
+
+            </tr>
+
+        {% empty %}
+            <tr>
+                <td colspan="6" class="table-empty">
+                    <div class="table-empty-icon">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+
+                    <div class="table-empty-title">
+                        No Currencies found
+                    </div>
+
+                    <div class="table-empty-desc">
+                        There are no records matching your current
+                        filter criteria.
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+        
+
+      {# ── Pagination (only when more than one page) ────────────── #}
+      {% if accounts.paginator.num_pages > 1 %}
+        <div class="table-footer">
+          <small class="table-footer-count">
+            Showing {{ currencies.start_index }}–{{ currencies.end_index }}
+            of {{ currencies.paginator.count }} Currency{{ currencies.paginator.count|pluralize }}
+          </small>
+
+          <div class="table-pagination" hx-include="#currency-filters">
+            {# First #}
+            {% if currencies.has_previous %}
+              <a class="page-btn page-btn--arrow"
+                 hx-get="?page=1"
+                 hx-target="#accounting-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+                <i class="bi bi-chevron-double-left"></i>
+              </a>
+            {% else %}
+              <span class="page-btn page-btn--arrow" aria-disabled="true">
+                <i class="bi bi-chevron-double-left"></i>
+              </span>
+            {% endif %}
+
+            {# Prev #}
+            {% if currencies.has_previous %}
+              <a class="page-btn page-btn--arrow"
+                 hx-get="?page={{ accounts.previous_page_number }}"
+                 hx-target="#accounting-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+                <i class="bi bi-chevron-left"></i>
+              </a>
+            {% else %}
+              <span class="page-btn page-btn--arrow" aria-disabled="true">
+                <i class="bi bi-chevron-left"></i>
+              </span>
+            {% endif %}
+
+            {# Page numbers #}
+            {% for num in currencies.paginator.page_range %}
+              {% if currencies.number == num %}
+                <span class="page-btn active">{{ num }}</span>
+              {% elif num > currencies.number|add:'-3' and num < currencies.number|add:'3' %}
+                <a class="page-btn"
+                   hx-get="?page={{ num }}"
+                   hx-target="#accounting-display"
+                   hx-swap="innerHTML"
+                   hx-push-url="true">{{ num }}</a>
+              {% endif %}
+            {% endfor %}
+
+            {# Next #}
+            {% if currencies.has_next %}
+              <a class="page-btn page-btn--arrow"
+                 hx-get="?page={{ currencies.next_page_number }}"
+                 hx-target="#accounting-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            {% else %}
+              <span class="page-btn page-btn--arrow" aria-disabled="true">
+                <i class="bi bi-chevron-right"></i>
+              </span>
+            {% endif %}
+
+            {# Last #}
+            {% if currencies.has_next %}
+              <a class="page-btn page-btn--arrow"
+                 hx-get="?page={{ currencies.paginator.num_pages }}"
+                 hx-target="#accounting-display"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+                <i class="bi bi-chevron-double-right"></i>
+              </a>
+            {% else %}
+              <span class="page-btn page-btn--arrow" aria-disabled="true">
+                <i class="bi bi-chevron-double-right"></i>
+              </span>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+</div>

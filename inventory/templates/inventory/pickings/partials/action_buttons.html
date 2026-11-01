@@ -1,0 +1,118 @@
+{% load group_tags %}
+{% load humanize %}
+
+<div>
+    {# ── ACTION BUTTONS (shown from flags built by PickingStateService.get_flags) ── #}
+
+
+    
+    {% if flags.can_confirm %}
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'inventory:picking_confirm' picking.id %}"
+            hx-target="#inventory-display"
+            hx-confirm="Confirm Picking?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-check-circle"></i> Confirm
+        </button>
+    {% endif %}
+
+    {% if flags.can_assign %}
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'inventory:picking_assign' picking.id %}"
+            hx-target="#inventory-display"
+            hx-confirm="Assign stock to this Picking?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-box-seam"></i> Assign
+        </button>
+    {% endif %}
+
+    {% if flags.can_validate %}
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'inventory:picking_validate' picking.id %}"
+            hx-target="#inventory-display"
+            hx-confirm="Validate Picking?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-check-circle"></i> Validate
+        </button>
+    {% endif %}
+
+    {% if flags.can_cancel %}
+        <button
+            type="button"
+            class="btn btn-secondary"
+            hx-post="{% url 'inventory:picking_cancel' picking.id %}"
+            hx-target="#inventory-display"
+            hx-confirm="Cancel this Picking?"
+            hx-swap="innerHTML"
+            hx-disabled-elt="this">
+            <i class="bi bi-x-circle"></i> Cancel
+        </button>
+    {% endif %}
+
+    {# A return only makes sense for a transfer that was actually done #}
+    {% if picking.status == "COMPLETED" %}
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#ReturnModal">
+            Create Return
+        </button>
+    {% endif %}
+</div>
+
+<div>
+
+
+<button type="button" class="btn btn-secondary"
+        hx-get="{% url 'inventory:stock_move_operations' picking.id %}"
+        hx-target="#inventory-display" hx-swap="outerHTML"
+        hx-disabled-elt="this" hx-push-url="true">
+    <i class="bi bi-list-ul"></i> Moves
+</button>
+
+{% if prev_picking %}
+  <button type="button"
+          class="btn btn-secondary"
+          hx-get="{% url 'inventory:picking_detail' picking_id=prev_picking.pk %}"
+          hx-target="#inventory-display"
+          hx-swap="innerHTML show:window:top"
+          hx-push-url="true">
+    &larr; Step {{ step_number|add:"-1" }}: {{ prev_picking.picking_type.name }}
+  </button>
+{% endif %}
+
+{% if next_picking %}
+  <button type="button"
+          class="btn btn-secondary"
+          hx-get="{% url 'inventory:picking_detail' picking_id=next_picking.pk %}"
+          hx-target="#inventory-display"
+          hx-swap="innerHTML show:window:top"
+          hx-push-url="true">
+    Step {{ step_number|add:"1" }}: {{ next_picking.picking_type.name }} &rarr;
+  </button>
+{% endif %}
+
+</div>
+
+{# ── STATUS BADGE: the picking statuses are DRAFT, WAITING, CONFIRMED, ASSIGNED, COMPLETED, CANCELLED ── #}
+<span class="po-invoice-number">
+    {% if picking.status == "DRAFT" %}
+        <span class="badge"><i class="bi bi-pencil"></i> {{ picking.get_status_display }}</span>
+    {% elif picking.status == "WAITING" or picking.status == "CONFIRMED" %}
+        <span class="badge badge--pending"><i class="bi bi-hourglass-top"></i> {{ picking.get_status_display }}</span>
+    {% elif picking.status == "ASSIGNED" %}
+        <span class="badge badge--partial"><i class="bi bi-box-seam"></i> {{ picking.get_status_display }}</span>
+    {% elif picking.status == "COMPLETED" %}
+        <span class="badge badge--completed"><i class="bi bi-check-circle-fill"></i> {{ picking.get_status_display }}</span>
+    {% elif picking.status == "CANCELLED" %}
+        <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> {{ picking.get_status_display }}</span>
+    {% else %}
+        <span class="badge">{{ picking.status }}</span>
+    {% endif %}
+</span>

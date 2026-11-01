@@ -1,0 +1,35 @@
+{% if swap.header %}
+<hx-partial hx-target="#header-form-wrapper" hx-swap="outerHTML">
+    <div id="header-form-wrapper" class="form-header">
+        {% include "accounting/journals/partials/header_form_inner.html" %}
+    </div>
+</hx-partial>
+{% endif %}
+
+
+{% if swap.items or swap.item_row %}
+<hx-partial hx-target="#items-management-form" hx-swap="innerHTML">
+  {{ formset.management_form }}
+</hx-partial>
+{% endif %}
+
+{% if swap.items %}
+<hx-partial hx-target="#journal-items" hx-swap="outerHTML">
+    <tbody id="journal-items">
+      {% for form in formset %}
+        {% include "accounting/journals/partials/journal_item_row.html" with form=form %}
+      {% endfor %}
+    </tbody>
+</hx-partial>
+
+{% elif swap.item_row and form %}
+<hx-partial hx-target="#line-row-{{ form.prefix }}" hx-swap="outerHTML">
+    {% include "accounting/journals/partials/journal_item_row.html" with form=form %}
+</hx-partial>
+{% endif %}
+
+{% if swap.totals %}
+<hx-partial hx-target="#move-total" hx-swap="outerHTML transition:true">
+    {% include "accounting/journals/partials/journal_totals.html" %}
+</hx-partial>
+{% endif %}

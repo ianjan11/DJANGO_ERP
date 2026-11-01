@@ -1,0 +1,102 @@
+<div class="form-card">
+  <!-- Breadcrumbs & Header -->
+  <div class="mb-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-1 small">
+        <li class="breadcrumb-item"><a href="{% url 'core:tenant_user_list' %}">Users</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Add Member</li>
+      </ol>
+    </nav>
+    <h1>Add Team Member</h1>
+    <p class="text-muted small">Adding user to <strong>{{ company.name }}</strong></p>
+  </div>
+  
+  
+  <form   id = "tenant_form"
+          method="post"
+          hx-post="{% url 'core:tenant_user_create' %}"
+          hx-target="#settings-display"
+          novalidate
+  >
+    {% csrf_token %}
+
+    {# Non-field errors (e.g. password mismatch) #}
+    {% if form.non_field_errors %}
+      <div class="form-errors alert alert-danger">
+        {% for error in form.non_field_errors %}
+          <p class="error mb-0">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="form-header-content">
+      
+      <!-- Email Field -->
+      <div class="form-group mb-3 {% if form.email.errors %}has-error{% endif %}">
+        {{ form.email.label_tag }}
+        {{ form.email }}
+        {% if form.email.help_text %}
+          <small class="help-text">{{ form.email.help_text|safe }}</small>
+        {% endif %}
+        {% for error in form.email.errors %}
+          <p class="error text-danger small">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <!-- First Name Field -->
+      <div class="form-group mb-3 {% if form.first_name.errors %}has-error{% endif %}">
+        {{ form.first_name.label_tag }}
+        {{ form.first_name }}
+        {% if form.first_name.help_text %}
+          <small class="help-text">{{ form.first_name.help_text|safe }}</small>
+        {% endif %}
+        {% for error in form.first_name.errors %}
+          <p class="error text-danger small">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <!-- Last Name Field -->
+      <div class="form-group mb-3 {% if form.last_name.errors %}has-error{% endif %}">
+        {{ form.last_name.label_tag }}
+        {{ form.last_name }}
+        {% if form.last_name.help_text %}
+          <small class="help-text">{{ form.last_name.help_text|safe }}</small>
+        {% endif %}
+        {% for error in form.last_name.errors %}
+          <p class="error text-danger small">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <!-- Password 1 Field -->
+      <div class="form-group mb-3 {% if form.password1.errors %}has-error{% endif %}">
+        {{ form.password1.label_tag }}
+        {{ form.password1 }}
+        {% if form.password1.help_text %}
+          <small class="help-text">{{ form.password1.help_text|safe }}</small>
+        {% endif %}
+        {% for error in form.password1.errors %}
+          <p class="error text-danger small">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <!-- Password 2 Field -->
+      <div class="form-group mb-3 {% if form.password2.errors %}has-error{% endif %}">
+        {{ form.password2.label_tag }}
+        {{ form.password2 }}
+        {% if form.password2.help_text %}
+          <small class="help-text">{{ form.password2.help_text|safe }}</small>
+        {% endif %}
+        {% for error in form.password2.errors %}
+          <p class="error text-danger small">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+    </div>
+      <div>
+              <button type="submit" class="btn btn-primary">Sign up</button>
+
+      </div>
+
+  </form>
+  
+</div>
