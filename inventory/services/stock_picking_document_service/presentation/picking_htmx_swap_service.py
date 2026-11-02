@@ -60,7 +60,6 @@ class UIResponseService:
         )
 
         picking = payload.get("picking")
-        print(picking)
 
         # 4. CONTEXT
         context: Dict[str, Any] = {

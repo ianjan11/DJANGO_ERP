@@ -214,3 +214,11 @@
 [INFO] 2026-11-01 14:20:26,285 sales.invoice apply_state: ui plan: {'swap': ['item-row', 'totals'], 'triggers': []}
 [INFO] 2026-11-01 14:20:26,289 sales.invoice apply_state: Pre-save — errors: {} | row_errors: {}
 [INFO] 2026-11-01 14:20:26,296 sales.invoice apply_state: Document type=sales_order pk=1 saved successfully.
+[DEBUG] 2026-11-02 10:07:15,309 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-02 10:07:15,311 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-02 10:07:15,326 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-02 10:07:15,368 sales.invoice apply_state: StockPicking pk=14 saved successfully.
+[DEBUG] 2026-11-02 10:07:18,303 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [19], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-02 10:07:18,303 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-02 10:07:18,324 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-02 10:07:18,366 sales.invoice apply_state: StockPicking pk=14 saved successfully.
