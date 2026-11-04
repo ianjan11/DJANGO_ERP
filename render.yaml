@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: sm-system-web
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn SM_SYSTEM.wsgi:application"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: "SM_SYSTEM.settings.production"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false  # You will manually paste your Neon connection string here in the Render dashboard
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"

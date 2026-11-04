@@ -1,0 +1,319 @@
+/* ============================================================
+   TABLE — Data table, status badges, pagination
+   table.css
+   Depends on: invoice.css (design tokens)
+   ============================================================ */
+
+
+/* ── Table wrapper ────────────────────────────────────────── */
+/*
+  Handles overflow scrolling on narrow viewports.
+  Wraps the <table> and .table-footer.
+*/
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  background: var(--surface-card);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-cards);
+}
+
+
+/* ── Table base ───────────────────────────────────────────── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-body-sm);
+  font-family: var(--font-suisseintl);
+  table-layout: fixed;           /* predictable column widths */
+}
+
+
+/* ── Column alignment helpers ─────────────────────────────── */
+.data-table th.col-right,
+.data-table td.col-right  { text-align: right; }
+
+.data-table th.col-center,
+.data-table td.col-center { text-align: center; }
+
+
+/* ── Header ───────────────────────────────────────────────── */
+.data-table thead tr {
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.data-table th {
+  padding: 10px var(--spacing-16);
+  text-align: left;
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-slate);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: var(--surface-card);
+  user-select: none;
+}
+
+/* Sortable column header */
+.data-table th.col-sortable {
+  cursor: pointer;
+  transition: color 0.12s ease;
+}
+
+.data-table th.col-sortable:hover {
+  color: var(--color-deep-indigo);
+}
+
+/* Sort chevron icon — place inside <th> as <i class="sort-icon"> */
+.data-table .sort-icon {
+  margin-left: var(--spacing-4);
+  font-size: 12px;
+  color: var(--color-fog);
+  vertical-align: -1px;
+  transition: color 0.12s ease;
+}
+
+.data-table th.col-sortable:hover .sort-icon {
+  color: var(--color-slate);
+}
+
+/* Active sort column */
+.data-table th.col-sort-asc .sort-icon,
+.data-table th.col-sort-desc .sort-icon {
+  color: var(--color-deep-indigo);
+}
+
+
+/* ── Body rows ────────────────────────────────────────────── */
+.data-table tbody tr {
+  border-bottom: 1px solid var(--color-mist);
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.data-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.data-table tbody tr:hover {
+  background: #f3f4f8;
+}
+
+/* Selected row state */
+.data-table tbody tr.is-selected {
+  background: #eef1fb;
+}
+
+
+/* ── Cells ────────────────────────────────────────────────── */
+.data-table td {
+  padding: var(--spacing-12) var(--spacing-16);
+  color: var(--color-deep-ink);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--leading-body-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* ── Cell content variants ────────────────────────────────── */
+
+/* Primary text — bold, indigo */
+.td-primary {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-deep-indigo);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Secondary/muted line — sits below .td-primary inside a cell */
+.td-muted {
+  font-size: var(--text-caption);
+  color: var(--color-slate);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Monospaced cell — for IDs, invoice numbers, codes */
+.td-mono {
+  font-family: var(--font-suisseintlmono);
+  font-size: var(--text-body-sm);
+  color: var(--color-slate);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Amount — semibold, right-aligned by parent .col-right */
+.td-amount {
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-indigo);
+}
+
+/* Amount modifier — overdue / negative */
+.td-amount--overdue {
+  color: var(--color-ember-orange);
+}
+
+
+
+
+/* ── Table footer ─────────────────────────────────────────── */
+/*
+  Row count label on the left, pagination controls on the right.
+*/
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-16);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-top: 1px solid var(--color-mist);
+  background: var(--surface-card);
+  border-radius: 0 0 var(--radius-cards) var(--radius-cards);
+}
+
+.table-footer-count {
+  font-size: var(--text-caption);
+  color: var(--color-slate);
+  white-space: nowrap;
+}
+
+
+/* ── Pagination ───────────────────────────────────────────── */
+.table-pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.table-pagination-ellipsis {
+  font-size: var(--text-caption);
+  color: var(--color-fog);
+  padding: 0 var(--spacing-4);
+}
+
+.page-btn {
+  height: 28px;
+  min-width: 28px;
+  padding: 0 var(--spacing-8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: var(--font-suisseintl);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-slate);
+
+  background: transparent;
+  border: 1px solid var(--color-mist);
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+
+  transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease;
+}
+
+.page-btn:hover:not(:disabled):not(.active) {
+  background: #f3f4f8;
+  color: var(--color-deep-indigo);
+  border-color: var(--color-fog);
+}
+
+/* Active / current page */
+.page-btn.active {
+  background: var(--color-deep-indigo);
+  color: var(--surface-card);
+  border-color: var(--color-deep-indigo);
+  cursor: default;
+}
+
+/* Disabled prev / next */
+.page-btn:disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Prev / next arrow buttons — slightly wider than number buttons */
+.page-btn--arrow {
+  font-size: 13px;
+}
+
+
+/* ── Empty state ──────────────────────────────────────────── */
+/*
+  Drop inside <tbody> as a single full-width row when no data.
+*/
+.table-empty {
+  padding: var(--spacing-64) var(--spacing-24);
+  text-align: center;
+  color: var(--color-slate);
+}
+
+.table-empty-icon {
+  font-size: 32px;
+  color: var(--color-mist);
+  margin-bottom: var(--spacing-12);
+}
+
+.table-empty-title {
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-graphite);
+  margin-bottom: var(--spacing-4);
+}
+
+.table-empty-desc {
+  font-size: var(--text-body-sm);
+  color: var(--color-fog);
+}
+
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .data-table th,
+  .data-table td {
+    padding: var(--spacing-8) var(--spacing-12);
+  }
+
+  .table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-12);
+  }
+
+  .table-pagination {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+
+/* ── Table toolbar ────────────────────────────────────────── */
+/* Title bar above the table — label left, count badge right  */
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-bottom: 1px solid var(--color-mist);
+  background: var(--surface-card);
+}
+
+.table-toolbar-title {
+  margin: 0;
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-indigo);
+}
+
+/* Disabled arrow — aria-disabled instead of inline opacity */
+.page-btn[aria-disabled="true"] {
+  opacity: 0.35;
+  pointer-events: none;
+  cursor: not-allowed;
+}

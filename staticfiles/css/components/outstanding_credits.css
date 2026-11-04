@@ -1,0 +1,333 @@
+/* ═══════════════════════════════════════════
+   OUTSTANDING CREDITS (OC)
+   Depends on: invoice.css (design tokens)
+   ═══════════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════
+   TABLE
+══════════════════════════════════════════ */
+.oc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-body-sm);
+  font-family: var(--font-suisseintl);
+  table-layout: auto;
+}
+
+.oc-table thead tr {
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.oc-table th {
+  padding: var(--spacing-8) var(--spacing-12);
+  text-align: left;
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-slate);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.oc-table td {
+  padding: var(--spacing-8) var(--spacing-12);
+  border-bottom: 1px solid var(--color-mist);
+  vertical-align: middle;
+  color: var(--color-deep-ink);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body-sm);
+}
+
+.oc-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.oc-table tbody tr {
+  transition: background 0.1s ease;
+  cursor: pointer;
+}
+
+.oc-table tbody tr:hover {
+  background: #f3f4f8;
+}
+
+.oc-table .oc-date {
+  color: var(--color-slate);
+  white-space: nowrap;
+  font-size: var(--text-caption);
+}
+
+.oc-table .oc-amt {
+  font-weight: var(--font-weight-semibold);
+  text-align: right;
+  color: var(--color-deep-indigo);
+  font-family: var(--font-suisseintlmono);
+}
+
+/* fixed: was text-align: left — should be right for amounts */
+.text-end { text-align: right; }
+
+
+/* ══════════════════════════════════════════
+   BADGES
+══════════════════════════════════════════ */
+.oc-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-badges);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+
+.oc-badge-credit,
+.oc-badge-pay {
+  background: var(--color-paper-white);
+  color: var(--color-slate);
+  border: 1px solid var(--color-mist);
+}
+
+.oc-badge-prepayment {
+  background: #faeeda;
+  color: #854f0b;
+  border: 1px solid #fac775;
+  margin-left: var(--spacing-4);
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  padding: 2px 8px;
+  border-radius: var(--radius-badges);
+}
+
+
+/* ══════════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════════ */
+.oc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-4);
+  height: 30px;
+  padding: 0 var(--spacing-12);
+  font-family: var(--font-suisseintl);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid var(--color-mist);
+  border-radius: 6px;
+  background: var(--surface-card);
+  color: var(--color-deep-ink);
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+  text-decoration: none;
+}
+
+.oc-btn:hover {
+  background: var(--color-paper-white);
+  border-color: var(--color-fog);
+  color: var(--color-deep-indigo);
+  box-shadow: rgba(0,0,0,0.05) 0px 2px 6px;
+}
+
+.oc-btn:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+.oc-btn:disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.oc-reconcile-btn {
+  background: var(--surface-card);
+  border-color: var(--color-mist);
+  color: var(--color-deep-ink);
+}
+
+.oc-reconcile-btn:hover {
+  background: var(--color-paper-white);
+  border-color: var(--color-fog);
+  color: var(--color-deep-indigo);
+  box-shadow: rgba(0, 0, 0, 0.06) 0px 4px 8px,
+              rgba(0, 0, 0, 0.04) 0px 1px 3px;
+  transform: translateY(-1px);;
+}
+
+.oc-btn-retry {
+  background: var(--color-graphite);
+  border-color: var(--color-graphite);
+  color: #ffffff;
+  margin-left: var(--spacing-8);
+}
+
+.oc-btn-retry:hover {
+  background: #2e3139;
+  border-color: #2e3139;
+  color: #ffffff;
+}
+
+
+/* ══════════════════════════════════════════
+   INPUT
+══════════════════════════════════════════ */
+.oc-input {
+  display: inline-block;
+  width: 120px;
+  height: 30px;
+  padding: 0 var(--spacing-8);
+  font-family: var(--font-suisseintl);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-deep-ink);
+  background: var(--surface-card);
+  border: 1px solid var(--color-mist);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.oc-input:hover  { border-color: var(--color-fog); }
+.oc-input:focus  {
+  border-color: var(--color-slate);
+  box-shadow: 0 0 0 3px rgba(113,114,118,0.12);
+}
+
+
+/* ══════════════════════════════════════════
+   STATES — loading / empty / error
+══════════════════════════════════════════ */
+.oc-loading {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  font-size: var(--text-body-sm);
+  color: var(--color-slate);
+  padding: var(--spacing-16);
+}
+
+.oc-empty {
+  text-align: center;
+  padding: var(--spacing-32) var(--spacing-24);
+  color: var(--color-fog);
+  background: var(--color-paper-white);
+  border-radius: var(--radius-cards);
+  border: 1px dashed var(--color-mist);
+  font-size: var(--text-body-sm);
+}
+
+.oc-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-8);
+  padding: var(--spacing-12) var(--spacing-16);
+  font-size: var(--text-body-sm);
+  color: #9b2626;
+  background: #fef5f5;
+  border: 1px solid #f7c1c1;
+  border-radius: var(--radius-cards);
+}
+
+
+/* ══════════════════════════════════════════
+   RESIDUAL STATES
+══════════════════════════════════════════ */
+.oc-residual-state {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-badges);
+}
+
+.oc-state-not_paid {
+  background: #fce8e8;
+  color: #9b2626;
+}
+
+.oc-state-partial {
+  background: #e6f1fb;
+  color: #185fa5;
+}
+
+.oc-state-paid {
+  background: #e1f5ee;
+  color: #0f6e56;
+}
+
+
+/* ══════════════════════════════════════════
+   WIDGET CONTAINER
+══════════════════════════════════════════ */
+#outstanding-credits-widget {
+  background: var(--surface-card);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-cards);
+  overflow: hidden;
+}
+
+.oc-residual-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.oc-residual-label {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-slate);
+}
+
+.oc-residual-val {
+  font-family: var(--font-suisseintlmono);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-indigo);
+  margin-left: auto;
+}
+
+.oc-section {
+  padding: var(--spacing-12) var(--spacing-16);
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.oc-section:last-child {
+  border-bottom: none;
+}
+
+.oc-section-title {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-slate);
+  margin-bottom: var(--spacing-8);
+}
+
+
+/* ══════════════════════════════════════════
+   SPINNER
+══════════════════════════════════════════ */
+.oc-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-mist);
+  border-top-color: var(--color-slate);
+  border-radius: 50%;
+  animation: oc-spin 0.7s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+@keyframes oc-spin { to { transform: rotate(360deg); } }

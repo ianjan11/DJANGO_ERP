@@ -1,0 +1,96 @@
+/* ═══════════════════════════════════════════
+   DASHBOARD
+   ═══════════════════════════════════════════ */
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.best-selling-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.chart-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Card ── */
+.chart-card {
+  background: var(--surface-card);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-cards);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: rgba(17, 26, 74, 0.04) 0px 1px 3px,
+              rgba(17, 26, 74, 0.02) 0px 1px 0px;
+}
+
+.chart-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--spacing-16) var(--spacing-16) var(--spacing-12);
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.chart-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.chart-eyebrow {
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-fog);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.chart-title {
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-indigo);
+}
+
+.chart-body {
+  padding: var(--spacing-16);
+  flex: 1;
+}
+
+/* ── Footer — pending count etc ── */
+.chart-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-12) var(--spacing-16);
+  border-top: 1px solid var(--color-mist);
+  background: var(--color-paper-white);
+}
+
+.chart-footer-label {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-slate);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chart-footer-value {
+  font-size: var(--text-heading-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-indigo);
+  font-family: var(--font-suisseintlmono);
+}

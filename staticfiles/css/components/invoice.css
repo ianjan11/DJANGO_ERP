@@ -1,0 +1,71 @@
+.invoice-number {
+    font-size: var(--text-heading-lg);
+    font-weight: var(--font-weight-semibold, 600);
+    color: var(--color-deep-indigo);
+
+}
+
+
+
+
+.invoice-header-card {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-content: stretch;
+  gap: 2px;
+  margin: 20px 0px 10px 10px;
+}
+
+
+.invoice-header-title {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: stretch;
+  gap: 2px;
+}
+
+.invoice-header-title > div label {
+  font-size: var(--text-subheading);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-slate);
+}
+
+
+
+.invoice-header-card > div {
+  align-self: flex-start;
+}
+
+
+
+               
+
+.totals-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  align-content: stretch;
+  gap: 8px;
+  margin: 40px;
+
+}
+
+
+.totals-container > div >div >span {
+  font-size: var(--text-subheading);
+  font-weight: var(--font-weight-semibold);
+}
+
+.totals-container > div >div > label {
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-slate);
+}

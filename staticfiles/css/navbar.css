@@ -1,0 +1,286 @@
+/* ── Navbar Container ── */
+.app-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface-card);
+  border-bottom: 1px solid var(--color-mist);
+  position: sticky;
+  top: 0;                              /* no margin — sticky with margin creates a gap */
+  z-index: 1000;
+  height: 52px;
+  padding: 0 var(--spacing-16);
+  box-shadow: rgba(17, 26, 74, 0.04) 0px 1px 3px;
+}
+
+/* ── Grouping ── */
+.nav-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ── Nav Links & Toggle ── */
+.app-nav-link, .app-nav-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  color: var(--color-slate);           /* fixed: was ---color-deep-indigo (three dashes) */
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  border-radius: 7px;
+  white-space: nowrap;
+  text-decoration: none;
+  /* removed font-size from transition — it causes layout shift on hover */
+  transition: background 0.12s ease,
+              color 0.12s ease,
+              border-color 0.12s ease;
+}
+
+.app-nav-link i,
+.app-nav-toggle i {
+  font-size: 15px;
+  color: var(--color-fog);
+  transition: color 0.12s ease;
+}
+
+.app-nav-link:hover,
+.app-nav-toggle:hover {
+  color: var(--color-deep-indigo);
+  background: var(--surface-canvas);
+  border-color: var(--color-mist);
+}
+
+.app-nav-link:hover i,
+.app-nav-toggle:hover i {
+  color: var(--color-deep-indigo);
+}
+
+/* removed: .app-nav-toggle:hover { font-size } — causes layout shift */
+
+.app-nav-link.selected,
+.app-nav-toggle.selected {
+  color: var(--color-deep-indigo);
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-paper-white);
+  border-color: var(--color-mist);
+  box-shadow: rgba(17, 26, 74, 0.06) 0px 1px 3px inset;
+}
+
+.app-nav-link.selected i,
+.app-nav-toggle.selected i {
+  color: var(--color-deep-indigo);
+}
+
+/* ── Divider between nav groups ── */
+.nav-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--color-mist);
+  margin: 0 6px;
+  flex-shrink: 0;
+}
+
+
+/* ── Dropdown wrapper ── */
+.nav-dropdown-wrap {
+  position: relative;
+}
+
+/* ── Dropdown trigger button ── */
+.app-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  color: var(--color-slate);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-suisseintl);
+  border: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  border-radius: 7px;
+  white-space: nowrap;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.app-nav-btn:hover,
+.app-nav-btn.open {
+  color: var(--color-deep-indigo);
+  background: var(--color-paper-white);
+  border-color: var(--color-mist);
+}
+
+.nav-chevron {
+  font-size: 10px;
+  transition: transform 0.15s ease;
+}
+
+.app-nav-btn.open .nav-chevron {
+  transform: rotate(180deg);
+}
+
+/* ── Dropdown panel ── */
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 210px;
+  background: var(--surface-card);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-cards);
+  box-shadow: rgba(0,0,0,0.08) 0px 8px 24px,
+              rgba(0,0,0,0.04) 0px 2px 6px;
+  overflow: hidden;
+  z-index: 1100;
+}
+
+.nav-dropdown.open {
+  display: block;
+}
+
+/* ── Dropdown section ── */
+.nav-dd-section {
+  padding: var(--spacing-4) 0;
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.nav-dd-section:last-child {
+  border-bottom: none;
+}
+
+.nav-dd-label {
+  display: block;
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-fog);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: var(--spacing-8) var(--spacing-12) var(--spacing-4);
+}
+
+/* ── Dropdown link ── */
+.nav-dd-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-12);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-slate);
+  cursor: pointer;
+  transition: background 0.1s ease, color 0.1s ease;
+}
+
+.nav-dd-link:hover {
+  background: var(--color-paper-white);
+  color: var(--color-deep-indigo);
+}
+
+.nav-dd-link i {
+  font-size: 14px;
+  width: 16px;
+  color: var(--color-fog);
+  flex-shrink: 0;
+}
+
+.nav-dd-link:hover i {
+  color: var(--color-slate);
+}
+
+/* ── Divider between home and nav items ── */
+.nav-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--color-mist);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+
+
+
+
+
+/* ── User Pill ── */
+.app-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 4px;
+  background: var(--surface-canvas);
+  border-radius: 8px;                  /* reduced from 30px — more professional */
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-deep-indigo);
+  border: 1px solid var(--color-mist);
+  cursor: pointer;
+  transition: background 0.12s ease,
+              box-shadow 0.12s ease,
+              border-color 0.12s ease;
+}
+
+.app-user-pill:hover {
+  background: var(--surface-card);
+  border-color: var(--color-fog);
+  box-shadow: rgba(17, 26, 74, 0.06) 0px 2px 6px;
+}
+
+/* ── Avatar ── */
+.app-user-avatar {
+  width: 26px;
+  height: 26px;
+  background: var(--color-deep-indigo); /* was pale-cyan — too light for initials */
+  color: #ffffff;
+  border-radius: 6px;                   /* square-ish — more professional than circle */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  flex-shrink: 0;
+}
+
+/* ── Logout ── */
+.app-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  color: var(--color-slate);
+  padding: 6px 12px;
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-suisseintl);
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  /* removed font-size from transition */
+  transition: background 0.12s ease,
+              color 0.12s ease,
+              border-color 0.12s ease;
+}
+
+.app-logout-btn:hover {
+  color: #9b2626;
+  background: #fef5f5;
+  border-color: #f7c1c1;
+}
+
+.app-logout-btn i { font-size: 14px; }
+
+/* ── Mobile ── */
+@media (max-width: 992px) {
+  .app-nav-link span,
+  .app-nav-toggle span,
+  .app-logout-btn span {
+    display: none;
+  }
+  .app-user-pill { padding: 4px; }
+}

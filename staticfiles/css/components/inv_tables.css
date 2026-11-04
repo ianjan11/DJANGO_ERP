@@ -1,0 +1,479 @@
+
+/* ═══════════════════════════════════════════
+   TABLE WRAP
+   ═══════════════════════════════════════════ */
+.inv-table-wrap {
+  width: 100%;
+  background: var(--surface-card);
+  /* border and border-radius removed — .invoice-card owns those */
+}
+
+/* ═══════════════════════════════════════════
+   TABLE BASE
+   ═══════════════════════════════════════════ */
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-body-sm);
+  font-family: var(--font-suisseintl);
+}
+
+/* ═══════════════════════════════════════════
+   COLUMN ALIGNMENT
+   ═══════════════════════════════════════════ */
+.inv-table th.col-right,
+.inv-table td.col-right  { text-align: right; }
+
+.inv-table th.col-center,
+.inv-table td.col-center { text-align: center; }
+
+.inv-table th.col-left,
+.inv-table td.col-left  { text-align: left; }
+
+/* ═══════════════════════════════════════════
+   THEAD
+   ═══════════════════════════════════════════ */
+.inv-table thead tr {
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.inv-table th {
+  padding: 10px var(--spacing-16);
+  text-align: left;
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-slate);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: var(--surface-card);
+  user-select: none;
+}
+
+.inv-table thead th:last-child,
+.inv-table thead td:last-child {
+  border-right: none;
+}
+
+.inv-table thead th:hover,
+.inv-table thead td:hover {
+  color: var(--color-deep-indigo);   /* was --color-accent which is undefined */
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════
+   TBODY ROWS
+   ═══════════════════════════════════════════ */
+.inv-table tbody tr {
+  border-bottom: 1px solid var(--color-mist);
+  cursor: pointer;
+  transition: background 0.15s;
+  
+}
+
+
+.inv-table tbody tr:hover {
+  background: #f3f4f8;
+}
+
+/* ═══════════════════════════════════════════
+   TBODY CELLS
+   ═══════════════════════════════════════════ */
+.inv-table tbody td {
+  padding: var(--spacing-12) var(--spacing-16);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-deep-ink);
+  vertical-align: middle;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: var(--leading-body-sm);
+  /* transition: all removed — animating layout props like padding causes reflows */
+}
+
+.inv-table tbody td:last-child {
+  border-right: none;
+}
+/* ═══════════════════════════════════════════
+   TFOOT
+   ═══════════════════════════════════════════ */
+.inv-table tfoot tr {
+  border-top: 2px solid var(--color-mist);
+  background: var(--surface-canvas);
+}
+
+.inv-table tfoot td {
+  padding: 13px 16px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-carbon);
+  text-align: right;
+}
+
+/* ═══════════════════════════════════════════
+   EDITABLE CELL
+   ═══════════════════════════════════════════ */
+.inv-table tbody td.td-editable {
+  padding: 0 16px;
+  vertical-align: middle;
+}
+
+.inv-table tbody td.td-editable:focus-within {
+  background: var(--surface-2, #f9fafb);
+  box-shadow: inset 0 -2px 0 #86b7fe;
+}
+
+/* ═══════════════════════════════════════════
+   NATIVE INPUTS — bottom border only
+   (.td-input, .td-select, .form-control, .form-select)
+   ═══════════════════════════════════════════ */
+.inv-table tbody td .td-input,
+.inv-table tbody td .td-select,
+.inv-table tbody td .form-control,
+.inv-table tbody td .form-select {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+  padding: 2px 0;
+  padding-left: 0;
+  font-size: 13.5px;
+  color: var(--color-deep-carbon);
+  appearance: auto;
+  cursor: pointer;
+  transition: border-bottom-color 0.15s ease;
+}
+
+.inv-table tbody td .td-input:hover,
+.inv-table tbody td .td-select:hover,
+.inv-table tbody td .form-control:hover,
+.inv-table tbody td .form-select:hover {
+  border-bottom-color: #86b7fe;
+  cursor: pointer;
+}
+
+.inv-table tbody td .td-input:focus,
+.inv-table tbody td .td-select:focus,
+.inv-table tbody td .form-control:focus,
+.inv-table tbody td .form-select:focus {
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+.inv-table tbody td .td-input[readonly],
+.inv-table tbody td .form-control[readonly],
+.inv-table tbody td .form-select[disabled] {
+  border-bottom-color: transparent;
+  cursor: default;
+  color: var(--color-slate);
+  background: transparent;
+}
+
+/* Bootstrap form-select arrow alignment */
+.inv-table tbody td .form-select {
+  padding-right: 1.75rem;
+  background-position: right 0 center;
+}
+
+/* ═══════════════════════════════════════════
+   SELECT2 INSIDE TD
+   ═══════════════════════════════════════════ */
+.inv-table tbody td .select2-container {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.inv-table tbody td .select2-container--default .select2-selection--single,
+.inv-table tbody td .select2-container--odoo-line .select2-selection--single {
+  display: flex !important;
+  align-items: center !important;
+  position: relative !important;
+  height: 32px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  cursor: pointer !important;
+}
+
+.inv-table tbody td .select2-container--default .select2-selection--single .select2-selection__rendered,
+.inv-table tbody td .select2-container--odoo-line .select2-selection--single .select2-selection__rendered {
+  flex: 1 !important;
+  line-height: normal !important;
+  padding-left: 0 !important;
+  padding-right: 20px !important;
+  display: block !important;
+  width: 100% !important;
+  font-size: 13.5px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.inv-table tbody td .select2-container--default .select2-selection--single .select2-selection__arrow,
+.inv-table tbody td .select2-container--odoo-line .select2-selection--single .select2-selection__arrow {
+  position: absolute !important;
+  top: 50% !important;
+  right: 0 !important;
+  transform: translateY(-50%) !important;
+  height: 20px !important;
+  width: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+}
+
+.inv-table tbody td .select2-container--default.select2-container--focus .select2-selection--single,
+.inv-table tbody td .select2-container--odoo-line.select2-container--focus .select2-selection--single {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* ═══════════════════════════════════════════
+   SELECT2 DROPDOWN — global (body-appended)
+   ═══════════════════════════════════════════ */
+.select2-dropdown {
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  background: #fff !important;
+  overflow: hidden !important;
+}
+
+.select2-search--dropdown {
+  padding: 8px !important;
+  background: #fafafa !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+}
+
+.select2-search--dropdown .select2-search__field {
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 6px !important;
+  padding: 5px 10px !important;
+  outline: none !important;
+  font-size: 0.875rem !important;
+  background: #fff !important;
+  color: #495057 !important;
+}
+
+.select2-search--dropdown .select2-search__field:focus {
+  border-color: #86b7fe !important;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1) !important;
+}
+
+.select2-results__options {
+  padding: 4px 0 !important;
+}
+
+.select2-results__option {
+  padding: 7px 14px !important;
+  font-size: 0.875rem !important;
+  color: #495057 !important;
+  border-radius: 4px !important;
+  margin: 0 4px !important;
+  transition: background 0.15s ease !important;
+  cursor: pointer !important;
+}
+
+.select2-results__option--highlighted {
+  background-color: #e8f0fe !important;
+  color: #0d6efd !important;
+}
+
+/* ═══════════════════════════════════════════
+   INVOICE HEADER
+   ═══════════════════════════════════════════ */
+.invoice-header-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2px;
+  margin: 20px 0 10px 10px;
+}
+
+.invoice-header-title {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 2px;
+}
+
+.invoice-header-title label,
+.invoice-number {
+  font-size: var(--text-heading-lg);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-deep-indigo);
+}
+
+/* ═══════════════════════════════════════════
+   TAX DROPDOWN
+   ═══════════════════════════════════════════ */
+
+/* hidden checkbox toggle */
+.tax-toggle {
+  display: none;
+}
+
+/* trigger — label acting as the visible control */
+.tax-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  padding: 0;
+  cursor: pointer;
+  gap: 6px;
+}
+
+/* selected badges row */
+.tax-selected-label {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.tax-placeholder {
+  color: #adb5bd;
+  font-size: 13.5px;
+}
+
+/* badge */
+.tax-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  font-size: 11.5px;
+  font-weight: 500;
+  border-radius: 10px;
+  background: #e8f0fe;
+  color: #0d6efd;
+  white-space: nowrap;
+}
+
+/* chevron */
+.tax-chevron {
+  font-size: 11px;
+  color: #6c757d;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.tax-toggle:checked ~ .tax-dropdown-trigger .tax-chevron {
+  transform: rotate(180deg);
+}
+
+/* dropdown panel */
+.tax-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 100;
+  min-width: 200px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 4px 0;
+}
+
+.tax-toggle:checked ~ .tax-dropdown-menu {
+  display: block;
+}
+
+/* option rows */
+.tax-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  font-size: 13.5px;
+  color: #495057;
+  cursor: pointer;
+  margin: 0 4px;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+  user-select: none;
+}
+
+.tax-option:hover {
+  background: #e8f0fe;
+  color: #0d6efd;
+}
+
+.tax-option input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+  accent-color: #0d6efd;
+}
+
+/* wrapper needs relative for dropdown positioning */
+.tax-dropdown-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+
+/* ═══════════════════════════════════════════
+   INVOICE HEADER SECTION
+   ═══════════════════════════════════════════ */
+.inv-header-section {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+.inv-header-col {
+  flex: 1;
+  padding: var(--spacing-16) var(--spacing-24);
+}
+
+.inv-header-col + .inv-header-col {
+  border-left: 1px solid var(--color-mist);
+}
+
+.inv-field {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 2px 12px;
+  align-items: baseline;
+  padding: 6px 0;
+}
+
+.inv-field:last-child { padding-bottom: 0; }
+
+.inv-field-label {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-slate);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding-top: 2px;
+}
+
+.inv-field-value {
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-deep-indigo);
+  line-height: 1.45;
+}
+
+.inv-field-sub {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-slate);
+  display: block;
+  line-height: 1.5;
+  margin-top: 1px;
+}
