@@ -3246,3 +3246,5 @@
 [WARNING] 2026-11-01 15:07:40,148 core.events.handlers dispatch: No handlers registered for: invoice.created
 [INFO] 2026-11-03 14:45:17,725 core.events.handlers dispatch: Handler pipeline started for: invoice.created
 [WARNING] 2026-11-03 14:45:17,725 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-06 14:38:11,457 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-06 14:38:11,458 core.events.handlers dispatch: No handlers registered for: picking.confirmed

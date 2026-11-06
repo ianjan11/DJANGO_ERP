@@ -1,146 +1,151 @@
+{% load humanize %}
+
 <div class="main-wrapper">
-  <div class="inv-card">
 
-      <div class="form-card ">
-      
-<div class="invoice-header-title">
-    <h5>
-        {% if category %}Edit Category : {{ category.name }}{% else %}New Category{% endif %}
-    </h5>
-</div>
+  <div class="detail-card">
 
+    {# ── Card title ── #}
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        {% if category and category.pk %}Edit Category : {{ category.name }}{% else %}New Category{% endif %}
+      </h5>
+    </div>
 
+    <form id="category-form"
+          method="post"
+          hx-post="{% if category and category.pk %}{% url 'inventory:edit_category' category.id %}{% else %}{% url 'inventory:create_category' %}{% endif %}"
+          hx-target="#inventory-display"
+          hx-push-url="true">
 
-<form      id="category-form"
-           hx-post="{% if category and category.pk %}{% url 'inventory:edit_category' category.id %}{% else %} {% url 'inventory:create_category'  %}{% endif %}"
-           hx-target="#inventory-display"
-           method="post"
-           style="padding:var(--spacing-16);
-             display:flex; flex-direction:column; gap:var(--spacing-16);"
-    >
+      {% csrf_token %}
 
+      <input type="hidden" id="category-id-input" name="category_id" value="{{ category.id|default:'' }}">
 
-    {% csrf_token %}
+      {# ══════════ HEADER / GENERAL INFO ══════════ #}
+      <div class="detail-header">
 
-    <input type="hidden" id="category-id-input" name="category_id" value="{{ category.id|default:'' }}">
+        <div class="detail-cols">
 
-
-    <!-- ================================================= -->
-    <!-- Section 1: General Information -->
-    <!-- ================================================= -->
-    <h6 class="mb-3 text-muted">General Information</h6>
-
-    <div class="form-header-content">
-        <div class="form-group">
-            <label for="{{ form.name.id_for_label }}" class="form-label mb-0">Category Name</label>
-            {{ form.name }}
-            {% for error in form.name.errors %}
+          {# Column 1 — identity & hierarchy #}
+          <div class="detail-col">
+            <div class="form-group form-group--primary">
+              <label for="{{ form.name.id_for_label }}" class="form-label mb-0">Category Name <span style="color:#b91c1c">*</span></label>
+              {{ form.name }}
+              {% for error in form.name.errors %}
                 <div class="invalid-feedback d-block">{{ error }}</div>
-            {% endfor %}
-        </div>
+              {% endfor %}
+            </div>
 
-        <div class="form-group">
-            <label for="{{ form.parent.id_for_label }}" class="form-label mb-0">Parent Category</label>
-            {{ form.parent }}
-            {% if form.parent.help_text %}
+            <div class="form-group">
+              <label for="{{ form.parent.id_for_label }}" class="form-label mb-0">Parent Category</label>
+              {{ form.parent }}
+              {% if form.parent.help_text %}
                 <small class="text-muted d-block mt-1">{{ form.parent.help_text }}</small>
-            {% endif %}
-            {% for error in form.parent.errors %}
+              {% endif %}
+              {% for error in form.parent.errors %}
                 <div class="invalid-feedback d-block">{{ error }}</div>
-            {% endfor %}
-        </div>
+              {% endfor %}
+            </div>
+          </div>
 
-        <div class="form-group d-flex align-items-center pt-3">
-            <div class="form-check">
+          {# Column 2 — status #}
+          <div class="detail-col">
+            <div class="form-group pt-4">
+              <div class="form-check">
                 {{ form.is_active }}
                 <label for="{{ form.is_active.id_for_label }}" class="form-check-label mb-0">Active</label>
                 {% for error in form.is_active.errors %}
-                    <div class="invalid-feedback d-block">{{ error }}</div>
+                  <div class="invalid-feedback d-block">{{ error }}</div>
                 {% endfor %}
+              </div>
             </div>
+          </div>
+
         </div>
-    </div>
-
-
-    <hr class="my-4">
-
-
-    <!-- ================================================= -->
-    <!-- Section 2: Default Property Accounts -->
-    <!-- ================================================= -->
-    <h6 class="mb-3 text-muted">Default Property Accounts</h6>
-
-    <div class="form-header-content">
-        <div class="form-group">
-            <label for="{{ form.property_valuation_account.id_for_label }}" class="form-label mb-0">Inventory Valuation Account</label>
-            {{ form.property_valuation_account }}
-            {% for error in form.property_valuation_account.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-            {% endfor %}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ form.property_stock_input_account.id_for_label }}" class="form-label mb-0">Stock Input (GRNI) Account</label>
-            {{ form.property_stock_input_account }}
-            {% for error in form.property_stock_input_account.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-            {% endfor %}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ form.property_stock_output_account.id_for_label }}" class="form-label mb-0">Stock Output (GDNI) Account</label>
-            {{ form.property_stock_output_account }}
-            {% for error in form.property_stock_output_account.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <div class="form-header-content mt-2">
-        <div class="form-group">
-            <label for="{{ form.property_cogs_account.id_for_label }}" class="form-label mb-0">Cost of Goods Sold Account</label>
-            {{ form.property_cogs_account }}
-            {% for error in form.property_cogs_account.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-            {% endfor %}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ form.property_price_difference_account.id_for_label }}" class="form-label mb-0">Price Difference Account</label>
-            {{ form.property_price_difference_account }}
-            {% for error in form.property_price_difference_account.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-            {% endfor %}
-        </div>
-    </div>
-    
-    
-    
-              {# ── Actions ── #}
-  <div style="display:flex; justify-content:flex-end; gap:var(--spacing-8);
-              padding-top:var(--spacing-12);
-              border-top:1px solid var(--color-mist);">
-      
-      
-     <button type="button"
-        class="btn btn-secondary"
-        hx-get="{% url 'inventory:view_categories' %}"
-        hx-target="#inventory-display"
-        hx-swap="innerHTML"
-        hx-push-url="true">
-    <i class="bi bi-arrow-left me-1"></i> Back
-</button>
-    
-    <button type="submit" class="btn btn-primary">
-      <i class="bi bi-check-circle"></i>
-      {% if category.pk %}Save Changes{% else %}Create Category{% endif %}
-    </button>
-    
-  </div>
-
-</form>
-      
-      
       </div>
+
+      {# ══════════ TABS ══════════ #}
+      <div class="tabs" data-tabs>
+
+        <div class="tabs-bar" role="tablist">
+          <button type="button" class="tabs-btn active" data-tab="accounts" role="tab"
+                  {% if form.property_valuation_account.errors or form.property_stock_input_account.errors or form.property_stock_output_account.errors or form.property_cogs_account.errors or form.property_price_difference_account.errors %}data-error="1"{% endif %}>
+            <i class="bi bi-journal-text"></i> Default Property Accounts
+            {% if form.property_valuation_account.errors or form.property_stock_input_account.errors or form.property_stock_output_account.errors or form.property_cogs_account.errors or form.property_price_difference_account.errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
+        </div>
+
+        {# ── Default Property Accounts ── #}
+        <div class="tabs-panel active" data-tab-panel="accounts" role="tabpanel">
+          <div class="tabs-grid">
+            <div>
+              <div class="form-group">
+                <label for="{{ form.property_valuation_account.id_for_label }}" class="form-label mb-0">Inventory Valuation Account</label>
+                {{ form.property_valuation_account }}
+                {% for error in form.property_valuation_account.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+              <div class="form-group">
+                <label for="{{ form.property_stock_input_account.id_for_label }}" class="form-label mb-0">Stock Input (GRNI) Account</label>
+                {{ form.property_stock_input_account }}
+                {% for error in form.property_stock_input_account.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+              <div class="form-group">
+                <label for="{{ form.property_stock_output_account.id_for_label }}" class="form-label mb-0">Stock Output (GDNI) Account</label>
+                {{ form.property_stock_output_account }}
+                {% for error in form.property_stock_output_account.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+            </div>
+            <div>
+              <div class="form-group">
+                <label for="{{ form.property_cogs_account.id_for_label }}" class="form-label mb-0">Cost of Goods Sold Account</label>
+                {{ form.property_cogs_account }}
+                {% for error in form.property_cogs_account.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+              <div class="form-group">
+                <label for="{{ form.property_price_difference_account.id_for_label }}" class="form-label mb-0">Price Difference Account</label>
+                {{ form.property_price_difference_account }}
+                {% for error in form.property_price_difference_account.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>{# /tabs #}
+
+      {# ── Non-field errors ── #}
+      {% if form.non_field_errors %}
+        <div class="detail-card-errors">
+          {% for error in form.non_field_errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+        </div>
+      {% endif %}
+
+      {# ── Actions ── #}
+      <div class="detail-card-footer">
+        <button type="button"
+                class="btn btn-secondary"
+                hx-get="{% url 'inventory:view_categories' %}"
+                hx-target="#inventory-display"
+                hx-swap="innerHTML"
+                hx-push-url="true">
+          <i class="bi bi-arrow-left me-1"></i> Back
+        </button>
+
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-check-circle"></i>
+          {% if category and category.pk %}Save Changes{% else %}Create Category{% endif %}
+        </button>
+      </div>
+
+    </form>
   </div>
 </div>

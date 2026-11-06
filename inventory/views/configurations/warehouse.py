@@ -134,7 +134,6 @@ def edit_warehouse(request, warehouse_id):
     return htmx_success(
         request,
         "Warehouse updated successfully.",
-        trigger={"Warehouse": {"message": "Warehouse updated successfully."}},
         target="#inventory-display",
     )
 
@@ -184,7 +183,6 @@ def create_warehouse(request):
     return htmx_success(
         request,
         "Warehouse created successfully.",
-        redirect_url=redirect_url,
         target="#inventory-display",
 
     )

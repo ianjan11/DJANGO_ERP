@@ -6,7 +6,7 @@ from sales.models import SalesOrder
 
 def load_accounts(account_id, request, for_update=False):
     """Loads account scoped to the user's company."""
-    queryset = Account.objects.filter(company_id=request.company_id)
+    queryset = Account.objects.filter(company=request.company)
     if for_update:
         queryset = queryset.select_for_update()
 

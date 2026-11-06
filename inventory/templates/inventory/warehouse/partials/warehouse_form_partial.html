@@ -1,152 +1,171 @@
+{% load humanize %}
 
-{% block content %}
-<div class="container-fluid py-4" id="accounting-display">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0 text-gray-800">
-      {% if form.instance.pk %}Edit Warehouse: {{ form.instance.name }}{% else %}New Warehouse{% endif %}
-    </h1>
-    <a href="{% url 'inventory:warehouse_list' %}"
-       class="btn btn-outline-secondary btn-sm"
-       hx-get="{% url 'inventory:warehouse_list' %}"
-       hx-target="#inventory-display"
-       hx-push-url="true">
-      <i class="bi bi-arrow-left"></i> Back to Warehouses
-    </a>
-  </div>
+<div class="main-wrapper">
+  <div class="detail-card">
 
-  <form method="post"
-        hx-target="#inventory-display"
-        hx-post="{% if form.instance.pk %}{% url 'inventory:warehouse_edit' form.instance.pk %}{% else %}{% url 'inventory:warehouse_create' %}{% endif %}"
-        hx-swap="innerHTML"
-        class="needs-validation"
-        novalidate>
-    {% csrf_token %}
+    {# ── Card title ── #}
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        {% if form.instance.pk %}Edit Warehouse: {{ form.instance.name }}{% else %}New Warehouse{% endif %}
+      </h5>
+    </div>
 
-    <div class="row">
-      <!-- Left Column: Core Identity -->
-      <div class="col-lg-7">
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">General Configuration</h6>
-            <div class="form-check form-switch mb-0">
-              {{ form.active }}
-              <label class="form-check-label ms-2" for="{{ form.active.id_for_label }}">Active</label>
+    <form method="post"
+          hx-target="#inventory-display"
+          hx-post="{% if form.instance.pk %}{% url 'inventory:warehouse_edit' form.instance.pk %}{% else %}{% url 'inventory:warehouse_create' %}{% endif %}"
+          hx-swap="innerHTML"
+          class="needs-validation"
+          novalidate>
+      {% csrf_token %}
+
+      {# ══════════ HEADER / GENERAL CONFIGURATION ══════════ #}
+      <div class="detail-header">
+
+        <div class="detail-cols">
+          {# Column 1 — identity & codes #}
+          <div class="detail-col">
+            <div class="form-group form-group--primary">
+              <label for="{{ form.name.id_for_label }}" class="form-label mb-0">Warehouse Name <span style="color:#b91c1c">*</span></label>
+              {{ form.name }}
+              {% for error in form.name.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.code.id_for_label }}" class="form-label mb-0">Short Code <span style="color:#b91c1c">*</span></label>
+              {{ form.code }}
+              <small class="text-muted d-block mt-1">Used to generate location barcodes.</small>
+              {% for error in form.code.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
             </div>
           </div>
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-8">
-                <label for="{{ form.name.id_for_label }}" class="form-label font-weight-bold">Warehouse Name</label>
-                {{ form.name }}
-                {% if form.name.errors %}
-                  <div class="invalid-feedback d-block">{{ form.name.errors.0 }}</div>
-                {% endif %}
-              </div>
 
-              <div class="col-md-4">
-                <label for="{{ form.code.id_for_label }}" class="form-label font-weight-bold">Short Code</label>
-                {{ form.code }}
-                <div class="form-text text-muted">Used to generate location barcodes.</div>
-                {% if form.code.errors %}
-                  <div class="invalid-feedback d-block">{{ form.code.errors.0 }}</div>
-                {% endif %}
-              </div>
+          {# Column 2 — relations & sequence #}
+          <div class="detail-col">
+            <div class="form-group">
+              <label for="{{ form.company.id_for_label }}" class="form-label mb-0">Company</label>
+              {{ form.company }}
+              {% for error in form.company.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
 
-              <div class="col-md-6">
-                <label for="{{ form.company.id_for_label }}" class="form-label font-weight-bold">Company</label>
-                {{ form.company }}
-                         </div>
+            <div class="form-group">
+              <label for="{{ form.sequence.id_for_label }}" class="form-label mb-0">Sequence</label>
+              {{ form.sequence }}
+              {% for error in form.sequence.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
 
-              <div class="col-md-6">
-                <label for="{{ form.partner.id_for_label }}" class="form-label font-weight-bold">Address / Partner</label>
-                {{ form.company.partner.name }}
-              </div>
-
-              <div class="col-md-4">
-                <label for="{{ form.sequence.id_for_label }}" class="form-label font-weight-bold">Sequence</label>
-                {{ form.sequence }}
-                {% if form.sequence.errors %}
-                  <div class="invalid-feedback d-block">{{ form.sequence.errors.0 }}</div>
-                {% endif %}
+            <div class="form-group pt-2">
+              <div class="form-check">
+                {{ form.active }}
+                <label for="{{ form.active.id_for_label }}" class="form-check-label mb-0">Active</label>
+                {% for error in form.active.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
-      <!-- Right Column: Logistics Operations & Steps -->
-      <div class="col-lg-5">
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-white py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Warehouse Routes & Steps</h6>
-          </div>
-          <div class="card-body">
-            <div class="mb-4">
-              <label for="{{ form.reception_steps.id_for_label }}" class="form-label font-weight-bold">Incoming Shipments</label>
-              {{ form.reception_steps }}
-              <div class="form-text text-muted mt-1">
-                Controls whether auto-created locations (Input, Quality Control) are activated.
-              </div>
-              {% if form.reception_steps.errors %}
-                <div class="invalid-feedback d-block">{{ form.reception_steps.errors.0 }}</div>
-              {% endif %}
-            </div>
+      {# ══════════ TABS ══════════ #}
+      <div class="tabs" data-tabs>
 
-            <div class="mb-3">
-              <label for="{{ form.delivery_steps.id_for_label }}" class="form-label font-weight-bold">Outgoing Shipments</label>
-              {{ form.delivery_steps }}
-              <div class="form-text text-muted mt-1">
-                Controls whether Output and Packing Zone locations are activated.
+        <div class="tabs-bar" role="tablist">
+          <button type="button" class="tabs-btn active" data-tab="routes" role="tab"
+                  {% if form.reception_steps.errors or form.delivery_steps.errors %}data-error="1"{% endif %}>
+            <i class="bi bi-truck"></i> Warehouse Routes &amp; Steps
+            {% if form.reception_steps.errors or form.delivery_steps.errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
+          {% if form.instance.pk %}
+          <button type="button" class="tabs-btn" data-tab="locations" role="tab">
+            <i class="bi bi-geo-alt"></i> Linked Locations
+          </button>
+          {% endif %}
+        </div>
+
+        {# ── Warehouse Routes & Steps ── #}
+        <div class="tabs-panel active" data-tab-panel="routes" role="tabpanel">
+          <div class="tabs-grid">
+            <div>
+              <div class="form-group">
+                <label for="{{ form.reception_steps.id_for_label }}" class="form-label mb-0">Incoming Shipments _mar</label>
+                {{ form.reception_steps }}
+                <small class="text-muted d-block mt-1">Controls whether auto-created locations (Input, Quality Control) are activated.</small>
+                {% for error in form.reception_steps.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
               </div>
-              {% if form.delivery_steps.errors %}
-                <div class="invalid-feedback d-block">{{ form.delivery_steps.errors.0 }}</div>
-              {% endif %}
+            </div>
+            <div>
+              <div class="form-group">
+                <label for="{{ form.delivery_steps.id_for_label }}" class="form-label mb-0">Outgoing Shipments</label>
+                {{ form.delivery_steps }}
+                <small class="text-muted d-block mt-1">Controls whether Output and Packing Zone locations are activated.</small>
+                {% for error in form.delivery_steps.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
             </div>
           </div>
         </div>
 
         {% if form.instance.pk %}
-          <!-- Read-only Location Mapping Summary for existing record -->
-          <div class="card shadow-sm mb-4 bg-light">
-            <div class="card-body">
-              <h6 class="font-weight-bold text-dark mb-3">Linked System Locations</h6>
-              <ul class="list-group list-group-flush small">
-                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
-                  <span>Stock Location:</span>
-                  <strong class="text-mono">{{ form.instance.lot_stock.complete_name|default:"—" }}</strong>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
-                  <span>Input Location:</span>
-                  <span class="badge {% if form.instance.wh_input_stock_loc.active %}bg-success{% else %}bg-secondary{% endif %}">
-                    {{ form.instance.wh_input_stock_loc.name }}
-                  </span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
-                  <span>Output Location:</span>
-                  <span class="badge {% if form.instance.wh_output_stock_loc.active %}bg-success{% else %}bg-secondary{% endif %}">
-                    {{ form.instance.wh_output_stock_loc.name }}
-                  </span>
-                </li>
-              </ul>
+        {# ── Linked Locations Panel ── #}
+        <div class="tabs-panel" data-tab-panel="locations" role="tabpanel">
+          <div class="tabs-grid">
+            <div>
+              <div class="form-group">
+                <label class="form-label mb-0">Stock Location</label>
+                <input type="text" class="form-control" value="{{ form.instance.lot_stock.complete_name|default:'—' }}" readonly style="background-color: var(--color-mist); font-family: monospace;">
+              </div>
+              <div class="form-group">
+                <label class="form-label mb-0">Input Location</label>
+                <input type="text" class="form-control" value="{{ form.instance.wh_input_stock_loc.name|default:'—' }}" readonly style="background-color: var(--color-mist);">
+              </div>
+            </div>
+            <div>
+              <div class="form-group">
+                <label class="form-label mb-0">Output Location</label>
+                <input type="text" class="form-control" value="{{ form.instance.wh_output_stock_loc.name|default:'—' }}" readonly style="background-color: var(--color-mist);">
+              </div>
             </div>
           </div>
+        </div>
         {% endif %}
-      </div>
-    </div>
 
-    <!-- Actions Footer -->
-    <div class="d-flex justify-content-end gap-2 mb-5">
-      <a href="{% url 'inventory:warehouse_list' %}"
-         class="btn btn-secondary"
-         hx-get="{% url 'inventory:warehouse_list' %}"
-         hx-target="#inventory-display"
-         hx-push-url="true">
-        Cancel
-      </a>
-      <button type="submit" class="btn btn-primary px-4">
-        <i class="bi bi-check-lg me-1"></i> Save Warehouse
-      </button>
-    </div>
-  </form>
+      </div>{# /tabs #}
+
+      {# ── Non-field errors ── #}
+      {% if form.non_field_errors %}
+        <div class="detail-card-errors">
+          {% for error in form.non_field_errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+        </div>
+      {% endif %}
+
+      {# ── Actions ── #}
+      <div class="detail-card-footer">
+        <a href="{% url 'inventory:warehouse_list' %}"
+           class="btn btn-secondary"
+           hx-get="{% url 'inventory:warehouse_list' %}"
+           hx-target="#inventory-display"
+           hx-swap="innerHTML"
+           hx-push-url="true">
+          <i class="bi bi-arrow-left me-1"></i> Cancel
+        </a>
+
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-check-circle"></i>
+          {% if form.instance.pk %}Save Changes{% else %}Create Warehouse{% endif %}
+        </button>
+      </div>
+
+    </form>
+  </div>
 </div>
-{% endblock %}

@@ -1,270 +1,224 @@
 {% load humanize %}
 
-<div class="table-toolbar">
-  <h5 class="table-toolbar-title">
-    {% if tax and tax.pk %}Edit Tax{% else %}New Tax{% endif %}
-  </h5>
-</div>
+<div class="main-wrapper">
+  <div class="detail-card">
 
-<form id="taxForm"
-      hx-post="{% if tax and tax.pk %}{% url 'accounting:tax_edit' tax.id %}{% else %}{% url 'accounting:tax_create' %}{% endif %}"
-      hx-target="#accounting-display"
-      method="post"
-      hx-push-url="true"
-      style="padding:var(--spacing-16); display:flex; flex-direction:column; gap:var(--spacing-16);">
-
-  {% csrf_token %}
-
-  <div class="inv-header-section" style="border:none;">
-
-    {# Left column - Tax Identity & Calculation #}
-    <div class="inv-header-col">
-
-      <div class="chart-card-header" style="border-bottom:none; padding:0 0 var(--spacing-8);">
-        <span class="chart-eyebrow">Tax Identity & Calculation</span>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_name">
-          Name <span style="color:#b91c1c">*</span>
-        </label>
-        <div style="flex:1;">
-          {{ form.name }}
-          {% if form.name.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ form.name.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_type_tax_use">
-          Tax Type <span style="color:#b91c1c">*</span>
-        </label>
-        <div style="flex:1;">
-          {{ form.type_tax_use }}
-          <span class="inv-field-sub">
-            Determines whether the tax is used for sales, purchases, or neither.
-          </span>
-          {% if form.type_tax_use.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ form.type_tax_use.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_computation">
-          Computation <span style="color:#b91c1c">*</span>
-        </label>
-        <div style="flex:1;">
-          {{ form.computation }}
-          <span class="inv-field-sub">
-            Choose percentage, fixed amount, or group of taxes.
-          </span>
-          {% if form.computation.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ form.computation.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_rate">
-          Rate <span style="color:#b91c1c">*</span>
-        </label>
-        <div style="flex:1;">
-          {{ form.rate }}
-          <span class="inv-field-sub">
-            Percentage rate or fixed tax amount, depending on computation.
-          </span>
-          {% if form.rate.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ form.rate.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_sequence">
-          Sequence
-        </label>
-        <div style="flex:1;">
-          {{ form.sequence }}
-          <span class="inv-field-sub">
-            Lower sequence runs first when multiple taxes are applied.
-          </span>
-          {% if form.sequence.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ form.sequence.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_parent_tax">
-          Parent Tax
-        </label>
-        <div style="flex:1;">
-          {{ form.parent_tax }}
-          <span class="inv-field-sub">
-            Select the group tax that contains this tax.
-          </span>
-          {% if form.parent_tax.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ form.parent_tax.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
+    {# ── Card title ── #}
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        {% if tax and tax.pk %}Edit Tax: {{ tax.name }}{% else %}New Tax{% endif %}
+      </h5>
     </div>
 
+    <form id="taxForm"
+          method="post"
+          hx-post="{% if tax and tax.pk %}{% url 'accounting:tax_edit' tax.id %}{% else %}{% url 'accounting:tax_create' %}{% endif %}"
+          hx-target="#accounting-display"
+          hx-swap="innerHTML"
+          hx-push-url="true">
 
-    {# Right column - Accounting & Tax Behaviour #}
-    <div class="inv-header-col">
+      {% csrf_token %}
 
-      <div class="chart-card-header" style="border-bottom:none; padding:0 0 var(--spacing-8);">
-        <span class="chart-eyebrow">Accounting & Tax Behaviour</span>
-      </div>
+      {# ══════════ HEADER ══════════ #}
+      <div class="detail-header">
+        
 
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_account">
-          Tax Account <span style="color:#b91c1c">*</span>
-        </label>
-        <div style="flex:1;">
-          {{ form.account }}
-          <span class="inv-field-sub">
-            Account used for collected or paid tax.
-          </span>
-          {% if form.account.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ form.account.errors.0 }}
+        <div class="detail-cols">
+
+          {# Column 1 — Identity & Type #}
+          <div class="detail-col">
+            <div class="form-group form-group--primary">
+              <label for="{{ form.name.id_for_label }}" class="form-label mb-0">Name <span style="color:#b91c1c">*</span></label>
+              {{ form.name }}
+              {% if form.name.help_text %}
+                <small class="text-muted d-block mt-1">{{ form.name.help_text }}</small>
+              {% endif %}
+              {% for error in form.name.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
             </div>
-          {% endif %}
-        </div>
-      </div>
 
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_account_refund">
-          Refund Account
-        </label>
-        <div style="flex:1;">
-          {{ form.account_refund }}
-          <span class="inv-field-sub">
-            Account used when the tax is reversed on a refund or credit note.
-          </span>
-          {% if form.account_refund.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ form.account_refund.errors.0 }}
+            <div class="form-group">
+              <label for="{{ form.type_tax_use.id_for_label }}" class="form-label mb-0">Tax Type <span style="color:#b91c1c">*</span></label>
+              {{ form.type_tax_use }}
+              <small class="text-muted d-block mt-1">Determines whether the tax is used for sales, purchases, or neither.</small>
+              {% for error in form.type_tax_use.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
             </div>
-          {% endif %}
-        </div>
-      </div>
 
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_tax_group">
-          Tax Group
-        </label>
-        <div style="flex:1;">
-          {{ form.tax_group }}
-          <span class="inv-field-sub">
-            Groups related taxes for reporting and presentation.
-          </span>
-          {% if form.tax_group.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ form.tax_group.errors.0 }}
+            <div class="form-group">
+              <label for="{{ form.computation.id_for_label }}" class="form-label mb-0">Computation <span style="color:#b91c1c">*</span></label>
+              {{ form.computation }}
+              <small class="text-muted d-block mt-1">Choose percentage, fixed amount, or group of taxes.</small>
+              {% for error in form.computation.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
             </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <span class="inv-field-label">Pricing</span>
-        <div style="flex:1; display:flex; align-items:center; gap:var(--spacing-8);">
-          {{ form.price_include }}
-          <span class="inv-field-sub">
-            Tax is already included in the displayed price.
-          </span>
-        </div>
-
-        {% if form.price_include.errors %}
-          <div class="inv-field-sub" style="color:#9b2626;">
-            {{ form.price_include.errors.0 }}
           </div>
-        {% endif %}
+
+          {# Column 2 — Rate & Hierarchy #}
+          <div class="detail-col">
+            <div class="form-group">
+              <label for="{{ form.rate.id_for_label }}" class="form-label mb-0">Rate <span style="color:#b91c1c">*</span></label>
+              {{ form.rate }}
+              <small class="text-muted d-block mt-1">Percentage rate or fixed tax amount, depending on computation.</small>
+              {% for error in form.rate.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.sequence.id_for_label }}" class="form-label mb-0">Sequence</label>
+              {{ form.sequence }}
+              <small class="text-muted d-block mt-1">Lower sequence runs first when multiple taxes are applied.</small>
+              {% for error in form.sequence.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.parent_tax.id_for_label }}" class="form-label mb-0">Parent Tax</label>
+              {{ form.parent_tax }}
+              <small class="text-muted d-block mt-1">Select the group tax that contains this tax.</small>
+              {% for error in form.parent_tax.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      <div class="inv-field">
-        <span class="inv-field-label">Compound Tax</span>
-        <div style="flex:1; display:flex; align-items:center; gap:var(--spacing-8);">
-          {{ form.include_base_amount }}
-          <span class="inv-field-sub">
-            Apply this tax on a base that includes previous taxes.
-          </span>
+      {# ══════════ TABS ══════════ #}
+      <div class="tabs" data-tabs>
+
+        <div class="tabs-bar" role="tablist">
+          <button type="button" class="tabs-btn active" data-tab="accounts" role="tab"
+                  {% if form.account.errors or form.account_refund.errors or form.tax_group.errors %}data-error="1"{% endif %}>
+            <i class="bi bi-journal-check"></i> Accounting Accounts
+            {% if form.account.errors or form.account_refund.errors or form.tax_group.errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
+
+          <button type="button" class="tabs-btn" data-tab="behaviour" role="tab"
+                  {% if form.price_include.errors or form.include_base_amount.errors or form.is_active.errors %}data-error="1"{% endif %}>
+            <i class="bi bi-sliders"></i> Tax Behaviour &amp; Options
+            {% if form.price_include.errors or form.include_base_amount.errors or form.is_active.errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
         </div>
 
-        {% if form.include_base_amount.errors %}
-          <div class="inv-field-sub" style="color:#9b2626;">
-            {{ form.include_base_amount.errors.0 }}
-          </div>
-        {% endif %}
-      </div>
+        {# ── Tab 1: Accounting Accounts ── #}
+        <div class="tabs-panel active" data-tab-panel="accounts" role="tabpanel">
+          <div class="tabs-grid">
+            <div>
+              <div class="form-group">
+                <label for="{{ form.account.id_for_label }}" class="form-label mb-0">Tax Account <span style="color:#b91c1c">*</span></label>
+                {{ form.account }}
+                <small class="text-muted d-block mt-1">Account used for collected or paid tax.</small>
+                {% for error in form.account.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
 
-      <div class="inv-field">
-        <span class="inv-field-label">Status</span>
-        <div style="flex:1; display:flex; align-items:center; gap:var(--spacing-8);">
-          {{ form.is_active }}
-          <span class="inv-field-sub">
-            Active taxes can be selected on sales and purchase documents.
-          </span>
+              <div class="form-group">
+                <label for="{{ form.account_refund.id_for_label }}" class="form-label mb-0">Refund Account</label>
+                {{ form.account_refund }}
+                <small class="text-muted d-block mt-1">Account used when the tax is reversed on a refund or credit note.</small>
+                {% for error in form.account_refund.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div>
+              <div class="form-group">
+                <label for="{{ form.tax_group.id_for_label }}" class="form-label mb-0">Tax Group</label>
+                {{ form.tax_group }}
+                <small class="text-muted d-block mt-1">Groups related taxes for reporting and presentation.</small>
+                {% for error in form.tax_group.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
         </div>
 
-        {% if form.is_active.errors %}
-          <div class="inv-field-sub" style="color:#9b2626;">
-            {{ form.is_active.errors.0 }}
+        {# ── Tab 2: Tax Behaviour & Options ── #}
+        <div class="tabs-panel" data-tab-panel="behaviour" role="tabpanel">
+          <div class="tabs-grid">
+            <div>
+              <div class="form-group">
+                <div class="form-check">
+                  {{ form.price_include }}
+                  <label class="form-check-label" for="{{ form.price_include.id_for_label }}">
+                    Included in Price
+                  </label>
+                </div>
+                <small class="text-muted d-block mt-1">Tax is already included in the displayed price.</small>
+                {% for error in form.price_include.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+
+              <div class="form-group">
+                <div class="form-check">
+                  {{ form.include_base_amount }}
+                  <label class="form-check-label" for="{{ form.include_base_amount.id_for_label }}">
+                    Compound Tax
+                  </label>
+                </div>
+                <small class="text-muted d-block mt-1">Apply this tax on a base that includes previous taxes.</small>
+                {% for error in form.include_base_amount.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div>
+              <div class="form-group">
+                <div class="form-check">
+                  {{ form.is_active }}
+                  <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                    Active
+                  </label>
+                </div>
+                <small class="text-muted d-block mt-1">Active taxes can be selected on sales and purchase documents.</small>
+                {% for error in form.is_active.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+            </div>
           </div>
-        {% endif %}
-      </div>
+        </div>
 
-    </div>
+      </div>{# /tabs #}
 
-  </div>
-
-
-  {# ── Actions ── #}
-  <div style="display:flex; justify-content:flex-end; gap:var(--spacing-8);
-              padding-top:var(--spacing-12);
-              border-top:1px solid var(--color-mist);">
-
-        <button type="button"
-        class="btn btn-secondary"
-        hx-get="{% url 'accounting:taxes_list' %}"
-        hx-target="#accounting-display"
-        hx-swap="innerHTML"
-        hx-push-url="true">
-    <i class="bi bi-arrow-left me-1"></i> Back
-</button>
-
-    <button type="submit"
-            class="btn btn-primary">
-
-      <i class="bi bi-check-circle"></i>
-
-      {% if tax and tax.pk %}
-        Save Changes
-      {% else %}
-        Create Tax
+      {# ── Non-field errors ── #}
+      {% if form.non_field_errors %}
+        <div class="detail-card-errors">
+          {% for error in form.non_field_errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
       {% endif %}
 
-    </button>
+      {# ── Actions ── #}
+      <div class="detail-card-footer">
+        <button type="button"
+                class="btn btn-secondary"
+                hx-get="{% url 'accounting:taxes_list' %}"
+                hx-target="#accounting-display"
+                hx-swap="innerHTML"
+                hx-push-url="true">
+          <i class="bi bi-arrow-left me-1"></i> Back
+        </button>
 
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-check-circle me-1"></i>
+          {% if tax and tax.pk %}Save Changes{% else %}Create Tax{% endif %}
+        </button>
+      </div>
+
+    </form>
   </div>
-
-</form>
-
+</div>

@@ -270,6 +270,13 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         if not self.uom_po_id:
             self.uom_po_id = self.uom_id
+
+        if self.default_price and self.default_price > 0:
+            # Margin % = ((Price - Cost) / Price) * 100
+            self.profit_margin = ((self.default_price - self.product_cost) / self.default_price) * 100
+        else:
+            self.profit_margin = 0.00
+
         self._validate()
         super().save(*args, **kwargs)
 

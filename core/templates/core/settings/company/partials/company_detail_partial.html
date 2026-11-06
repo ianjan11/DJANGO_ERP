@@ -1,391 +1,277 @@
 {% load humanize %}
 
 <div class="main-wrapper">
-  <div class="inv-card">
+  <div class="detail-card">
 
-      
-      <div class="form-card">
-      
-<div class="table-toolbar">
-  <h5 class="table-toolbar-title">
-    {% if company_form.instance.pk %}
-      Edit Company
-    {% else %}
-      New Company
-    {% endif %}
-  </h5>
-</div>
+    {# ── Card title ── #}
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        {% if company_form.instance.pk %}Edit Company{% else %}New Company{% endif %}
+      </h5>
+    </div>
 
+    <form id="companyForm"
+          method="post"
+          hx-post="{% if company_form.instance.pk %}{% url 'core:company_edit' company_form.instance.pk %}{% else %}{% url 'core:company_create' %}{% endif %}"
+          {% if form_context == "settings" %}hx-target="#settings-display"{% else %}hx-target="#company-display"{% endif %}
+          hx-push-url="true">
 
+      {% csrf_token %}
 
-<form id="companyForm"
-      method="post"
-      hx-post="{% if company_form.instance.pk %}{% url 'core:company_edit' company_form.instance.pk %}{% else %}{% url 'core:company_create' %}{% endif %}"
-      {% if form_context == "settings" %} hx-target="#settings-display" {% else %} hx-target="#company-display" {% endif %}
-      hx-push-url="true"
-      style="padding:var(--spacing-16);
-             display:flex;
-             flex-direction:column;
-             gap:var(--spacing-16);">
-
-  {% csrf_token %}
-
-  {# ── Section 1: Identity & Contact ── #}
-  <div class="inv-header-section" style="border:none;">
-
-    {# Left column - Basic Information #}
-    <div class="inv-header-col">
-
-      <div class="chart-card-header"
-           style="border-bottom:none; padding:0 0 var(--spacing-8);">
-        <span class="chart-eyebrow">Company Identity</span>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_code">
-          Code <span style="color:#b91c1c">*</span>
-        </label>
-        <div style="flex:1;">
-          {{ company_form.code }}
-          {% if company_form.code.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.code.errors.0 }}
-            </div>
-          {% endif %}
+      {# ══════════ HEADER ══════════ #}
+      <div class="detail-header">
+        <div class="detail-avatar">
+          {% if company_form.instance.pk and company_form.instance.name %}{{ company_form.instance.name|slice:":1"|upper }}{% else %}<i class="bi bi-building"></i>{% endif %}
         </div>
-      </div>
 
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_name">
-          Name <span style="color:#b91c1c">*</span>
-        </label>
-        <div style="flex:1;">
-          {{ company_form.name }}
-          {% if company_form.name.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.name.errors.0 }}
+        <div class="detail-cols">
+
+          {# Column 1 — identity #}
+          <div class="detail-col">
+            <div class="form-group form-group--primary">
+              <label for="{{ company_form.name.id_for_label }}" class="form-label mb-0">Name <span style="color:#b91c1c">*</span></label>
+              {{ company_form.name }}
+              {% if company_form.name.help_text %}
+                <small class="text-muted d-block mt-1">{{ company_form.name.help_text }}</small>
+              {% endif %}
+              {% for error in company_form.name.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
             </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_vat">
-          Tax ID / VAT
-        </label>
-        <div style="flex:1;">
-          {{ company_form.vat }}
-          {% if company_form.vat.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.vat.errors.0 }}
+            <div class="form-group">
+              <label for="{{ company_form.code.id_for_label }}" class="form-label mb-0">Code <span style="color:#b91c1c">*</span></label>
+              {{ company_form.code }}
+              {% if company_form.code.help_text %}
+                <small class="text-muted d-block mt-1">{{ company_form.code.help_text }}</small>
+              {% endif %}
+              {% for error in company_form.code.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
             </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_parent">
-          Parent Company
-        </label>
-        <div style="flex:1;">
-          {{ company_form.parent }}
-          <span class="inv-field-sub">
-            For consolidated multi-company structures.
-          </span>
-
-          {% if company_form.parent.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.parent.errors.0 }}
+            <div class="form-group">
+              <label for="{{ company_form.vat.id_for_label }}" class="form-label mb-0">Tax ID / VAT</label>
+              {{ company_form.vat }}
+              {% if company_form.vat.help_text %}
+                <small class="text-muted d-block mt-1">{{ company_form.vat.help_text }}</small>
+              {% endif %}
+              {% for error in company_form.vat.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
             </div>
-          {% endif %}
-        </div>
-      </div>
+          </div>
 
-      {% if company_form.instance.pk %}
-        <div class="inv-field">
-          <label class="inv-field-label" for="id_is_active">
-            Active
-          </label>
-          <div style="flex:1;">
-            {{ company_form.is_active }}
+          {# Column 2 — structure #}
+          <div class="detail-col">
+            <div class="form-group">
+              <label for="{{ company_form.parent.id_for_label }}" class="form-label mb-0">Parent Company</label>
+              {{ company_form.parent }}
+              <small class="text-muted d-block mt-1">For consolidated multi-company structures.</small>
+              {% for error in company_form.parent.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
 
-            {% if company_form.is_active.errors %}
-              <div class="inv-field-sub" style="color:#9b2626;">
-                {{ company_form.is_active.errors.0 }}
-              </div>
+            {% if company_form.instance.pk %}
+            <div class="form-group">
+              <label for="{{ company_form.is_active.id_for_label }}" class="form-label mb-0">Active</label>
+              {{ company_form.is_active }}
+              {% if company_form.is_active.help_text %}
+                <small class="text-muted d-block mt-1">{{ company_form.is_active.help_text }}</small>
+              {% endif %}
+              {% for error in company_form.is_active.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
             {% endif %}
           </div>
+
+        </div>
+      </div>
+
+      {# ══════════ TABS ══════════ #}
+      <div class="tabs" data-tabs>
+
+        <div class="tabs-bar" role="tablist">
+        <button type="button" class="tabs-btn active" data-tab="contact" role="tab"
+                {% if company_form.street.errors or company_form.city.errors or company_form.email.errors or company_form.phone.errors %}data-error="1"{% endif %}>
+          <i class="bi bi-geo-alt"></i> Address &amp; Contact
+          {% if company_form.street.errors or company_form.city.errors or company_form.email.errors or company_form.phone.errors %}<span class="tabs-dot"></span>{% endif %}
+        </button>
+        <button type="button" class="tabs-btn" data-tab="locale" role="tab"
+                {% if company_form.country.errors or company_form.currency.errors %}data-error="1"{% endif %}>
+          <i class="bi bi-currency-exchange"></i> Localization &amp; Currency
+          {% if company_form.country.errors or company_form.currency.errors %}<span class="tabs-dot"></span>{% endif %}
+        </button>
+        <button type="button" class="tabs-btn" data-tab="fiscal" role="tab"
+                {% if company_form.fiscal_year_start_month.errors or company_form.fiscal_year_start_day.errors %}data-error="1"{% endif %}>
+          <i class="bi bi-calendar3"></i> Fiscal Year
+          {% if company_form.fiscal_year_start_month.errors or company_form.fiscal_year_start_day.errors %}<span class="tabs-dot"></span>{% endif %}
+        </button>
+        <button type="button" class="tabs-btn" data-tab="locks" role="tab"
+                {% if company_form.lock_date.errors or company_form.tax_lock_date.errors %}data-error="1"{% endif %}>
+          <i class="bi bi-lock"></i> Posting Locks
+          {% if company_form.lock_date.errors or company_form.tax_lock_date.errors %}<span class="tabs-dot"></span>{% endif %}
+        </button>
+        </div>
+
+      {# ── Address &amp; Contact ── #}
+      <div class="tabs-panel active" data-tab-panel="contact" role="tabpanel">
+        <div class="tabs-grid">
+          <div>
+            <div class="form-group">
+              <label for="{{ company_form.street.id_for_label }}" class="form-label mb-0">Street</label>
+              {{ company_form.street }}
+              {% if company_form.street.help_text %}
+                <small class="text-muted d-block mt-1">{{ company_form.street.help_text }}</small>
+              {% endif %}
+              {% for error in company_form.street.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="form-group">
+              <label for="{{ company_form.city.id_for_label }}" class="form-label mb-0">City</label>
+              {{ company_form.city }}
+              {% if company_form.city.help_text %}
+                <small class="text-muted d-block mt-1">{{ company_form.city.help_text }}</small>
+              {% endif %}
+              {% for error in company_form.city.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+          <div>
+            <div class="form-group">
+              <label for="{{ company_form.email.id_for_label }}" class="form-label mb-0">Email</label>
+              {{ company_form.email }}
+              {% if company_form.email.help_text %}
+                <small class="text-muted d-block mt-1">{{ company_form.email.help_text }}</small>
+              {% endif %}
+              {% for error in company_form.email.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="form-group">
+              <label for="{{ company_form.phone.id_for_label }}" class="form-label mb-0">Phone</label>
+              {{ company_form.phone }}
+              {% if company_form.phone.help_text %}
+                <small class="text-muted d-block mt-1">{{ company_form.phone.help_text }}</small>
+              {% endif %}
+              {% for error in company_form.phone.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ── Localization &amp; Currency ── #}
+      <div class="tabs-panel" data-tab-panel="locale" role="tabpanel">
+        <div class="tabs-grid">
+          <div>
+            <div class="form-group">
+              <label for="{{ company_form.country.id_for_label }}" class="form-label mb-0">Country</label>
+              {{ company_form.country }}
+              {% if company_form.country.help_text %}
+                <small class="text-muted d-block mt-1">{{ company_form.country.help_text }}</small>
+              {% endif %}
+              {% for error in company_form.country.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+          <div>
+            <div class="form-group">
+              <label for="{{ company_form.currency.id_for_label }}" class="form-label mb-0">Base Currency <span style="color:#b91c1c">*</span></label>
+              {{ company_form.currency }}
+              <small class="text-muted d-block mt-1">Primary accounting currency for this entity.</small>
+              {% for error in company_form.currency.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ── Fiscal Year ── #}
+      <div class="tabs-panel" data-tab-panel="fiscal" role="tabpanel">
+        <div class="tabs-grid">
+          <div>
+            <div class="form-group">
+              <label for="{{ company_form.fiscal_year_start_month.id_for_label }}" class="form-label mb-0">Start Month</label>
+              {{ company_form.fiscal_year_start_month }}
+              {% if company_form.fiscal_year_start_month.help_text %}
+                <small class="text-muted d-block mt-1">{{ company_form.fiscal_year_start_month.help_text }}</small>
+              {% endif %}
+              {% for error in company_form.fiscal_year_start_month.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+          <div>
+            <div class="form-group">
+              <label for="{{ company_form.fiscal_year_start_day.id_for_label }}" class="form-label mb-0">Start Day</label>
+              {{ company_form.fiscal_year_start_day }}
+              <small class="text-muted d-block mt-1">e.g. Month=1, Day=1 for a calendar-year fiscal year.</small>
+              {% for error in company_form.fiscal_year_start_day.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ── Posting Locks ── #}
+      <div class="tabs-panel" data-tab-panel="locks" role="tabpanel">
+        <div class="tabs-grid">
+          <div>
+            <div class="form-group">
+              <label for="{{ company_form.lock_date.id_for_label }}" class="form-label mb-0">Lock Date</label>
+              {{ company_form.lock_date }}
+              <small class="text-muted d-block mt-1">No entries can be posted or modified on or before this date.</small>
+              {% for error in company_form.lock_date.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+          <div>
+            <div class="form-group">
+              <label for="{{ company_form.tax_lock_date.id_for_label }}" class="form-label mb-0">Tax Lock Date</label>
+              {{ company_form.tax_lock_date }}
+              <small class="text-muted d-block mt-1">Locks tax-relevant entries independently of the general lock date.</small>
+              {% for error in company_form.tax_lock_date.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>{# /tabs #}
+
+      {# ── Non-field errors ── #}
+      {% if company_form.non_field_errors %}
+        <div class="detail-card-errors">
+          {% for error in company_form.non_field_errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
         </div>
       {% endif %}
 
-    </div>
+      {# ── Actions ── #}
+      <div class="detail-card-footer">
+        <button type="button"
+                class="btn btn-secondary"
+                hx-get="{{ back_url }}"
+                {% if form_context == "settings" %}hx-target="#settings-display"{% else %}hx-target="#company-display"{% endif %}
+                hx-swap="innerHTML"
+                hx-push-url="true">
+          <i class="bi bi-arrow-left me-1"></i> Cancel
+        </button>
 
-    {# Right column - Address & Contact #}
-    <div class="inv-header-col">
-
-      <div class="chart-card-header"
-           style="border-bottom:none; padding:0 0 var(--spacing-8);">
-        <span class="chart-eyebrow">Address & Contact</span>
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-check-circle"></i>
+          {% if company_form.instance.pk %}Save Changes{% else %}Create Company{% endif %}
+        </button>
       </div>
 
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_street">
-          Street
-        </label>
-        <div style="flex:1;">
-          {{ company_form.street }}
-
-          {% if company_form.street.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.street.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_city">
-          City
-        </label>
-        <div style="flex:1;">
-          {{ company_form.city }}
-
-          {% if company_form.city.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.city.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_email">
-          Email
-        </label>
-        <div style="flex:1;">
-          {{ company_form.email }}
-
-          {% if company_form.email.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.email.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_phone">
-          Phone
-        </label>
-        <div style="flex:1;">
-          {{ company_form.phone }}
-
-          {% if company_form.phone.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.phone.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
-  {# ── Section 2: Localization & Currency ── #}
-  <div class="inv-header-section"
-       style="border-top:1px solid var(--color-mist);
-              padding-top:var(--spacing-16);">
-
-    <div class="inv-header-col">
-
-      <div class="chart-card-header"
-           style="border-bottom:none; padding:0 0 var(--spacing-8);">
-        <span class="chart-eyebrow">Localization & Currency</span>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_country">
-          Country
-        </label>
-        <div style="flex:1;">
-          {{ company_form.country }}
-
-          {% if company_form.country.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.country.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_currency">
-          Base Currency <span style="color:#b91c1c">*</span>
-        </label>
-        <div style="flex:1;">
-          {{ company_form.currency }}
-
-          <span class="inv-field-sub">
-            Primary accounting currency for this entity.
-          </span>
-
-          {% if company_form.currency.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.currency.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-    </div>
-
-    {# Fiscal Year settings #}
-    <div class="inv-header-col">
-
-      <div class="chart-card-header"
-           style="border-bottom:none; padding:0 0 var(--spacing-8);">
-        <span class="chart-eyebrow">Fiscal Year</span>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_fiscal_year_start_month">
-          Start Month
-        </label>
-        <div style="flex:1;">
-          {{ company_form.fiscal_year_start_month }}
-
-          {% if company_form.fiscal_year_start_month.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.fiscal_year_start_month.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_fiscal_year_start_day">
-          Start Day
-        </label>
-        <div style="flex:1;">
-          {{ company_form.fiscal_year_start_day }}
-
-          <span class="inv-field-sub">
-            e.g. Month=1, Day=1 for a calendar-year fiscal year.
-          </span>
-
-          {% if company_form.fiscal_year_start_day.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.fiscal_year_start_day.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
-  {# ── Section 3: Lock Dates ── #}
-  <div class="inv-header-section"
-       style="border-top:1px solid var(--color-mist);
-              padding-top:var(--spacing-16);">
-
-    <div class="inv-header-col">
-
-      <div class="chart-card-header"
-           style="border-bottom:none; padding:0 0 var(--spacing-8);">
-        <span class="chart-eyebrow">Posting Locks</span>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_lock_date">
-          Lock Date
-        </label>
-        <div style="flex:1;">
-          {{ company_form.lock_date }}
-
-          <span class="inv-field-sub">
-            No entries can be posted or modified on or before this date.
-          </span>
-
-          {% if company_form.lock_date.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.lock_date.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="inv-field">
-        <label class="inv-field-label" for="id_tax_lock_date">
-          Tax Lock Date
-        </label>
-        <div style="flex:1;">
-          {{ company_form.tax_lock_date }}
-
-          <span class="inv-field-sub">
-            Locks tax-relevant entries independently of the general lock date.
-          </span>
-
-          {% if company_form.tax_lock_date.errors %}
-            <div class="inv-field-sub" style="color:#9b2626;">
-              {{ company_form.tax_lock_date.errors.0 }}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-    </div>
-
-    <div class="inv-header-col"></div>
-
-  </div>
-
-  {# ── Non-field errors ── #}
-  {% if company_form.non_field_errors %}
-    <div class="inv-field-sub" style="color:#9b2626;">
-      {% for error in company_form.non_field_errors %}
-        <div>{{ error }}</div>
-      {% endfor %}
-    </div>
-  {% endif %}
-
-  {# ── Actions ── #}
-  <div style="display:flex;
-              justify-content:flex-end;
-              gap:var(--spacing-8);
-              padding-top:var(--spacing-12);
-              border-top:1px solid var(--color-mist);">
-
-    <button type="button"
-            class="btn btn-secondary"
-            hx-get="{{ back_url }}"
-            {% if form_context == "settings" %}
-              hx-target="#settings-display"
-            {% else %}
-              hx-target="#company-display"
-            {% endif %}
-            hx-swap="innerHTML"
-            hx-push-url="true">
-      <i class="bi bi-arrow-left me-1"></i>
-      Cancel
-    </button>
-
-    <button type="submit" class="btn btn-primary">
-      <i class="bi bi-check-circle"></i>
-
-      {% if company_form.instance.pk %}
-        Save Changes
-      {% else %}
-        Create Company
-      {% endif %}
-    </button>
-
-  </div>
-
-</form>
-
-      </div>
+    </form>
   </div>
 </div>

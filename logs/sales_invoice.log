@@ -222,3 +222,114 @@
 [DEBUG] 2026-11-02 10:07:18,303 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
 [INFO] 2026-11-02 10:07:18,324 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
 [INFO] 2026-11-02 10:07:18,366 sales.invoice apply_state: StockPicking pk=14 saved successfully.
+[DEBUG] 2026-11-06 12:15:32,158 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-06 12:15:32,161 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-06 12:15:32,168 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-06 12:15:32,177 sales.invoice apply_state: StockPicking pk=1 saved successfully.
+[DEBUG] 2026-11-06 12:15:34,378 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [1], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-06 12:15:34,378 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-06 12:15:34,384 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-06 12:15:34,394 sales.invoice apply_state: StockPicking pk=1 saved successfully.
+[DEBUG] 2026-11-06 14:41:55,029 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': False, 'created': [], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-06 14:41:55,030 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-06 14:41:55,035 sales.invoice apply_state: UI plan built: {'swap': ['header'], 'triggers': []}
+[INFO] 2026-11-06 14:41:55,047 sales.invoice apply_state: StockPicking pk=2 saved successfully.
+[DEBUG] 2026-11-06 14:41:58,286 sales.invoice apply_state: item-results: {'errors': {}, 'row_errors': {}, 'warnings': {}, 'changed': True, 'created': [2], 'updated': [], 'deleted': []}
+[DEBUG] 2026-11-06 14:41:58,286 sales.invoice apply_state: After sync - errors: {} | row_errors: {}
+[INFO] 2026-11-06 14:41:58,291 sales.invoice apply_state: UI plan built: {'swap': ['item-row'], 'triggers': []}
+[INFO] 2026-11-06 14:41:58,300 sales.invoice apply_state: StockPicking pk=2 saved successfully.
+[ERROR] 2026-11-06 15:41:11,819 sales.invoice sales_order_create_or_detail: Failed to create sales order: NOT NULL constraint failed: sales_salesorder.fulfillment_location_id
+Traceback (most recent call last):
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/backends/sqlite3/base.py", line 359, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+sqlite3.IntegrityError: NOT NULL constraint failed: sales_salesorder.fulfillment_location_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/sales/views/orders_updates.py", line 210, in sales_order_create_or_detail
+    order = create_sales_order(request)
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/sales/services/sales_order_service/creator.py", line 24, in create_sales_order
+    order = SalesOrder.objects.create(
+        status="DRAFT",
+    ...<4 lines>...
+        company=request.company,
+    )
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/models/query.py", line 669, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/models/base.py", line 874, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/models/base.py", line 966, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/models/base.py", line 1169, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, insert_fields, returning_fields, raw
+    )
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/models/base.py", line 1220, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/models/query.py", line 1918, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/models/sql/compiler.py", line 1925, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/debug_toolbar/panels/sql/tracking.py", line 281, in execute
+    return self._record(super().execute, sql, params)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/debug_toolbar/panels/sql/tracking.py", line 201, in _record
+    return method(sql, params)
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/.venv/lib/python3.14/site-packages/django/db/backends/sqlite3/base.py", line 359, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+django.db.utils.IntegrityError: NOT NULL constraint failed: sales_salesorder.fulfillment_location_id

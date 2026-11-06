@@ -30,15 +30,7 @@
         {% endfor %}
     </div>
 
-    <div class="form-group">
-        <label for="{{ header_form.origin.id_for_label }}" class="form-label mb-0">Source Document</label>
-        {{ header_form.origin }}
-        {% for error in header_form.origin.errors %}
-            <div class="invalid-feedback d-block">
-                {{ error }}
-            </div>
-        {% endfor %}
-    </div>
+
 </div>
 
 <!-- Column 2: Locations & Scheduling -->

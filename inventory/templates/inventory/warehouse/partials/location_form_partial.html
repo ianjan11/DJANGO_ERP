@@ -1,192 +1,293 @@
-{% block content %}
-<div class="container-fluid py-4" id="inventory-display">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0 text-gray-800">
-      {% if form.instance.pk %}Edit Location: {{ form.instance.complete_name }}{% else %}New Location{% endif %}
-    </h1>
-    <a href="{% url 'inventory:locations_list' %}"
-       class="btn btn-outline-secondary btn-sm"
-       hx-get="{% url 'inventory:locations_list' %}"
-       hx-target="#inventory-display"
-       hx-push-url="true">
-      <i class="bi bi-arrow-left"></i> Back to Locations
-    </a>
-  </div>
+{% load humanize %}
 
-  <form method="post"
-        hx-post="{% if form.instance.pk %}{% url 'inventory:edit_location' form.instance.pk %}{% else %}{% url 'inventory:create_location' %}{% endif %}"
-        hx-target="#inventory-display"
-        hx-swap="innerHTML"
-        class="needs-validation"
-        novalidate>
-    {% csrf_token %}
+<div class="main-wrapper">
+  <div class="detail-card">
 
-    <div class="row">
-      <!-- Left Column: Core Definition -->
-      <div class="col-lg-7">
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Location Details</h6>
-            <div class="form-check form-switch mb-0">
-              {{ form.active }}
-              <label class="form-check-label ms-2" for="{{ form.is_active.id_for_label }}">Active</label>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label for="{{ form.name.id_for_label }}" class="form-label font-weight-bold">Location Name</label>
-                {{ form.name }}
-                {% if form.name.errors %}
-                  <div class="invalid-feedback d-block">{{ form.name.errors.0 }}</div>
-                {% endif %}
-              </div>
+    {# ── Card title ── #}
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        {% if form.instance.pk %}Edit Location: {{ form.instance.complete_name }}{% else %}New Location{% endif %}
+      </h5>
+    </div>
 
-              <div class="col-md-6">
-                <label for="{{ form.parent.id_for_label }}" class="form-label font-weight-bold">Parent Location</label>
-                {{ form.parent }}
-                <div class="form-text text-muted">Selecting a parent determines the warehouse link.</div>
-                {% if form.parent.errors %}
-                  <div class="invalid-feedback d-block">{{ form.parent.errors.0 }}</div>
-                {% endif %}
-              </div>
+    <form id="locationForm"
+          method="post"
+          hx-post="{% if form.instance.pk %}{% url 'inventory:edit_location' form.instance.pk %}{% else %}{% url 'inventory:create_location' %}{% endif %}"
+          hx-target="#inventory-display"
+          hx-swap="innerHTML"
+          hx-push-url="true">
 
-              <div class="col-md-12">
-                <label for="{{ form.usage.id_for_label }}" class="form-label font-weight-bold">Location Type / Usage</label>
-                {{ form.usage }}
-                {% if form.usage.errors %}
-                  <div class="invalid-feedback d-block">{{ form.usage.errors.0 }}</div>
-                {% endif %}
-              </div>
+      {% csrf_token %}
 
-              {% if form.comment %}
-              <div class="col-12">
-                <label for="{{ form.comment.id_for_label }}" class="form-label font-weight-bold">Internal Notes</label>
-                {{ form.comment }}
-              </div>
+      {# ══════════ HEADER ══════════ #}
+      <div class="detail-header">
+
+
+        <div class="detail-cols">
+
+          {# Column 1 — identity #}
+          <div class="detail-col">
+            <div class="form-group form-group--primary">
+              <label for="{{ form.name.id_for_label }}" class="form-label mb-0">Location Name <span style="color:#b91c1c">*</span></label>
+              {{ form.name }}
+              {% if form.name.help_text %}
+                <small class="text-muted d-block mt-1">{{ form.name.help_text }}</small>
               {% endif %}
+              {% for error in form.name.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.usage.id_for_label }}" class="form-label mb-0">Location Type / Usage <span style="color:#b91c1c">*</span></label>
+              {{ form.usage }}
+              {% if form.usage.help_text %}
+                <small class="text-muted d-block mt-1">{{ form.usage.help_text }}</small>
+              {% endif %}
+              {% for error in form.usage.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.barcode.id_for_label }}" class="form-label mb-0">Barcode</label>
+              {{ form.barcode }}
+              {% if form.barcode.help_text %}
+                <small class="text-muted d-block mt-1">{{ form.barcode.help_text }}</small>
+              {% endif %}
+              {% for error in form.barcode.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
             </div>
           </div>
+
+          {# Column 2 — structure #}
+          <div class="detail-col">
+            <div class="form-group">
+              <label for="{{ form.parent.id_for_label }}" class="form-label mb-0">Parent Location</label>
+              {{ form.parent }}
+              <small class="text-muted d-block mt-1">Selecting a parent determines the warehouse link.</small>
+              {% for error in form.parent.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.active.id_for_label }}" class="form-label mb-0">Active</label>
+              {{ form.active }}
+              {% if form.active.help_text %}
+                <small class="text-muted d-block mt-1">{{ form.active.help_text }}</small>
+              {% endif %}
+              {% for error in form.active.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {# ══════════ TABS ══════════ #}
+      <div class="tabs" data-tabs>
+
+        <div class="tabs-bar" role="tablist">
+          <button type="button" class="tabs-btn active" data-tab="coordinates" role="tab"
+                  {% if form.posx.errors or form.posy.errors or form.posz.errors or form.removal_strategy.errors %}data-error="1"{% endif %}>
+            <i class="bi bi-compass"></i> Coordinates &amp; Strategy
+            {% if form.posx.errors or form.posy.errors or form.posz.errors or form.removal_strategy.errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
+          <button type="button" class="tabs-btn" data-tab="attributes" role="tab"
+                  {% if form.scrap_location.errors or form.return_location.errors or form.replenish_location.errors %}data-error="1"{% endif %}>
+            <i class="bi bi-tags"></i> Attributes &amp; Rules
+            {% if form.scrap_location.errors or form.return_location.errors or form.replenish_location.errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
+          {% if form.comment %}
+          <button type="button" class="tabs-btn" data-tab="notes" role="tab"
+                  {% if form.comment.errors %}data-error="1"{% endif %}>
+            <i class="bi bi-journal-text"></i> Notes
+            {% if form.comment.errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
+          {% endif %}
+          <button type="button" class="tabs-btn" data-tab="metadata" role="tab">
+            <i class="bi bi-diagram-3"></i> Tree Metadata
+          </button>
         </div>
 
-        <!-- Physical Position / Corridors -->
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-white py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Physical Coordinates & Identification</h6>
-          </div>
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label for="{{ form.barcode.id_for_label }}" class="form-label font-weight-bold">Barcode</label>
-                {{ form.barcode }}
-                {% if form.barcode.errors %}
-                  <div class="invalid-feedback d-block">{{ form.barcode.errors.0 }}</div>
-                {% endif %}
-              </div>
-
+        {# ── Coordinates & Strategy ── #}
+        <div class="tabs-panel active" data-tab-panel="coordinates" role="tabpanel">
+          <div class="tabs-grid">
+            <div>
               {% if form.removal_strategy %}
-              <div class="col-md-6">
-                <label for="{{ form.removal_strategy.id_for_label }}" class="form-label font-weight-bold">Removal Strategy</label>
+              <div class="form-group">
+                <label for="{{ form.removal_strategy.id_for_label }}" class="form-label mb-0">Removal Strategy</label>
                 {{ form.removal_strategy }}
-                <div class="form-text text-muted">Blank inherits from parent or category.</div>
+                <small class="text-muted d-block mt-1">Blank inherits from parent or category.</small>
+                {% for error in form.removal_strategy.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
               </div>
               {% endif %}
 
               {% if form.posx %}
-              <div class="col-md-4">
-                <label for="{{ form.posx.id_for_label }}" class="form-label font-weight-bold">Corridor (X)</label>
+              <div class="form-group">
+                <label for="{{ form.posx.id_for_label }}" class="form-label mb-0">Corridor (X)</label>
                 {{ form.posx }}
+                {% for error in form.posx.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
               </div>
-              <div class="col-md-4">
-                <label for="{{ form.posy.id_for_label }}" class="form-label font-weight-bold">Shelves (Y)</label>
+              {% endif %}
+            </div>
+
+            <div>
+              {% if form.posy %}
+              <div class="form-group">
+                <label for="{{ form.posy.id_for_label }}" class="form-label mb-0">Shelves (Y)</label>
                 {{ form.posy }}
+                {% for error in form.posy.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
               </div>
-              <div class="col-md-4">
-                <label for="{{ form.posz.id_for_label }}" class="form-label font-weight-bold">Height (Z)</label>
+              {% endif %}
+
+              {% if form.posz %}
+              <div class="form-group">
+                <label for="{{ form.posz.id_for_label }}" class="form-label mb-0">Height (Z)</label>
                 {{ form.posz }}
+                {% for error in form.posz.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
               </div>
               {% endif %}
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Right Column: Flags & Hierarchy Read-Only Info -->
-      <div class="col-lg-5">
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-white py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Location Attributes</h6>
-          </div>
-          <div class="card-body">
-            {% if form.scrap_location %}
-            <div class="form-check mb-3">
-              {{ form.scrap_location }}
-              <label class="form-check-label ms-2" for="{{ form.scrap_location.id_for_label }}">
-                <strong>Is a Scrap Location?</strong>
-                <div class="text-muted small">Used to allocate damaged or written-off stock.</div>
-              </label>
-            </div>
-            {% endif %}
+        {# ── Attributes & Rules ── #}
+        <div class="tabs-panel" data-tab-panel="attributes" role="tabpanel">
+          <div class="tabs-grid">
+            <div>
+              {% if form.scrap_location %}
+              <div class="form-group">
+                <div class="form-check">
+                  {{ form.scrap_location }}
+                  <label class="form-check-label" for="{{ form.scrap_location.id_for_label }}">
+                    Is a Scrap Location?
+                  </label>
+                </div>
+                <small class="text-muted d-block mt-1">Used to allocate damaged or written-off stock.</small>
+                {% for error in form.scrap_location.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+              {% endif %}
 
-            {% if form.return_location %}
-            <div class="form-check mb-3">
-              {{ form.return_location }}
-              <label class="form-check-label ms-2" for="{{ form.return_location.id_for_label }}">
-                <strong>Is a Return Location?</strong>
-                <div class="text-muted small">Default destination for customer returns.</div>
-              </label>
+              {% if form.return_location %}
+              <div class="form-group">
+                <div class="form-check">
+                  {{ form.return_location }}
+                  <label class="form-check-label" for="{{ form.return_location.id_for_label }}">
+                    Is a Return Location?
+                  </label>
+                </div>
+                <small class="text-muted d-block mt-1">Default destination for customer returns.</small>
+                {% for error in form.return_location.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+              {% endif %}
             </div>
-            {% endif %}
 
-            {% if form.replenish_location %}
-            <div class="form-check mb-3">
-              {{ form.replenish_location }}
-              <label class="form-check-label ms-2" for="{{ form.replenish_location.id_for_label }}">
-                <strong>Replenish Location</strong>
-                <div class="text-muted small">Triggers automated reordering rules.</div>
-              </label>
+            <div>
+              {% if form.replenish_location %}
+              <div class="form-group">
+                <div class="form-check">
+                  {{ form.replenish_location }}
+                  <label class="form-check-label" for="{{ form.replenish_location.id_for_label }}">
+                    Replenish Location
+                  </label>
+                </div>
+                <small class="text-muted d-block mt-1">Triggers automated reordering rules.</small>
+                {% for error in form.replenish_location.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+              {% endif %}
             </div>
-            {% endif %}
           </div>
         </div>
 
-        <!-- Read-only Location Tree Metadata -->
-        <div class="card shadow-sm mb-4 bg-light">
-          <div class="card-body">
-            <h6 class="font-weight-bold text-dark mb-3">Tree Metadata</h6>
+        {# ── Internal Notes ── #}
+        {% if form.comment %}
+        <div class="tabs-panel" data-tab-panel="notes" role="tabpanel">
+          <div class="form-group">
+            <label for="{{ form.comment.id_for_label }}" class="form-label mb-0">Internal Notes</label>
+            {{ form.comment }}
+            {% if form.comment.help_text %}
+              <small class="text-muted d-block mt-1">{{ form.comment.help_text }}</small>
+            {% endif %}
+            {% for error in form.comment.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        {# ── Tree Metadata ── #}
+        <div class="tabs-panel" data-tab-panel="metadata" role="tabpanel">
+          <div class="tabs-grid">
             {% if form.instance.pk %}
-              <div class="mb-2">
-                <span class="text-muted small d-block">Complete Path:</span>
-                <code class="text-dark font-weight-bold">{{ form.instance.complete_name }}</code>
+              <div>
+                <div class="form-group">
+                  <label class="form-label mb-0">Complete Path</label>
+                  <div><code>{{ form.instance.complete_name }}</code></div>
+                </div>
               </div>
               <div>
-                <span class="text-muted small d-block">Linked Warehouse:</span>
-                <strong class="text-primary">{{ form.instance.warehouse.name|default:"Shared / Virtual (None)" }}</strong>
+                <div class="form-group">
+                  <label class="form-label mb-0">Linked Warehouse</label>
+                  <div><strong>{{ form.instance.warehouse.name|default:"Shared / Virtual (None)" }}</strong></div>
+                </div>
               </div>
             {% else %}
-              <p class="text-muted small mb-0">
-                <i class="bi bi-info-circle me-1"></i>
-                The full path name and warehouse assignment will be generated automatically upon saving based on the chosen parent.
-              </p>
+              <div style="grid-column: 1 / -1;">
+                <p class="text-muted mb-0">
+                  <i class="bi bi-info-circle me-1"></i>
+                  The full path name and warehouse assignment will be generated automatically upon saving based on the chosen parent.
+                </p>
+              </div>
             {% endif %}
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Actions Footer -->
-    <div class="d-flex justify-content-end gap-2 mb-5">
-      <a href="{% url 'inventory:locations_list' %}"
-         class="btn btn-secondary"
-         hx-get="{% url 'inventory:locations_list' %}"
-         hx-target="#inventory-display"
-         hx-push-url="true">
-        Cancel
-      </a>
-      <button type="submit" class="btn btn-primary px-4">
-        <i class="bi bi-check-lg me-1"></i> Save Location
-      </button>
-    </div>
-  </form>
+      </div>{# /tabs #}
+
+      {# ── Non-field errors ── #}
+      {% if form.non_field_errors %}
+        <div class="detail-card-errors">
+          {% for error in form.non_field_errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {# ── Actions ── #}
+      <div class="detail-card-footer">
+        <button type="button"
+                class="btn btn-secondary"
+                hx-get="{% url 'inventory:locations_list' %}"
+                hx-target="#inventory-display"
+                hx-swap="innerHTML"
+                hx-push-url="true">
+          <i class="bi bi-arrow-left me-1"></i> Cancel
+        </button>
+
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-check-circle me-1"></i>
+          {% if form.instance.pk %}Save Changes{% else %}Create Location{% endif %}
+        </button>
+      </div>
+
+    </form>
+  </div>
 </div>
-{% endblock %}

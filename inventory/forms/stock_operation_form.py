@@ -51,6 +51,7 @@ class StockPickingHeaderForm(forms.ModelForm):
             "dest_location",
             "scheduled_date",
             "origin",
+            "note",
         ]
         widgets = {
             "picking_type": forms.Select(attrs={
@@ -83,6 +84,10 @@ class StockPickingHeaderForm(forms.ModelForm):
                 "class": "form-control picking-header-field",
                 "placeholder": "e.g. SO001, PO0024...",
             }),
+
+            "note" : forms.TextInput( attrs={
+                "class": "form-control picking-header-field",
+            } ),
         }
         labels = {
             "picking_type": "Operation Type",
@@ -91,6 +96,7 @@ class StockPickingHeaderForm(forms.ModelForm):
             "dest_location": "Destination Location",
             "scheduled_date": "Scheduled Date",
             "origin": "Source Document",
+            "note": "Note"
         }
 
     def __init__(self, *args, company=None, **kwargs):

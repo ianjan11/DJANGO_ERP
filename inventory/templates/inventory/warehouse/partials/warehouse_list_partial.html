@@ -17,6 +17,7 @@
     <div
       class="invoice-card mb-3 cursor-pointer"
       hx-get="{% url 'inventory:warehouse_detail' warehouse.id %}"
+      hx-push-url="true"
       hx-target="#inventory-display"
       hx-swap="innerHTML"
       role="button"

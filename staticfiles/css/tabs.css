@@ -1,0 +1,98 @@
+/* ============================================================
+   TABS — selectable content groups
+   tabs.css
+   Depends on: base.css (design tokens)
+   Behaviour:  tabs.js
+
+   Markup:
+     <div class="tabs" data-tabs>
+       <div class="tabs-bar" role="tablist">
+         <button type="button" class="tabs-btn active" data-tab="a">
+           <i class="bi bi-x"></i> Label
+           <span class="tabs-dot"></span>      (optional error marker)
+         </button>
+       </div>
+       <div class="tabs-panel active" data-tab-panel="a">…</div>
+     </div>
+
+   Add data-error="1" to a .tabs-btn to auto-open it on load.
+   ============================================================ */
+
+
+/* ── Bar ──────────────────────────────────────────────────── */
+.tabs-bar {
+  display: flex;
+  gap: 2px;
+  padding: 0 var(--spacing-16);
+  border-bottom: 1px solid var(--color-mist);
+  overflow-x: auto;
+}
+
+/* ── Button ───────────────────────────────────────────────── */
+.tabs-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  margin-bottom: -1px;                 /* overlap bar border */
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: var(--font-suisseintl);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-slate);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.12s ease,
+              background 0.12s ease,
+              border-color 0.12s ease;
+}
+
+.tabs-btn i {
+  font-size: 14px;
+  color: var(--color-fog);
+  transition: color 0.12s ease;
+}
+
+.tabs-btn:hover {
+  color: var(--color-deep-indigo);
+  background: var(--color-paper-white);
+}
+
+.tabs-btn.active {
+  color: var(--color-deep-indigo);
+  font-weight: var(--font-weight-semibold);
+  border-bottom-color: var(--color-deep-indigo);
+}
+
+.tabs-btn.active i,
+.tabs-btn:hover i { color: var(--color-deep-indigo); }
+
+/* ── Error marker ─────────────────────────────────────────── */
+.tabs-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e24b4a;
+  flex-shrink: 0;
+}
+
+/* ── Panel ────────────────────────────────────────────────── */
+.tabs-panel {
+  display: none;
+  padding: var(--spacing-16);
+}
+
+.tabs-panel.active { display: block; }
+
+/* Optional two-column layout inside a panel */
+.tabs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 var(--spacing-32);
+}
+
+@media (max-width: 768px) {
+  .tabs-grid { grid-template-columns: 1fr; }
+}
