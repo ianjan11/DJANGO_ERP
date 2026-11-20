@@ -5,3 +5,4 @@ from .orders_updates import  (refresh_order,reset_order_view,sales_order_create_
 from .sales_dashboard import sales_dashboard
 from .orders import sales_orders_list
 from .sales_order_to_invoice import sales_to_invoice_view
+from .charts import sales_view_charts

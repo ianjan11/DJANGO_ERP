@@ -25,8 +25,8 @@ class WarehouseForm(forms.ModelForm):
                 'placeholder': 'e.g. WH1',
             }),
             'sequence': forms.NumberInput(attrs={'class': 'form-control', 'min': 0}),
-            'reception_steps': forms.Select(attrs={'class': 'form-select'}),
-            'delivery_steps': forms.Select(attrs={'class': 'form-select'}),
+            'reception_steps': forms.Select(attrs={'class': 'form-select select2-widget'}),
+            'delivery_steps': forms.Select(attrs={'class': 'form-select select2-widget'}),
             'active': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch'}),
         }
 

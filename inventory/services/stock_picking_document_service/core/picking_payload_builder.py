@@ -29,6 +29,7 @@ def build_payload(post, doc_type: str = "picking") -> Tuple[dict, bool]:
         "scheduled_date": post.get("scheduled_date"),
         "picking_type": post.get("picking_type"),
         "status": post.get("status"),
+        "note": post.get("note"),
     }
 
     # Filter out keys not supplied in post
@@ -42,6 +43,7 @@ def build_payload(post, doc_type: str = "picking") -> Tuple[dict, bool]:
         "scheduled_date": "datetime",
         "origin": str,
         "status": str,
+        "note": str,
     }
 
     updatable_fields = {k: v for k, v in header_mapping.items() if k in header}

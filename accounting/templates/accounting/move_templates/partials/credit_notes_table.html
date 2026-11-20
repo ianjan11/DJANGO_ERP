@@ -27,7 +27,7 @@
                 hx-target="#accounting-display"
                 hx-push-url="true">
 
-                <td class="td-mono">{{ invoice.invoice_number }}</td>
+                <td class="td-mono">{{ invoice.name }}</td>
 
                 <td class="td-primary">{{ invoice.partner }}</td>
 
@@ -40,16 +40,14 @@
                 </td>
 
                 <td class="col-center">
-                    {% if invoice.status == "DRAFT" %}
-                        <span class="badge badge--draft"><i class="bi bi-pencil-square"></i> Draft</span>
+                    {% if invoice.state == "DRAFT" %}
+                    <span class="badge badge--draft"><i class="bi bi-pencil"></i> Draft</span>
                     {% elif invoice.status == "POSTED" %}
                         <span class="badge badge--pending"><i class="bi bi-send-fill"></i> Posted</span>
-                    {% elif invoice.status == "CONFIRMED" %}
-                        <span class="badge badge--paid"><i class="bi bi-check-circle-fill"></i> Confirmed</span>
-                    {% elif invoice.status == "CANCELLED" %}
+                    {% elif invoice.state == "CANCELLED" %}
                         <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
                     {% else %}
-                        <span class="badge">{{ invoice.status }}</span>
+                        <span class="badge">{{ invoice.state }}</span>
                     {% endif %}
                 </td>
 
@@ -83,4 +81,3 @@
 
 
 </div>
-

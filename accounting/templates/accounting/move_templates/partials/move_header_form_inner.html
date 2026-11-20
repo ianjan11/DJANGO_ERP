@@ -1,8 +1,8 @@
  <input type="hidden" id="invoice-id-input" name="invoice_id" value="{{ invoice.id }}">
  <input type="hidden" id="state" name="state" value="{{ invoice.state }}">
- 
+
     <!-- Column 1: Customer + Payment Term -->
-    <div class="form-header-content">
+    <div class="detail-col">
         <div class="form-group">
             <label for="{{ header_form.partner.id_for_label }}" class="form-label mb-0">Partner</label>
             {{ header_form.partner }}
@@ -11,7 +11,7 @@
                     {{ error }}
                 </div>
             {% endfor %}
-           
+
         </div>
         <div class="form-group">
             <label for="{{ header_form.payment_term.id_for_label }}" class="form-label mb-0">Payment Term</label>
@@ -25,7 +25,7 @@
     </div>
 
     <!-- Column 2: Date + Source Location + Currency -->
-    <div class="form-header-content">
+    <div class="detail-col">
         <div class="form-group">
             <label for="{{ header_form.issue_date.id_for_label }}" class="form-label mb-0">Date</label>
             {{ header_form.issue_date }}

@@ -11,9 +11,12 @@ from accounting.forms.tax_form import TaxForm
 from accounting.models import Tax
 from accounting.services.tax_service.tax_loader import load_tax
 from core.utils import htmx_success, htmx_error
-
+from core.utils.module import _render, _module
 
 logger = logging.getLogger("accounting.tax")
+
+MODULE = "accounting"
+
 
 
 def _build_context(request):
@@ -42,6 +45,7 @@ def _build_context(request):
 
     return {
         "taxes": page_obj,
+
     }
 
 @login_required
@@ -54,7 +58,8 @@ def taxes_view(request):
         else "accounting/configurations/taxes/taxes_list.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
+
 
 @login_required
 @require_POST
@@ -125,6 +130,8 @@ def tax_detail(request, tax_id):
     context = {
         "tax": tax,
         "form": form,
+        "back_url": reverse("accounting:taxes_list"),
+        "back_label": "Taxes",
     }
 
     template = (
@@ -133,7 +140,8 @@ def tax_detail(request, tax_id):
         else "accounting/configurations/taxes/tax_detail.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
+
 
 @login_required
 @require_POST
@@ -218,7 +226,6 @@ def edit_tax(request, tax_id):
                 "message": "Tax updated successfully.",
             }
         },
-        target="#accounting-display",
     )
 
 @login_required
@@ -230,6 +237,8 @@ def get_empty_tax_form(request):
     context = {
         "form": form,
         "tax": None,
+        "back_url": reverse("accounting:taxes_list"),
+        "back_label": "Taxes",
     }
 
     template = (
@@ -281,6 +290,9 @@ def create_tax(request):
                 "accounting:tax_detail",
                 args=[tax.id],
             )
+
+            redirect_url += f"?module={_module(request)}"
+
 
     except ValidationError as e:
         errors = (

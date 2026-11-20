@@ -1,0 +1,105 @@
+{% load static %}
+{% load humanize %}
+
+<div class="main-wrapper dashboard-page" data-accounting-charts-url="{% url 'accounting:accounting_charts' %}">
+  <div class="dashboard">
+
+    {# ── Row 1: 3 Accounting Status & Distribution Donut Charts ── #}
+    <div class="row g-3 mb-4">
+
+      <div class="col-12 col-sm-6 col-xl-4">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Lifecycle</span>
+              <span class="chart-title">Journal Entry States</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="moveStatePieChart" style="width:100%; height:220px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl-4">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Settlements</span>
+              <span class="chart-title">Invoice Payment Status</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="paymentStatePieChart" style="width:100%; height:220px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-12 col-xl-4">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Distribution</span>
+              <span class="chart-title">Active Journals</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="journalPieChart" style="width:100%; height:220px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    {# ── Row 2: Customer Invoices vs Vendor Bills 12-Month Trend ── #}
+    <div class="row g-3 mb-4">
+      <div class="col-12">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">12-Month Financial Overview</span>
+              <span class="chart-title">Customer Invoices vs Vendor Bills</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="accountingTrendChart" style="width:100%; height:320px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# ── Row 3: Top Customers & Top Vendors Rankings ── #}
+    <div class="row g-3 mb-4">
+
+      <div class="col-12 col-lg-6">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Receivables</span>
+              <span class="chart-title">Top Customers by Invoiced Revenue</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="topCustomersChart" style="width:100%; height:300px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Payables</span>
+              <span class="chart-title">Top Vendors by Bill Expenses</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="topVendorsChart" style="width:100%; height:300px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

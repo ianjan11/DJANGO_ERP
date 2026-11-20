@@ -1,80 +1,120 @@
 {% load humanize %}
 
-<form id="journal-header-form"
-      hx-post="{% url 'accounting:journal_update' %}"
-      hx-trigger="change[event.target.classList.contains('move-header-field')] delay:300ms"
-      hx-swap="none"
-      hx-sync="this:queue last">
+<div class="main-wrapper">
+  <div class="detail-card">
 
-  {% csrf_token %}
-  <div id="header-form-wrapper" class="form-header">
-    {% include "accounting/journals/partials/header_form_inner.html" %}
+    {# ── Card title ── #}
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        {% if move and move.name %}{{ move.name }}{% else %}New Journal Entry{% endif %}
+      </h5>
+               {% include "core/bread_crumbs.html" %}
+
+    </div>
+
+    {# ── Action Card & Statuses ── #}
+    <div class="action-card">
+      {% include "accounting/journals/partials/action_buttons.html" %}
+      <div class="action-card-status">
+        {% if move.state == "draft" %}
+          <span class="badge badge--draft"><i class="bi bi-pencil"></i> Draft</span>
+        {% elif move.state == "posted" %}
+          <span class="badge badge--posted"><i class="bi bi-send-fill"></i> Posted</span>
+        {% elif move.state == "cancelled" %}
+          <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
+        {% else %}
+          <span class="badge">{{ move.state }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <form id="journal-header-form"
+          hx-post="{% url 'accounting:journal_update' %}"
+          hx-trigger="change[event.target.classList.contains('move-header-field')] delay:300ms"
+          hx-swap="none"
+          hx-sync="this:queue last">
+
+      {% csrf_token %}
+      <input type="hidden" id="move-id-input" name="move_id" value="{{ move.id }}">
+      <input type="hidden" id="state" name="state" value="{{ move.state }}">
+
+      {# ══════════ HEADER: IMPORTANT INFO ══════════ #}
+      <div class="detail-header">
+        <div class="detail-cols">
+            {% include "accounting/journals/partials/header_form_inner.html" %}
+        </div>
+      </div>
+
+      {# ══════════ TABS: OPERATIONS & SECONDARY DETAILS ══════════ #}
+      <div class="tabs" data-tabs>
+
+        <div class="tabs-bar" role="tablist">
+          <button type="button" class="tabs-btn active" data-tab="operations" role="tab"
+                  {% if formset.non_form_errors %}data-error="1"{% endif %}>
+            <i class="bi bi-list-check"></i> Journal Items
+            {% if formset.non_form_errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
+
+
+
+          <button type="button" class="tabs-btn" data-tab="notes" role="tab"
+                  {% if header_form.narration.errors %}data-error="1"{% endif %}>
+            <i class="bi bi-journal-text"></i> Additional Info &amp; Notes
+            {% if header_form.narration.errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
+
+                    {% if move.state == "posted" %}
+            <button type="button" class="tabs-btn" data-tab="reconciliation" role="tab">
+            <i class="bi bi-list-check"></i> Reconciliations
+          </button>
+            {% endif %}
+
+        </div>
+
+        {# ── Tab 1: Operations & Journal Items ── #}
+        <div class="tabs-panel active" data-tab-panel="operations" role="tabpanel">
+            {% include "accounting/journals/partials/journal_lines_editable.html" %}
+        </div>
+
+        {# ── Tab 2: Additional Info & Notes ── #}
+        <div class="tabs-panel" data-tab-panel="notes" role="tabpanel">
+          <div class="tabs-grid">
+            <div class="form-header-content">
+              <div class="form-group">
+                <label for="{{ header_form.narration.id_for_label }}" class="form-label mb-0">Notes</label>
+                {{ header_form.narration }}
+                {% for error in header_form.narration.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+                <div class="form-group">
+    <label for="{{ header_form.ref.id_for_label }}" class="form-label mb-0">Reference</label>
+    {{ header_form.ref }}
+    {% for error in header_form.ref.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
   </div>
+          </div>
+        </div>
 
-  {# ── Line items ── #}
-  <div class="table-toolbar">
-    <h5 class="table-toolbar-title">Journal Items</h5>
+      </div>{# /tabs #}
+
+        {% if move.state == "posted" %}
+        {# ── Tab 3: Reconciliations ── #}
+        <div class="tabs-panel" data-tab-panel="reconciliation" role="tabpanel">
+                        {% include "accounting/journals/partials/journal_lines_posted.html" %}
+        </div>
+        {% endif %}
+
+      {# ── Non-field errors ── #}
+      {% if header_form.non_field_errors %}
+        <div class="detail-card-errors">
+          {% for error in header_form.non_field_errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      </div>
+    </form>
   </div>
-
-  <div id="items-management-form">
-    {{ formset.management_form }}
-  </div>
-
-  {% if formset.non_form_errors %}
-  <div style="margin: var(--spacing-12) var(--spacing-16);
-              padding: var(--spacing-12);
-              background: #fce8e8;
-              border: 1px solid #f7c1c1;
-              border-radius: var(--radius-cards);
-              font-size: var(--text-body-sm);
-              color: #9b2626;">
-    {{ formset.non_form_errors }}
-  </div>
-  {% endif %}
-
-  <div class="inv-table-wrap">
-    <table class="inv-table" id="journal-lines-table">
-      <thead>
-        <tr>
-          <th style="display:none"></th>
-          <th style="width:25%; min-width:200px">Account</th>
-          <th style="width:25%; min-width:200px">Partner</th>
-          <th style="width:25%; min-width:180px">Memo / Label</th>
-          <th style="width:15%; min-width:120px" class="col-right">Debit</th>
-          <th style="width:15%; min-width:120px" class="col-right">Credit</th>
-          <th style="width:5%;  min-width:48px"  class="col-center"></th>
-        </tr>
-      </thead>
-      <tbody id="journal-items">
-        {% for form in formset %}
-          {% include "accounting/journals/partials/journal_item_row.html" %}
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  {# TOTAL_FORMS is derived from the DOM row count so it can't drift from the server-rendered management form #}
-  <button id="row-btn"
-          class="btn btn-secondary btn-sm"
-          type="button"
-          style="display:none; margin:var(--spacing-8);"
-          hx-get="{% url 'accounting:journal_item_row' move.id %}"
-          hx-target="#journal-items"
-          hx-swap="beforeend"
-          hx-sync="closest form:queue last"
-          hx-vals='js:{
-            total_forms: document.querySelectorAll("#journal-items > tr").length,
-            partner_id: document.querySelector("[name=partner]")?.value ?? ""
-          }'
-          hx-on::after:swap="
-            document.querySelector('[name=items-TOTAL_FORMS]').value =
-              document.querySelectorAll('#journal-items > tr').length;
-          ">
-    <i class="bi bi-plus"></i> Add Row
-  </button>
-
-  <div id="journal-total-container" class="totals-container">
-    {% include "accounting/journals/partials/journal_totals.html" %}
-  </div>
-
-</form>
+</div>

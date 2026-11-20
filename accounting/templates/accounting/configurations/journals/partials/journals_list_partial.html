@@ -1,7 +1,7 @@
 {% load humanize %}
 
 <div id="currency-display"
-     hx-get="{% url 'accounting:journals_list' %}"
+     hx-get="{% url 'accounting:journals_list' %}?module={{ module }}"
      hx-trigger="JournalSuccess from:body">
 
 <div class="main-wrapper">
@@ -19,9 +19,9 @@
   
         <div>
           <button class="btn btn-primary btn-sm"
-                  hx-get="{% url 'accounting:get_empty_journal_form' %}"
+                  hx-get="{% url 'accounting:get_empty_journal_form' %}?module={{ module }}"
                   hx-disable-elt="this"
-                  hx-target="#accounting-display"
+                  hx-target="closest .module-display"
                   hx-push-url="true"
                >
             <i class="bi bi-plus-lg"></i> New
@@ -29,10 +29,11 @@
     
           <button type="button"
                   class="btn btn-danger btn-sm"
-                  hx-post="{% url 'accounting:journals_delete' %}"
+                  hx-post="{% url 'accounting:journals_delete' %}?module={{ module }}"
                   hx-include="[name='journal_ids']:checked"
                   hx-confirm="Are you sure you want to delete the selected journals?"
-                  hx-target="#accounting-display">
+                  hx-target="closest .module-display"
+          >
             <i class="ti ti-trash me-1"></i> Delete
           </button>
     
@@ -42,9 +43,9 @@
         <form data-toolbar
               class="toolbar"
               id="journal-filters"
-              hx-get="{% url 'accounting:journals_list' %}"
+              hx-get="{% url 'accounting:journals_list' %}?module={{ module }}"
               hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
-              hx-target="#accounting-display"
+              hx-target="closest .module-display"
               hx-replace-url="true">
             
           <div class="toolbar-search-wrap">
@@ -113,8 +114,8 @@
               <td>
                 <button type="button"
                         class="btn btn-secondary btn-sm"
-                        hx-get="{% url 'accounting:company_journal_detail' journal.id %}"
-                        hx-target="#accounting-display"
+                        hx-get="{% url 'accounting:company_journal_detail' journal.id %}?module={{ module }}"
+                        hx-target="closest .module-display"
                         hx-push-url="true"
                         hx-disable-elt="this">
                   <i class="ti ti-eye"></i> View
@@ -147,8 +148,8 @@
             {# First #}
             {% if journals.has_previous %}
               <a class="page-btn page-btn--arrow"
-                 hx-get="?page=1"
-                 hx-target="#accounting-display"
+                 hx-get="?page=1&module={{ module }}"
+                 hx-target="closest .module-display"
                  hx-swap="innerHTML"
                  hx-push-url="true">
                 <i class="bi bi-chevron-double-left"></i>
@@ -162,8 +163,8 @@
             {# Prev #}
             {% if journals.has_previous %}
               <a class="page-btn page-btn--arrow"
-                 hx-get="?page={{ journals.previous_page_number }}"
-                 hx-target="#accounting-display"
+                 hx-get="?page={{ journals.previous_page_number }}&module={{ module }}"
+                 hx-target="closest .module-display"
                  hx-swap="innerHTML"
                  hx-push-url="true">
                 <i class="bi bi-chevron-left"></i>
@@ -180,8 +181,8 @@
                 <span class="page-btn active">{{ num }}</span>
               {% elif num > journals.number|add:'-3' and num < journals.number|add:'3' %}
                 <a class="page-btn"
-                   hx-get="?page={{ num }}"
-                   hx-target="#accounting-display"
+                   hx-get="?page={{ num }}&module={{ module }}"
+                   hx-target="closest .module-display"
                    hx-swap="innerHTML"
                    hx-push-url="true">{{ num }}</a>
               {% endif %}
@@ -190,8 +191,8 @@
             {# Next #}
             {% if journals.has_next %}
               <a class="page-btn page-btn--arrow"
-                 hx-get="?page={{ journals.next_page_number }}"
-                 hx-target="#accounting-display"
+                 hx-get="?page={{ journals.next_page_number }}&module={{ module }}"
+                 hx-target="closest .module-display"
                  hx-swap="innerHTML"
                  hx-push-url="true">
                 <i class="bi bi-chevron-right"></i>
@@ -205,8 +206,8 @@
             {# Last #}
             {% if journals.has_next %}
               <a class="page-btn page-btn--arrow"
-                 hx-get="?page={{ journals.paginator.num_pages }}"
-                 hx-target="#accounting-display"
+                 hx-get="?page={{ journals.paginator.num_pages }}&module={{ module }}"
+                 hx-target="closest .module-display"
                  hx-swap="innerHTML"
                  hx-push-url="true">
                 <i class="bi bi-chevron-double-right"></i>

@@ -17,5 +17,14 @@ urlpatterns = [
     path("settings/users/create/", views.tenant_create_view, name="tenant_user_create", ),
     path("settings/users/<int:membership_id>/update/", views.user_profile_update, name="user_profile_update", ),
 
+    path('partners/customers/', views.get_customers_view, name='customers'),
+    path('partners/vendors/', views.get_vendors_view, name='vendors'),
+    path('partners/list/', views.get_all_partners, name='partners'),
+
+    path('partner/new/', views.get_empty_partner_form, name='get_partner_form', ),
+    path('partner/create/', views.create_partner_view, name='partner_create'),
+    path('accounting/partner/<int:partner_id>/', views.partners_details_view, name='partner_detail'),
+    path('accounting/partner/<int:partner_id>/edit', views.edit_partner_view, name='partner_edit'),
+
 ]
 

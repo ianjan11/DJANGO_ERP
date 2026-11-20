@@ -17,7 +17,7 @@ class DocumentUIService:
 
     PARTNER_FIELDS = {"partner"}
     DATE_FIELDS = {"scheduled_date"}
-    OTHER_FIELDS = {"origin"}
+    OTHER_FIELDS = {"origin","note",}
 
     # Lines inherit blank source/dest from the picking, so these change what
     # every row displays.

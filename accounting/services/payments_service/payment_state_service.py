@@ -34,6 +34,7 @@ class PaymentStateService:
     DRAFT = "draft"
     POSTED = "posted"
     CANCELLED = "cancelled"
+    RECONCILED = "reconciled"
 
     # =========================================================
     # ALLOWED TRANSITIONS
@@ -41,7 +42,7 @@ class PaymentStateService:
 
     ALLOWED_TRANSITIONS = {
         DRAFT: [POSTED, CANCELLED],
-        POSTED: [DRAFT, CANCELLED],
+        POSTED: [DRAFT, CANCELLED, RECONCILED],
         CANCELLED: [],
     }
     # =========================================================
@@ -389,10 +390,15 @@ class PaymentStateService:
                 payment.state == self.POSTED
             ),
 
+            "can_apply":(
+              payment.state == self.POSTED
+            ),
+
             "locked": (
                 payment.state in (
                     self.POSTED,
                     self.CANCELLED,
+                    self.RECONCILED,
                 )
             ),
         }

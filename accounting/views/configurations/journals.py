@@ -12,8 +12,13 @@ from accounting.services.account_move_services.journal_loader import load_Journa
 import logging
 
 from core.utils import htmx_error, htmx_success
+from core.utils.module import _render, _module
 
 logger = logging.getLogger('django.request')
+
+
+MODULE = "accounting"
+
 
 def _build_context(request,journals):
 
@@ -23,6 +28,7 @@ def _build_context(request,journals):
 
     context = {
         "journals": page_obj,
+
     }
     return context
 
@@ -51,7 +57,8 @@ def journals_list_view(request):
         else "accounting/configurations/journals/journals_list.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
+
 
 @login_required
 def journal_detail(request, journal_id):
@@ -66,6 +73,8 @@ def journal_detail(request, journal_id):
     context = {
         "journal": journal,
         "form": form,
+        "back_url": reverse("accounting:journals_list"),
+        "back_label": "Journals ",
     }
 
     template = (
@@ -74,7 +83,8 @@ def journal_detail(request, journal_id):
         else 'accounting/configurations/journals/journal_detail.html'
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
+
 
 @login_required
 @require_POST
@@ -126,7 +136,6 @@ def edit_journal(request, journal_id):
         request,
         "Journal updated successfully.",
         trigger={"JournalSuccess": {"message": "Journal updated successfully."}},
-        target="#accounting-display",
     )
 
 @login_required
@@ -136,6 +145,8 @@ def get_empty_journal_form(request):
     context = {
         "form": form,
         "journal": None,
+        "back_url": reverse("accounting:journals_list"),
+        "back_label": "Journals ",
     }
 
     template = (
@@ -144,7 +155,8 @@ def get_empty_journal_form(request):
         else "accounting/configurations/journals/journal_form.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
+
 
 
 @login_required
@@ -177,6 +189,8 @@ def create_journal(request):
             form.save_m2m()
 
             redirect_url = reverse("accounting:company_journal_detail", args=[journal.id])
+            redirect_url += f"?module={_module(request)}"
+
 
 
     except ValidationError as e:
@@ -250,9 +264,7 @@ def delete_journal(request):
             "Failed to delete journal(s) due to an internal server error.",
         )
 
-    journals = Journal.objects.filter(company=request.company)
 
-    context = _build_context(request, journals)
 
     return htmx_success(
         request,

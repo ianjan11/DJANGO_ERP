@@ -18,13 +18,17 @@ PICKING_TYPE_MAPPING = {
     "outgoing": StockPickingType.Code.OUTGOING,
     "return": StockPickingType.Code.RETURN,
     "internal": StockPickingType.Code.INTERNAL,
+    "Receipts": StockPickingType.Code.INCOMING,
+    "Delivery Orders": StockPickingType.Code.OUTGOING,
+    "Returns": StockPickingType.Code.RETURN,
+    "Internal Transfers": StockPickingType.Code.INTERNAL,
 }
 
 PICKING_LIST_URLS = {
-    "incoming": "inventory:receipt_list",
-    "outgoing": "inventory:delivery_list",
-    "return": "inventory:return_list",
-    "internal": "inventory:internal_transfer_list",
+    "incoming": ("inventory:receipt_list","Receipts" ),
+    "outgoing": ("inventory:delivery_list", "Delivery Orders"),
+    "return": ("inventory:return_list", "Returns"),
+    "internal": ("inventory:internal_transfer_list", "Internal Transfers"),
 }
 
 

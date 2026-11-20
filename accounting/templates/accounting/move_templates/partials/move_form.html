@@ -1,80 +1,224 @@
-<form id="invoice-header-form"
-      hx-post="{% url 'accounting:invoice_update' %}"
-      hx-trigger="change[event.target.classList.contains('move-header-field')] delay:300ms"
-      hx-swap="none"
-      hx-sync="this:queue last">
+{% load humanize %}
+<div class="main-wrapper">
 
-    {% csrf_token %}
+  <div class="detail-card">
 
-    <div id="header-form-wrapper" class="form-header">
-        {% include "accounting/move_templates/partials/move_header_form_inner.html" %}
+    {# ── Card title ── #}
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        {% if invoice and invoice.name %} {{ invoice.name }}{% else %}New Invoice{% endif %}
+      </h5>
+
+        {% include "core/bread_crumbs.html" %}
+
     </div>
 
-    <div id="items-management-form">
-        {{ formset.management_form }}
-    </div>
-    
-      {% if formset.non_form_errors %}
-  <div style="margin: var(--spacing-12) var(--spacing-16);
-              padding: var(--spacing-12);
-              background: #fce8e8;
-              border: 1px solid #f7c1c1;
-              border-radius: var(--radius-cards);
-              font-size: var(--text-body-sm);
-              color: #9b2626;">
-    {{ formset.non_form_errors }}
-  </div>
-  {% endif %}
+    {# ── Action Card & Statuses ── #}
+    <div class="action-card">
+      {% include "accounting/move_templates/partials/action_buttons.html" %}
+      <div class="action-card-status">
+        {% if invoice.state == "draft" %}
+          <span class="badge badge--draft"><i class="bi bi-pencil"></i> Draft</span>
+        {% elif invoice.state == "posted" %}
+          <span class="badge badge--posted"><i class="bi bi-send-fill"></i> Posted</span>
+        {% elif invoice.state == "cancelled" %}
+          <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
+        {% else %}
+          <span class="badge">{{ invoice.state }}</span>
+        {% endif %}
 
-    <div class="inv-table-wrap">
-        <table class="inv-table">
-            <thead>
-              <tr>
-    <th style="display:none"></th>
-    <th style="width:200px; min-width:200px">Product</th>
-      <th style="width:200px; min-width:200px">Description</th>
-    <th style="width:100px; min-width:100px">Quantity</th>
-    <th style="width:200px; min-width:200px">Uom</th>
-    <th style="width:140px; min-width:140px">Unit Price</th>
-    <th style="width:130px; min-width:130px">Discount %</th>
-    <th style="width:140px; min-width:140px" class="col-left">Amount</th>
-    <th style="width:240px; min-width:240px" class="col-left">Taxes</th>
-      <th style="width:240px; min-width:240px" class="col-left">Account</th>
-    <th style="width:48px;  min-width:48px"  class="col-center"></th>
-  </tr>
-
-            </thead>
-            <tbody id="invoice-items">
-                {% for form in formset %}
-                    {% include "accounting/move_templates/partials/move_item_row.html" with form=form %}
-                {% endfor %}
-            </tbody>
-        </table>
+        {% if invoice.state != "draft" %}
+          {% if invoice.payment_state == "paid" %}
+            <span class="badge badge--paid"><i class="bi bi-shield-check"></i> Paid</span>
+          {% elif invoice.payment_state == "partial" %}
+            <span class="badge badge--pending"><i class="bi bi-circle-half"></i> Partial</span>
+          {% elif invoice.payment_state == "not_paid" %}
+            <span class="badge badge--cancelled"><i class="bi bi-clock"></i> Unpaid</span>
+          {% endif %}
+        {% endif %}
+      </div>
     </div>
 
-    <!-- Add button -->
-    <button
-        id="row-btn"
-        style="display:none"
-        class="btn btn-secondary m-1 btn-sm"
-        type="button"
-        hx-get="{% url 'accounting:invoice_item_row' invoice.id %}"
-        hx-target="#invoice-items"
-        hx-swap="beforeend"
-        hx-vals='js:{
-            total_forms: document.querySelector("[name=items-TOTAL_FORMS]").value,
-            partner_id: document.querySelector("#partner-select")?.value ?? ""
-        }'
-        hx-on::after:swap="
-            let total = document.querySelector('[name=items-TOTAL_FORMS]');
-            total.value = parseInt(total.value) + 1;
-        ">
-        <i class="bi bi-plus"></i> Add Row
-    </button>
+    <form id="invoice-header-form"
+          hx-post="{% url 'accounting:invoice_update' %}"
+          hx-trigger="change[event.target.classList.contains('move-header-field')] delay:300ms"
+          hx-swap="none"
+          hx-sync="this:queue last">
 
-    <div id="invoice-total-container" class="totals-container">
-        <div>
-            {% include "accounting/move_templates/partials/move_totals.html" %}
+      {% csrf_token %}
+      <input type="hidden" id="invoice-id-input" name="invoice_id" value="{{ invoice.id }}">
+      <input type="hidden" id="state" name="state" value="{{ invoice.state }}">
+
+      {# ══════════ HEADER: IMPORTANT INFO ══════════ #}
+      <div class="detail-header">
+        <div class="detail-cols ">
+            {% include "accounting/move_templates/partials/move_header_form_inner.html" %}
+          </div>
+      </div>
+
+      {# ══════════ TABS: OPERATIONS & SECONDARY DETAILS ══════════ #}
+      <div class="tabs" data-tabs>
+
+        <div class="tabs-bar" role="tablist">
+          <button type="button" class="tabs-btn active" data-tab="operations" role="tab"
+                  {% if formset.non_form_errors %}data-error="1"{% endif %}>
+            <i class="bi bi-list-check"></i> Invoice Lines
+            {% if formset.non_form_errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
+
+           {% if flags.locked %}
+          <button type="button" class="tabs-btn" data-tab="accounting_lines" role="tab">
+            <i class="bi bi-journal-bookmark"></i> Journal Items
+          </button>
+            {% endif %}
+
+          <button type="button" class="tabs-btn" data-tab="notes" role="tab"
+                  {% if header_form.narration.errors %}data-error="1"{% endif %}>
+            <i class="bi bi-journal-text"></i> Additional Info &amp; Notes
+            {% if header_form.narration.errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
+
+            {% if credit_notes %}
+            <button type="button" class="tabs-btn" data-tab="credit_lines" role="tab">
+            <i class="bi bi-wallet2"></i> Credit_notes
+          </button>
+            {% endif %}
+
         </div>
-    </div>
-</form>
+
+        {# ── Tab 1: Operations & Lines ── #}
+        <div class="tabs-panel active" data-tab-panel="operations" role="tabpanel">
+
+          <div id="items-management-form">
+            {{ formset.management_form }}
+          </div>
+
+          {% if formset.non_form_errors %}
+            <div style="margin-bottom: var(--spacing-12);
+                        padding: var(--spacing-12);
+                        background: #fce8e8;
+                        border: 1px solid #f7c1c1;
+                        border-radius: var(--radius-cards);
+                        font-size: var(--text-body-sm);
+                        color: #9b2626;">
+              {{ formset.non_form_errors }}
+            </div>
+          {% endif %}
+
+          <div class="inv-table-wrap">
+            <table class="inv-table">
+              <thead>
+                <tr>
+                  <th style="display:none"></th>
+                  <th style="width:200px; min-width:200px">Product</th>
+                  <th style="width:200px; min-width:200px">Description</th>
+                  <th style="width:100px; min-width:100px">Quantity</th>
+                  <th style="width:200px; min-width:200px">Uom</th>
+                  <th style="width:140px; min-width:140px">Unit Price</th>
+                  <th style="width:130px; min-width:130px">Discount %</th>
+                  <th style="width:140px; min-width:140px" class="col-left">Amount</th>
+                  <th style="width:240px; min-width:240px" class="col-left">Taxes</th>
+                  <th style="width:240px; min-width:240px" class="col-left">Account</th>
+                  <th style="width:48px;  min-width:48px" class="col-center"></th>
+                </tr>
+              </thead>
+              <tbody id="invoice-items">
+                {% if flags.editable %}
+                  {% for form in formset %}
+                    {% include "accounting/move_templates/partials/move_item_row.html" with form=form %}
+                  {% endfor %}
+                {% else %}
+                  {% for item in items %}
+                    {% include "accounting/move_templates/partials/move_read_only_rows.html" with item=item %}
+                  {% empty %}
+                    <tr>
+                      <td colspan="10" class="table-empty">
+                        <div class="table-empty-title">No lines</div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                {% endif %}
+              </tbody>
+            </table>
+
+            {% if flags.editable %}
+              <button
+                  id="row-btn"
+                  style="display:none"
+                  class="btn btn-secondary m-1 btn-sm mt-3"
+                  type="button"
+                  hx-get="{% url 'accounting:invoice_item_row' invoice.id %}"
+                  hx-target="#invoice-items"
+                  hx-swap="beforeend"
+                  hx-vals='js:{
+                      total_forms: document.querySelector("[name=items-TOTAL_FORMS]").value,
+                      partner_id: document.querySelector("#partner-select")?.value ?? ""
+                  }'
+                  hx-on::after:swap="
+                      let total = document.querySelector('[name=items-TOTAL_FORMS]');
+                      total.value = parseInt(total.value) + 1;
+                  ">
+                  <i class="bi bi-plus me-1"></i> Add Row
+              </button>
+            {% endif %}
+          </div>
+
+          <div id="invoice-total-container" class="totals-container">
+            <div>
+              {% include "accounting/move_templates/partials/move_totals.html" %}
+            </div>
+              <div>
+                  {% include "accounting/move_templates/partials/outstandings.html" %}
+              </div>
+          </div>
+
+        </div>
+
+        {# ── Tab 2: Journal Items / Accounting Lines ── #}
+        <div class="tabs-panel" data-tab-panel="accounting_lines" role="tabpanel">
+            <div>
+              {# Accounting journal items panel content #}
+                {% include "accounting/move_templates/partials/accounting_lines.html" %}
+            </div>
+        </div>
+
+        {# ── Tab 3: Additional Info & Notes ── #}
+        <div class="tabs-panel" data-tab-panel="notes" role="tabpanel">
+          <div class="tabs-grid">
+            <div>
+              <div class="form-group">
+                <label for="{{ header_form.narration.id_for_label }}" class="form-label mb-0">Notes</label>
+                {{ header_form.narration }}
+                {% for error in header_form.narration.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+            {# ── Tab 4: Credit_lines  #}
+        <div class="tabs-panel" data-tab-panel="credit_lines" role="tabpanel">
+          <div class="tabs-grid">
+            <div>
+              {# Accounting journal items panel content #}
+                {% include "accounting/move_templates/partials/credit_notes_table.html" %}
+            </div>
+          </div>
+        </div>
+
+      </div>{# /tabs #}
+
+      {# ── Non-field errors ── #}
+      {% if header_form.non_field_errors %}
+        <div class="detail-card-errors">
+          {% for error in header_form.non_field_errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+    </form>
+  </div>
+</div>

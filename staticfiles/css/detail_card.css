@@ -118,6 +118,43 @@
 }
 
 
+
+/* ── Action bar: three equal sections ─────────────────────── */
+.action-card {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));  /* minmax(0,…) keeps them equal even with long content */
+  align-items: center;
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.action-card > * {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-height: 56px;
+  padding: var(--spacing-12) var(--spacing-16);
+}
+
+/* divider between sections */
+.action-card > * + * {
+  border-left: 1px solid var(--color-mist);
+}
+
+/* section 1: workflow actions, left aligned (default) */
+
+/* section 2: navigation */
+.action-card > :nth-child(2) {
+  justify-content: center;
+}
+
+/* section 3: status badge */
+.action-card-status {
+  justify-content: flex-end;
+}
+
+
+
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 768px) {
   .detail-header { flex-direction: column; }
@@ -129,4 +166,24 @@
     margin-top: var(--spacing-12);
     padding-top: var(--spacing-12);
   }
+
+  .detail-header-group + .detail-header-group {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .action-card {
+    grid-template-columns: 1fr;
+  }
+  .action-card > * + * {
+    border-left: none;
+    border-top: 1px solid var(--color-mist);
+  }
+  .action-card > :nth-child(2),
+  .action-card-status {
+    justify-content: flex-start;
+  }
+
 }
+
+

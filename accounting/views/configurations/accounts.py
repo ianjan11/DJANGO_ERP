@@ -14,9 +14,12 @@ from accounting.services.configuration_services.accounts_loader import load_acco
 import logging
 
 from core.utils import htmx_error, htmx_success
+from core.utils.module import _render
 
 logger = logging.getLogger('sales.invoice')
 
+
+MODULE = "accounting"
 
 def _build_context(request,accounts):
 
@@ -27,6 +30,7 @@ def _build_context(request,accounts):
 
     context = {
         "accounts": page_obj,
+
     }
     return context
 
@@ -62,7 +66,7 @@ def accounts_list_view(request):
         else "accounting/configurations/accounts/accounts_list.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
 
 @login_required
 def account_detail(request, account_id):
@@ -76,6 +80,8 @@ def account_detail(request, account_id):
     context = {
         "account": account,
         "account_form": form,
+        "back_url": reverse("accounting:accounts_list"),
+        "back_label": "Accounts ",
     }
 
     template = (
@@ -84,7 +90,7 @@ def account_detail(request, account_id):
         else 'accounting/configurations/accounts/account_detail.html'
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
 
 @require_POST
 def edit_account(request, account_id):
@@ -141,7 +147,6 @@ def edit_account(request, account_id):
         request,
         "Account updated successfully.",
         trigger={"accountSuccess": {"message": "Account updated successfully."}},
-        target="#accounting-display",
     )
 
 @login_required
@@ -153,6 +158,8 @@ def get_empty_account_form(request):
     context = {
         "account_form": form,
         "account": None,
+        "back_url": reverse("accounting:accounts_list"),
+        "back_label": "Accounts ",
     }
 
     template = (
@@ -161,7 +168,7 @@ def get_empty_account_form(request):
         else "accounting/configurations/accounts/accounts_form.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
 
 @login_required
 @require_POST
@@ -222,7 +229,7 @@ def create_account(request):
         else "accounting/configurations/accounts/accounts_list.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
 
 
 @login_required
@@ -285,7 +292,7 @@ def delete_account(request):
         else "accounting/configurations/accounts/accounts_list.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
 
 @login_required
 @require_POST

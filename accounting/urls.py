@@ -6,6 +6,9 @@ app_name = 'accounting'
 urlpatterns = [
     # ----------------------------payments--------------------------------#
     path('accounting/dashboard/', views.accounting_dashboard, name='accounting_dashboard'),
+
+    path('accounting/charts/', views.accounting_view_charts, name='accounting_charts'),
+
     path('accounting/payments/customer/', views.customer_payments, name='customer_payments'),
     path('accounting/payments/vendor/', views.vendor_payments, name='vendor_payments'),
     path('accounting/payments/create/', views.save_payments, name='create_payment'),
@@ -45,6 +48,7 @@ urlpatterns = [
     path('accounting/journals/reconciliation/', views.reconciliation_page_view, name='reconciliation'),
     path('accounting/journals/reconcile/', views.reconcile_journal, name='reconcile_journal'),
     path('accounting/journals/auto_reconcile/', views.auto_reconcile_journal, name='auto_reconcile_journal'),
+    path('accounting/journals/reconcile-invoice/', views.reconcile_from_invoice, name='reconcile_from_invoice'),
 
     path('accounting/invoices/customer', views.customer_invoices, name='customer_invoices'),
     path('accounting/invoices/vendor', views.vendor_invoices, name='vendor_invoices'),
@@ -60,11 +64,7 @@ urlpatterns = [
     path('accounting/invoices/<int:invoice_id>/post/', views.post_invoice_view, name='post_invoice'),
     path('accounting/invoices/<int:invoice_id>/credit/', views.issue_credit_note_view, name='credit_invoice'),
 
-    path('accounting/customers/', views.get_customers_view, name='customers'),
-    path('accounting/vendors/', views.get_vendors_view, name='vendors'),
-    path('accounting/partner/create/', views.create_partner_view, name='partner_create'),
-    path('accounting/partner/<int:partner_id>/', views.partners_details_view, name='partner_detail'),
-    path('accounting/partner/<int:partner_id>/edit', views.edit_partner_view, name='partner_edit'),
+
 
     path('accounting/configurations/accounts/', views.accounts_list_view, name='accounts_list'),
     path('accounting/configurations/account/<int:account_id>/', views.account_detail, name='account_detail'),

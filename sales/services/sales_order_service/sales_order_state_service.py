@@ -47,26 +47,10 @@ class SalesOrdersStateService:
     # =========================================================
 
     ALLOWED_TRANSITIONS = {
-        DRAFT: [
-            SENT,
-            CONFIRMED,
-            CANCELLED,
-        ],
-
-        SENT: [
-            CONFIRMED,
-            CANCELLED,
-            DRAFT,
-        ],
-
-        CONFIRMED: [
-            DONE,
-            CANCELLED,
-            DRAFT,
-        ],
-
+        DRAFT: [SENT, CANCELLED],  # must be sent before confirming
+        SENT: [CONFIRMED, CANCELLED, DRAFT],
+        CONFIRMED: [DONE, CANCELLED, DRAFT],
         DONE: [],
-
         CANCELLED: [],
     }
 
@@ -324,6 +308,7 @@ class SalesOrdersStateService:
 
         current_state = order.status
 
+
         # -----------------------------------------------------
         # Already in state
         # -----------------------------------------------------
@@ -399,6 +384,7 @@ class SalesOrdersStateService:
 
         order.status = new_state
 
+
         return ok(
             success=True,
             changed=True,
@@ -411,54 +397,16 @@ class SalesOrdersStateService:
     # =========================================================
 
     def get_flags(self, order):
-        """
-        Return workflow flags for frontend/UI logic.
-
-        These flags describe the state-level possibility.
-        Backend operations must still enforce permissions
-        and business validation.
-        """
-
+        can = lambda target: self.can_transition(order.status, target)
         return {
-            "editable": (
-                self.is_editable(order)
-            ),
-
-            "can_delete": (
-                self.can_delete(order)
-            ),
-
-            "can_send": (
-                order.status == self.DRAFT
-            ),
-
-            "can_confirm": (
-                order.status == self.SENT
-            ),
-
-            "can_done": (
-                order.status == self.CONFIRMED
-            ),
-
-            "can_cancel": (
-                order.status in (
-                    self.DRAFT,
-                    self.SENT,
-                    self.CONFIRMED,
-                )
-            ),
-
-            "can_reset_to_draft": (
-                order.status in (
-                    self.SENT,
-                    self.CONFIRMED,
-                )
-            ),
-
-            "locked": (
-                order.status in (
-                    self.DONE,
-                    self.CANCELLED,
-                )
-            ),
+            "editable": self.is_editable(order),
+            "can_delete": self.can_delete(order),
+            "can_send": can(self.SENT),
+            "can_confirm": can(self.CONFIRMED),
+            "can_mark_done": can(self.DONE),
+            "can_cancel": can(self.CANCELLED),
+            "can_reset_to_draft": can(self.DRAFT),
+            "locked": order.status in (self.DONE, self.CANCELLED),
+            "can_create_invoice": order.status == self.DONE,
         }
+

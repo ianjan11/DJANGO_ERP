@@ -1,7 +1,7 @@
 {% load humanize %}
 
 <div id="currency-display"
-     hx-get="{% url 'accounting:currency_view' %}"
+     hx-get="{% url 'accounting:currency_view' %}?module={{ module }}"
      hx-trigger="RefreshCurrencies from:body">
 
 <div class="main-wrapper">
@@ -21,7 +21,7 @@
           
               <div>
             <button class="btn btn-primary btn-sm"
-        hx-get="{% url 'accounting:get_empty_currency_row' %}"
+        hx-get="{% url 'accounting:get_empty_currency_row' %}?module={{ module }}"
         hx-vals="js:{
             index: document.getElementById('id_form-TOTAL_FORMS')
                 ? document.getElementById('id_form-TOTAL_FORMS').value
@@ -53,7 +53,7 @@
         <form data-toolbar
               class="toolbar"
               id="currency-filters"
-              hx-get="{% url 'accounting:currency_view' %}"
+              hx-get="{% url 'accounting:currency_view' %}?module={{ module }}"
               hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
               hx-target="#accounting-display"
               hx-replace-url="true">
@@ -119,11 +119,11 @@
                         <input class="form-check-input"
                                type="checkbox"
                                role="switch"
-                               id="currency-active-{{ c.currency.id }}"
+                               id="currency-active-{{ c.currency.id }}?module={{ module }}"
                                name="is_active"
                                value="true"
                                {% if c.is_active %}checked{% endif %}
-                               hx-post="{% url 'accounting:toggle_currency' c.currency.id %}"
+                               hx-post="{% url 'accounting:toggle_currency' c.currency.id %}?module={{ module }}"
                                hx-trigger="change"
                                hx-swap="none">
                     </div>
@@ -138,7 +138,7 @@
                 <td>
                     <button type="button"
                             class="btn btn-secondary btn-sm"
-                            hx-post="{% url 'accounting:save_rate' c.currency.id %}"
+                            hx-post="{% url 'accounting:save_rate' c.currency.id %}?module={{ module }}"
                             hx-include="closest tr"
                             hx-swap="none">
                         <i class="bi bi-check-circle"></i>
@@ -184,7 +184,7 @@
             {# First #}
             {% if currencies.has_previous %}
               <a class="page-btn page-btn--arrow"
-                 hx-get="?page=1"
+                 hx-get="?page=1&module={{ module }}"
                  hx-target="#accounting-display"
                  hx-swap="innerHTML"
                  hx-push-url="true">
@@ -199,7 +199,7 @@
             {# Prev #}
             {% if currencies.has_previous %}
               <a class="page-btn page-btn--arrow"
-                 hx-get="?page={{ accounts.previous_page_number }}"
+                 hx-get="?page={{ accounts.previous_page_number }}&module={{ module }}"
                  hx-target="#accounting-display"
                  hx-swap="innerHTML"
                  hx-push-url="true">
@@ -217,7 +217,7 @@
                 <span class="page-btn active">{{ num }}</span>
               {% elif num > currencies.number|add:'-3' and num < currencies.number|add:'3' %}
                 <a class="page-btn"
-                   hx-get="?page={{ num }}"
+                   hx-get="?page={{ num }}&module={{ module }}"
                    hx-target="#accounting-display"
                    hx-swap="innerHTML"
                    hx-push-url="true">{{ num }}</a>
@@ -227,7 +227,7 @@
             {# Next #}
             {% if currencies.has_next %}
               <a class="page-btn page-btn--arrow"
-                 hx-get="?page={{ currencies.next_page_number }}"
+                 hx-get="?page={{ currencies.next_page_number }}&module={{ module }}"
                  hx-target="#accounting-display"
                  hx-swap="innerHTML"
                  hx-push-url="true">
@@ -242,7 +242,7 @@
             {# Last #}
             {% if currencies.has_next %}
               <a class="page-btn page-btn--arrow"
-                 hx-get="?page={{ currencies.paginator.num_pages }}"
+                 hx-get="?page={{ currencies.paginator.num_pages }}&module={{ module }}"
                  hx-target="#accounting-display"
                  hx-swap="innerHTML"
                  hx-push-url="true">

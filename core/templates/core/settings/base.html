@@ -4,7 +4,7 @@
 {% block app_wrapper %}
 <div class="main-container  settings-container">
     
-    <div id="settings-display"  hx-history-elt>
+    <div id="settings-display" class="module-display" hx-history-elt>
         {% block content %}{% endblock %}
     </div>
 
@@ -24,14 +24,8 @@ document.addEventListener('htmx:beforeSwap', (e) => {
 </script>
 {{ block.super }}
 
-
     <script src="{% static 'js/general/check_box_all.js' %}?v={{ now|date:'U' }}"></script>
     <script src="{% static 'js/general/check_box_all.js' %}?v={{ now|date:'U' }}"></script>
     <script src="{% static 'js/general/clear_buton.js' %}?t={{ now|date:'U' }}"></script>
     <script src="{% static 'js/general/select2.js' %}?v={{ now|date:'U' }}"></script>
-
-
-
-
-
 {% endblock %}

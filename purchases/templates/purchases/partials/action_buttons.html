@@ -1,120 +1,104 @@
+
 {% load group_tags %}
 {% load humanize %}
 
-     <div>
-    {# ── INFO CARD ────────────────────────────────── #}
-     <button
+{# ── Purchase workflow actions ── #}
+<div class="detail-header-group">
+
+    {% if flags.can_send %}
+        <button
             type="button"
-            class="btn btn-secondary"
-            hx-post="{% url 'purchases:confirm_purchase' purchase.id %}"
-            hx-target="#purchases-display"
-            hx-confirm="Confirm this Purchase?"
-            hx-swap="innerHTML"
-            hx-disabled-elt="this">
-            <i class="bi bi-check-circle"></i> Confirm
-        </button>
-
-
-     <button
-            type="button"
-            class="btn btn-secondary"
-            hx-post="{% url 'purchases:delete_purchase' purchase.id %}"
-            hx-target="#purchases-display"
-            hx-confirm="Delete this Purchase?"
-            hx-swap="innerHTML"
-            hx-disabled-elt="this">
-            <i class="bi bi-trash"></i> Delete
-        </button>
-
-         <button
-            type="button"
-            class="btn btn-secondary"
-            hx-post="{% url 'purchases:approve_purchase' purchase.id %}"
-            hx-target="#purchases-display"
-            hx-confirm="Approve this Purchase?"
-            hx-swap="innerHTML"
-            hx-disabled-elt="this">
-            <i class="bi bi-pen"></i> To Approve
-        </button>
-
-
-
-         <button
-            type="button"
-            class="btn btn-secondary"
-            hx-post="{% url 'purchases:reset_purchase' purchase.id %}"
-            hx-target="#purchases-display"
-            hx-confirm="Reset this Purchase ?, Once confirmed all related shipments will be cancelled"
-            hx-swap="innerHTML"
-            hx-disabled-elt="this">
-            <i class="bi bi-arrow-counterclockwise"></i>  Reset
-        </button>
-
-         <button
-            type="button"
-            class="btn btn-secondary"
+            class="btn btn-secondary js-loading-button"
             hx-post="{% url 'purchases:send_purchase' purchase.id %}"
             hx-target="#purchases-display"
-            hx-confirm="Send this Purchase?"
             hx-swap="innerHTML"
-            hx-disabled-elt="this">
-            <i class="bi bi-send "></i> Send
+            hx-confirm="Send this Purchase?">
+            <i class="bi bi-send"></i> Send
         </button>
+    {% endif %}
 
-         <button
+    {% if flags.can_request_approval %}
+        <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-secondary js-loading-button"
+            hx-post="{% url 'purchases:approve_purchase' purchase.id %}"
+            hx-target="#purchases-display"
+            hx-swap="innerHTML"
+            hx-confirm="Request approval for this Purchase?">
+            <i class="bi bi-pen"></i> To Approve
+        </button>
+    {% endif %}
+
+    {% if flags.can_confirm %}
+        <button
+            type="button"
+            class="btn btn-primary js-loading-button"
+            hx-post="{% url 'purchases:confirm_purchase' purchase.id %}"
+            hx-target="#purchases-display"
+            hx-swap="innerHTML"
+            hx-confirm="Confirm this Purchase? Receipts will be created.">
+            <i class="bi bi-check-circle"></i> Confirm
+        </button>
+    {% endif %}
+
+    {% if flags.can_mark_done %}
+        <button
+            type="button"
+            class="btn btn-primary js-loading-button"
+            hx-post="{% url 'purchases:purchase_to_invoice' purchase_id=purchase.id %}"
+            hx-target="#purchases-display"
+            hx-swap="innerHTML"
+            hx-confirm="Create an invoice from this purchase order?">
+            <i class="bi bi-receipt"></i> Convert to Invoice
+        </button>
+    {% endif %}
+
+    {% if flags.can_reset %}
+        <button
+            type="button"
+            class="btn btn-secondary js-loading-button"
+            hx-post="{% url 'purchases:reset_purchase' purchase.id %}"
+            hx-target="#purchases-display"
+            hx-swap="innerHTML"
+            hx-confirm="Reset this Purchase to draft? Any pending receipts will be cancelled.">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset
+        </button>
+    {% endif %}
+
+    {% if flags.can_cancel %}
+        <button
+            type="button"
+            class="btn btn-secondary js-loading-button"
             hx-post="{% url 'purchases:cancel_purchase' purchase.id %}"
             hx-target="#purchases-display"
-            hx-confirm="Cancel this Purchase?"
             hx-swap="innerHTML"
-            hx-disabled-elt="this">
+            hx-confirm="Cancel this Purchase?">
             <i class="bi bi-x-circle"></i> Cancel
         </button>
+    {% endif %}
+
+    {% if flags.can_delete %}
+        <button
+            type="button"
+            class="btn btn-secondary js-loading-button"
+            hx-post="{% url 'purchases:delete_purchase' purchase.id %}"
+            hx-target="#purchases-display"
+            hx-swap="innerHTML"
+            hx-confirm="Delete this Purchase?">
+            <i class="bi bi-trash"></i> Delete
+        </button>
+    {% endif %}
+
+</div>
 
 
-         <button
-    type="button"
-    class="btn btn-primary"
-    hx-post="{% url 'purchases:purchase_to_invoice' purchase_id=purchase.id %}"
-    hx-target="#purchases-display"
-    hx-swap="outerHTML"
-    hx-confirm="Create an invoice from this purchase order?"
-    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-  >
-    Convert to Invoice
-  </button>
-     
-     </div>
+{# ── Navigation ── #}
+<div class="detail-header-group">
 
-         
-     <div>
-     <a href="{% url 'inventory:get_pickings' %}?picking_origin={{ purchase.reference }}"
-     class="btn btn-secondary">
-     <i class="bi bi-box-seam"></i> Receipts
-     </a>
-     </div>
+    <a
+        href="{% url 'inventory:get_pickings' %}?picking_origin={{ purchase.reference|urlencode }}"
+        class="btn btn-secondary">
+        <i class="bi bi-box-seam"></i> Receipts
+    </a>
 
-             <span class="po-invoice-number">
-                       {% if purchase.status == "DRAFT" %}
-                        <span class="badge badge--draft"><i class="bi bi-pencil-square"></i>RFQ</span>
-                        {% elif purchase.status == "SENT" %}
-                        <span class="badge badge-posted"><i class="bi bi-send-fill"></i>RFQ Sent</span>
-                        {% elif purchase.status == "TO_APPROVE" %}
-                        <span class="badge badge--completed"><span><i class="bi bi-x-check-fill"></i></span>To approve</span>
-                        {% elif purchase.status == "CANCELLED" %}
-                        <span class="badge badge--cancelled"><span><i class="bi bi-x-circle-fill"></i></span>Cancelled</span>
-                        {% elif purchase.status == "PURCHASE" %}
-                        <span class="badge badge--partial"><i class="bi bi-circle-half"></i> Purchase</span>
-                        {% elif purchase.status == "DONE" %}
-                        <span class="badge badge--partial"><i class="bi bi-circle-half"></i> Locked/Done </span>
-                        {% else %}
-                        <span class="badge"><span></span>{{ purchase.status }}</span>
-                        {% endif %}
-             </span>
-
-
-
-
-
-
+</div>

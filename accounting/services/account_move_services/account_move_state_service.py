@@ -327,7 +327,7 @@ class AccountMoveStateService:
     # STATE FLAGS
     # =========================================================
 
-    def get_flags(self, invoice):
+    def get_flags(self, move):
         """
         Return workflow flags for frontend/UI logic.
 
@@ -341,32 +341,35 @@ class AccountMoveStateService:
         can_post/can_cancel/can_reset_to_draft as False.
         """
 
-        is_entry = self._is_manual_entry(invoice)
+        is_entry = self._is_manual_entry(move)
 
         return {
-            "editable": self.is_editable(invoice),
+            "editable": self.is_editable(move),
 
-            "can_delete": self.can_delete(invoice),
+            "can_delete": self.can_delete(move),
 
             "can_post": (
-                is_entry and invoice.state == self.DRAFT
+                is_entry and move.state == self.DRAFT
             ),
 
             "can_cancel": (
-                is_entry and invoice.state in (
+                is_entry and move.state in (
                     self.DRAFT,
                     self.POSTED,
                 )
             ),
 
             "can_reset_to_draft": (
-                is_entry and invoice.state == self.POSTED
+                is_entry and move.state == self.POSTED
             ),
 
             "locked": (
-                invoice.state in (
+                move.state in (
                     self.POSTED,
                     self.CANCELLED,
                 )
             ),
+
+
+
         }

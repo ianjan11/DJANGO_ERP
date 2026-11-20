@@ -28,8 +28,8 @@ from ...services.stock_picking_document_service.presentation.picking_htmx_swap_s
 
 logger = logging.getLogger(__name__)
 
-
 picking_state = PickingStateService()
+
 
 
 
@@ -62,6 +62,9 @@ def _build_context(request, picking):
 
     return_lines = get_returnable_lines(picking)
 
+    code = picking.picking_type.code
+
+    back_url, label = PICKING_LIST_URLS.get(code)
 
     return {
         "picking": picking,
@@ -71,6 +74,9 @@ def _build_context(request, picking):
         "formset": formset,
         "header_form": header_form,
         "flags": picking_state.get_flags(picking),
+        "back_url": reverse(back_url),
+        "back_label": label,
+        "target": "#inventory-display",
         **chain_context(picking),
     }
 
@@ -79,11 +85,13 @@ def picking_create_or_detail_view(request, picking_id=None):
     if not picking_id:
         picking_type_key = request.GET.get("picking_type")
 
+
         if picking_type_key not in PICKING_TYPE_MAPPING:
             messages.error(request, "Invalid picking operation type.")
             return redirect("inventory:receipt_list")
 
-        fallback_url = reverse(PICKING_LIST_URLS[picking_type_key])
+        url,label = PICKING_LIST_URLS[picking_type_key]
+        fallback_url = reverse(url)
         operation_code = PICKING_TYPE_MAPPING[picking_type_key]
 
         try:
@@ -146,7 +154,6 @@ def picking_create_or_detail_view(request, picking_id=None):
 
     return render(request, template, context)
 
-
 @login_required
 def picking_item_row(request, picking_id):
 
@@ -208,13 +215,11 @@ def picking_update(request):
 
     return UIResponseService().render(request=request, payload=context)
 
-
 def _check(picking, action):
     """Ask the state service; raise ValidationError with its messages if not allowed."""
     result = picking_state.check(picking, action)
     if result.get("errors"):
         raise ValidationError(result["errors"])
-
 
 @login_required
 @require_POST
@@ -252,7 +257,6 @@ def confirm_picking_view(request, picking_id):
 
     )
 
-
 @login_required
 @require_POST
 def assign_picking_view(request, picking_id):
@@ -289,7 +293,6 @@ def assign_picking_view(request, picking_id):
         target="#inventory-display",
 
     )
-
 
 @login_required
 @require_POST
@@ -342,7 +345,6 @@ def validate_picking_view(request, picking_id):
 
     )
 
-
 @login_required
 @require_POST
 def cancel_picking_view(request, picking_id):
@@ -382,8 +384,6 @@ def cancel_picking_view(request, picking_id):
 
     )
 
-
-
 @login_required
 def get_next_picking_view(request, picking_id):
     picking = load_picking(picking_id, request=request)
@@ -395,7 +395,6 @@ def get_next_picking_view(request, picking_id):
         return redirect("inventory:picking_detail", picking_id=picking.pk)
 
     return redirect("inventory:picking_detail", picking_id=next_picking.pk)
-
 
 @login_required
 def get_previous_picking_view(request, picking_id):

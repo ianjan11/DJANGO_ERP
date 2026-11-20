@@ -1,77 +1,109 @@
+
 {% load group_tags %}
 {% load humanize %}
 
 {# ── Workflow actions (flags from PickingStateService.get_flags) ── #}
 <div class="detail-header-group">
-  {% if flags.can_confirm %}
-    <button type="button" class="btn btn-secondary"
+
+    {% if flags.can_confirm %}
+        <button
+            type="button"
+            class="btn btn-secondary js-loading-button"
             hx-post="{% url 'inventory:picking_confirm' picking.id %}"
-            hx-target="#inventory-display" hx-confirm="Confirm Picking?"
-            hx-swap="innerHTML" hx-disabled-elt="this">
-      <i class="bi bi-check-circle"></i> Confirm
-    </button>
-  {% endif %}
+            hx-target="#inventory-display"
+            hx-confirm="Confirm Picking?"
+            hx-swap="innerHTML">
+            <i class="bi bi-check-circle"></i> Confirm
+        </button>
+    {% endif %}
 
-  {% if flags.can_assign %}
-    <button type="button" class="btn btn-secondary"
+    {% if flags.can_assign %}
+        <button
+            type="button"
+            class="btn btn-secondary js-loading-button"
             hx-post="{% url 'inventory:picking_assign' picking.id %}"
-            hx-target="#inventory-display" hx-confirm="Assign stock to this Picking?"
-            hx-swap="innerHTML" hx-disabled-elt="this">
-      <i class="bi bi-box-seam"></i> Assign
-    </button>
-  {% endif %}
+            hx-target="#inventory-display"
+            hx-confirm="Assign stock to this Picking?"
+            hx-swap="innerHTML">
+            <i class="bi bi-box-seam"></i> Assign
+        </button>
+    {% endif %}
 
-  {% if flags.can_validate %}
-    <button type="button" class="btn btn-primary"
+    {% if flags.can_validate %}
+        <button
+            type="button"
+            class="btn btn-primary js-loading-button"
             hx-post="{% url 'inventory:picking_validate' picking.id %}"
-            hx-target="#inventory-display" hx-confirm="Validate Picking?"
-            hx-swap="innerHTML" hx-disabled-elt="this">
-      <i class="bi bi-check-circle"></i> Validate
-    </button>
-  {% endif %}
+            hx-target="#inventory-display"
+            hx-confirm="Validate Picking?"
+            hx-swap="innerHTML">
+            <i class="bi bi-check-circle"></i> Validate
+        </button>
+    {% endif %}
 
-  {% if flags.can_cancel %}
-    <button type="button" class="btn btn-secondary"
+    {% if flags.can_cancel %}
+        <button
+            type="button"
+            class="btn btn-secondary js-loading-button"
             hx-post="{% url 'inventory:picking_cancel' picking.id %}"
-            hx-target="#inventory-display" hx-confirm="Cancel this Picking?"
-            hx-swap="innerHTML" hx-disabled-elt="this">
-      <i class="bi bi-x-circle"></i> Cancel
-    </button>
-  {% endif %}
+            hx-target="#inventory-display"
+            hx-confirm="Cancel this Picking?"
+            hx-swap="innerHTML">
+            <i class="bi bi-x-circle"></i> Cancel
+        </button>
+    {% endif %}
 
-  {# A return only makes sense for a transfer that was actually done #}
-  {% if picking.status == "COMPLETED" %}
-    <button type="button" class="btn btn-secondary"
-            data-bs-toggle="modal" data-bs-target="#ReturnModal">
-      <i class="bi bi-arrow-counterclockwise"></i> Create Return
-    </button>
-  {% endif %}
+    {# A return only makes sense for a completed picking #}
+    {% if picking.status == "COMPLETED" %}
+        <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-toggle="modal"
+            data-bs-target="#ReturnModal">
+            <i class="bi bi-arrow-counterclockwise"></i> Create Return
+        </button>
+    {% endif %}
+
 </div>
+
 
 {# ── Navigation ── #}
 <div class="detail-header-group">
-  <button type="button" class="btn btn-secondary"
-          hx-get="{% url 'inventory:stock_move_operations' picking.id %}"
-          hx-target="#inventory-display" hx-swap="outerHTML"
-          hx-disabled-elt="this" hx-push-url="true">
-    <i class="bi bi-list-ul"></i> Moves
-  </button>
 
-  {% if prev_picking %}
-    <button type="button" class="btn btn-ghost"
+    <button
+        type="button"
+        class="btn btn-secondary js-loading-button"
+        hx-get="{% url 'inventory:stock_move_operations' picking.id %}"
+        hx-target="#inventory-display"
+        hx-swap="innerHTML"
+        hx-push-url="true">
+        <i class="bi bi-list-ul"></i> Moves
+    </button>
+
+    {% if prev_picking %}
+        <button
+            type="button"
+            class="btn btn-ghost js-loading-button"
             hx-get="{% url 'inventory:picking_detail' picking_id=prev_picking.pk %}"
-            hx-target="#inventory-display" hx-swap="innerHTML show:window:top"
+            hx-target="#inventory-display"
+            hx-swap="innerHTML show:window:top"
             hx-push-url="true">
-      &larr; Step {{ step_number|add:"-1" }}: {{ prev_picking.picking_type.name }}
-    </button>
-  {% endif %}
+            &larr; Step {{ step_number|add:"-1" }}:
+            {{ prev_picking.picking_type.name }}
+        </button>
+    {% endif %}
 
-  {% if next_picking %}
-    <button type="button" class="btn btn-ghost"
+    {% if next_picking %}
+        <button
+            type="button"
+            class="btn btn-ghost js-loading-button"
             hx-get="{% url 'inventory:picking_detail' picking_id=next_picking.pk %}"
-            hx-target="#inventory-display" hx-swap="innerHTML show:window:top"
+            hx-target="#inventory-display"
+            hx-swap="innerHTML show:window:top"
             hx-push-url="true">
-      Step {{ step_number|add:"1" }}: {{ next_picking.picking_type.name }} &rarr;
-    </button>
-  {% endif %}
+            Step {{ step_number|add:"1" }}:
+            {{ next_picking.picking_type.name }} &rarr;
+        </button>
+    {% endif %}
+
 </div>

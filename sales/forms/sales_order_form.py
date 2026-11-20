@@ -20,7 +20,7 @@ LOCKED_STATUSES = (
 class SalesOrderForm(forms.ModelForm):
     class Meta:
         model = SalesOrder
-        fields = ['issue_date', 'partner', 'fulfillment_location', 'currency', 'payment_term']
+        fields = ['issue_date', 'partner', 'fulfillment_location', 'currency', 'payment_term', 'notes',]
         widgets = {
             'issue_date': forms.DateInput(attrs={
                 'type': 'date',
@@ -50,6 +50,11 @@ class SalesOrderForm(forms.ModelForm):
                 'id': 'payment-term-select',
                 'class': 'form-select form-select-sm select2-widget order-header-field',
             }),
+            'notes': forms.TextInput(attrs={
+                'id': 'notes',
+                'class':'form-control order-header-field',
+            }),
+
         }
 
     def __init__(self, *args, company=None, **kwargs):

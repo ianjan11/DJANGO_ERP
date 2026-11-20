@@ -8,10 +8,13 @@ from django.urls import reverse
 from django.views.decorators.http import require_GET, require_POST
 from core.utils import htmx_error, htmx_success
 from core.utils.format_errors import _format_form_errors
+from core.utils.module import _render, _module
 from inventory.forms.stocklocation_form import StockLocationForm
 from inventory.models import  StockLocation
 
 logger = logging.getLogger(__name__)
+
+MODULE = "inventory"
 
 
 @login_required
@@ -33,7 +36,8 @@ def locations_list(request):
         else "inventory/warehouse/locations_list.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
+
 
 
 @login_required
@@ -44,6 +48,9 @@ def get_empty_location_form(request):
 
     context = {
         "form": form,
+        "back_url": reverse("inventory:locations_list"),
+        "back_label": " Locations ",
+        "target": "#inventory-display"
     }
 
     template = (
@@ -52,7 +59,8 @@ def get_empty_location_form(request):
         else "inventory/warehouse/location_form.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
+
 
 
 @login_required
@@ -71,6 +79,9 @@ def location_detail(request, location_id):
     context = {
         "location": location,
         "form": form,
+        "back_url": reverse("inventory:locations_list"),
+        "back_label": " Locations ",
+        "target": "#inventory-display"
     }
 
     template = (
@@ -79,7 +90,8 @@ def location_detail(request, location_id):
         else "inventory/warehouse/location_form.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
+
 
 
 @login_required
@@ -112,6 +124,10 @@ def create_location(request):
             # Fixed: variable named location instead of warehouse
             location = form.save()
             redirect_url = reverse("inventory:location_detail", args=[location.id])
+            redirect_url += f"?module={_module(request)}"
+
+
+
 
     except ValidationError as e:
         errors = e.message_dict if hasattr(e, "message_dict") else {"__all__": e.messages}
@@ -187,7 +203,6 @@ def edit_location(request, location_id):
         request,
         "Location updated successfully.",
         trigger={"LocationUpdated": {"message": "Location updated successfully."}},
-        target="#inventory-display",
     )
 
 

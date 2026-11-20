@@ -89,9 +89,8 @@
                 <th>Partner</th>
                 <th>Date</th>
                 <th class="col-right">Amount</th>
-                <th class="col-center">Order Status</th>
+                <th class="col-center">State</th>
                 <th class="col-center">Payment Status</th>
-                <th class="col-center">Delivery Status</th>
             </tr>
         </thead>
 
@@ -101,7 +100,7 @@
                 hx-target="#accounting-display"
                 hx-push-url="true">
 
-                <td class="td-mono">{{ invoice.invoice_number }}</td>
+                <td class="td-mono">{{ invoice.name }}</td>
 
                 <td class="td-primary">{{ invoice.partner }}</td>
 
@@ -114,17 +113,15 @@
                 </td>
 
                 <td class="col-center">
-                    {% if invoice.status == "DRAFT" %}
-                        <span class="badge badge--draft"><i class="bi bi-pencil-square"></i> Draft</span>
-                    {% elif invoice.status == "POSTED" %}
-                        <span class="badge badge--pending"><i class="bi bi-send-fill"></i> Posted</span>
-                    {% elif invoice.status == "CONFIRMED" %}
-                        <span class="badge badge--paid"><i class="bi bi-check-circle-fill"></i> Confirmed</span>
-                    {% elif invoice.status == "CANCELLED" %}
-                        <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
-                    {% else %}
-                        <span class="badge">{{ invoice.status }}</span>
-                    {% endif %}
+                     {% if invoice.state == "draft" %}
+           <span class="badge badge--draft"><i class="bi bi-pencil"></i> Draft</span>
+        {% elif invoice.state == "posted" %}
+          <span class="badge badge--posted"><i class="bi bi-send-fill"></i> Posted</span>
+        {% elif invoice.state == "cancelled" %}
+          <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
+        {% else %}
+          <span class="badge">{{ invoice.state }}</span>
+        {% endif %}
                 </td>
 
                 <td class="col-center">
@@ -139,19 +136,6 @@
                     {% endif %}
                 </td>
 
-                <td class="col-center">
-                    {% if invoice.delivery_status == "DELIVERED" %}
-                        <span class="badge badge--paid"><i class="bi bi-truck"></i> Delivered</span>
-                    {% elif invoice.delivery_status == "PENDING" %}
-                        <span class="badge badge--draft"><i class="bi bi-hourglass-split"></i> Pending</span>
-                    {% elif invoice.delivery_status == "PARTIAL" %}
-                        <span class="badge badge--partial"><i class="bi bi-box-seam"></i> Partial</span>
-                    {% elif invoice.delivery_status == "CANCELLED" %}
-                        <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
-                    {% else %}
-                        <span style="color:var(--color-fog);">—</span>
-                    {% endif %}
-                </td>
             </tr>
             {% empty %}
             <tr>

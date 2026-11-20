@@ -1,7 +1,10 @@
 {# templates/partials/_navbar.html #}
+{% if request.user.is_authenticated %}
+
 <nav class="app-navbar" id="app-navbar">
   <div class="nav-group">
     {# ── Home Link ── #}
+
     <a href="{% url 'users:home' %}"
        class="app-nav-link"
        data-nav-url="{% url 'users:home' %}"
@@ -13,7 +16,7 @@
 
     {% if nav_items %}<div class="nav-divider"></div>{% endif %}
 
-    {# ── Dynamic Navigation Items ── #}
+
     {% for item in nav_items %}
       {% if item.sections %}
         {# ── Dropdown / Mega Menu Item ── #}
@@ -32,13 +35,13 @@
               {% for section in item.sections %}
                 <div class="nav-dropdown-section">
                   {% if section.label %}
-                    <div class="nav-dropdown-header">{{ section.label }}</div>
+                    <div class="nav-dropdown-header"> {{ section.label }}  </div>
                   {% endif %}
                   {% for sub in section.items %}
-                    <a href="{{ sub.href }}"
+                    <a href="{{ sub.href }}{% if sub.module %}?module={{ sub.module }}{% endif %}"
                        class="nav-dd-link{% if sub.is_active %} selected{% endif %}"
                        data-nav-url="{{ sub.href }}"
-                       hx-get="{{ sub.href }}"
+                       hx-get="{{ sub.href }}{% if sub.module %}?module={{ sub.module }}{% endif %}"
                        hx-target="{{ sub.target }}"
                        hx-push-url="true">
                       {% if sub.icon %}<i class="bi bi-{{ sub.icon }}"></i>{% endif %}
@@ -53,7 +56,7 @@
 
       {% else %}
         {# ── Standard Single Link ── #}
-        <a href="{{ item.href }}"
+        <a href="{{ item.href }}{% if item.module %}?module={{ item.module }}{% endif %}"
            class="app-nav-link{% if item.css_class %} {{ item.css_class }}{% endif %}{% if item.is_active %} selected{% endif %}"
            data-nav-url="{{ item.href }}"
            {% if item.resolved_data_urls %}
@@ -61,7 +64,7 @@
                data-{{ key }}="{{ val }}"
              {% endfor %}
            {% endif %}
-           hx-get="{{ item.href }}"
+           hx-get="{{ item.href }}{% if item.module %}?module={{ item.module }}{% endif %}"
            hx-target="{{ item.target }}"
            hx-push-url="true">
           {% if item.icon %}<i class="bi bi-{{ item.icon }}"></i>{% endif %}
@@ -72,69 +75,94 @@
   </div>
 
   {# ── User Pill & Logout ── #}
-  <div class="nav-group">
-    <div class="app-user-pill">
-      <div class="app-user-avatar">{{ request.user.username|first|upper }}</div>
-      <span>{{ request.user.username }}</span>
+<div class="nav-group">
+  {% with display_name=request.user.get_full_name|default:request.user.get_username %}
+  <div class="nav-dropdown-wrap" data-account-menu>
+
+    {# ── Trigger ── #}
+    <button type="button"
+            class="app-account-btn"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="{{ display_name }}{% if active_company %} · {{ active_company.name }}{% endif %}">
+      <span class="app-avatar-wrap">
+        <span class="app-user-avatar" aria-hidden="true">{{ display_name|first|upper }}</span>
+        {% if active_company %}
+        <span class="app-status-dot app-status-dot--badge {% if active_company.is_active %}is-active{% else %}is-inactive{% endif %}"
+              role="img"
+              aria-label="{% if active_company.is_active %}Company active{% else %}Company inactive{% endif %}"></span>
+        {% endif %}
+      </span>
+      <span class="app-pill-text">{{ display_name }}</span>
+      <i class="bi bi-chevron-down nav-chevron" aria-hidden="true"></i>
+    </button>
+
+    {# ── Panel ── #}
+    <div class="nav-dropdown nav-dropdown--right nav-dropdown--account">
+
+      {# User #}
+      <div class="nav-dd-head">
+        <div class="app-user-avatar app-user-avatar--lg" aria-hidden="true">{{ display_name|first|upper }}</div>
+        <div class="nav-dd-head-text">
+          <div class="nav-dd-head-name">{{ display_name }}</div>
+          {% if request.user.email %}<div class="nav-dd-head-sub">{{ request.user.email }}</div>{% endif %}
+        </div>
+      </div>
+
+      {# Active company #}
+      {% if active_company %}
+      <div class="nav-dd-section">
+        <span class="nav-dd-label">Active company</span>
+        <div class="nav-dd-company">
+          <i class="bi bi-building"></i>
+          <span class="nav-dd-text">{{ active_company.name }}</span>
+          <span class="nav-dd-status {% if active_company.is_active %}is-active{% else %}is-inactive{% endif %}">
+            <span class="app-status-dot {% if active_company.is_active %}is-active{% else %}is-inactive{% endif %}"></span>
+            {% if active_company.is_active %}Active{% else %}Inactive{% endif %}
+          </span>
+        </div>
+      </div>
+      {% endif %}
+
+      {# Switch #}
+      {% if user_companies|length > 1 or not active_company %}
+      <div class="nav-dd-section">
+        <span class="nav-dd-label">Switch company</span>
+        {% for company in user_companies %}
+          {% if company.pk != active_company.pk %}
+          <form method="post" action="{% url 'users:select-company-set' %}" class="app-logout-form">
+            {% csrf_token %}
+            <input type="hidden" name="company_id" value="{{ company.pk }}">
+            <button type="submit" class="nav-dd-link nav-dd-btn">
+              <i class="bi bi-arrow-left-right"></i>
+              <span class="nav-dd-text">{{ company.name }}</span>
+            </button>
+          </form>
+          {% endif %}
+        {% endfor %}
+        <a class="nav-dd-link" href="{% url 'users:select-company' %}">
+          <i class="bi bi-grid"></i> <span>All companies</span>
+        </a>
+      </div>
+      {% endif %}
+
+      {# Logout #}
+      <div class="nav-dd-section">
+        <form method="POST" action="{% url 'users:logout' %}" class="app-logout-form">
+          {% csrf_token %}
+          <button type="submit" class="nav-dd-link nav-dd-btn nav-dd-link--danger">
+            <i class="bi bi-box-arrow-right"></i> <span>Log Out</span>
+          </button>
+        </form>
+      </div>
     </div>
-    <form method="POST" action="{% url 'users:logout' %}" style="margin:0">
-      {% csrf_token %}
-      <button type="submit" class="app-logout-btn">
-        <i class="bi bi-box-arrow-right"></i> <span>Log Out</span>
-      </button>
-    </form>
   </div>
+  {% endwith %}
+</div>
 </nav>
 
-<script>
-// static/js/navbar.js — load once in base.html
-(function () {
-  if (window.__navbarBound) return;
-  window.__navbarBound = true;
+{% endif %}
 
-  const closeAll = () => {
-    document.querySelectorAll("[data-dropdown].open, .nav-dropdown.open").forEach(el => {
-      el.classList.remove("open");
-      if (el.matches("[data-dropdown]")) el.setAttribute("aria-expanded", "false");
-    });
-  };
 
-  // Open / toggle / click-outside in one event handler
-  document.addEventListener("click", e => {
-    const btn = e.target.closest("[data-dropdown]");
-    if (!btn) return closeAll();
 
-    const dd = document.getElementById("dropdown-" + btn.dataset.dropdown);
-    const wasOpen = dd && dd.classList.contains("open");
-    closeAll();
-    if (dd && !wasOpen) {
-      dd.classList.add("open");
-      btn.classList.add("open");
-      btn.setAttribute("aria-expanded", "true");
-    }
-  });
 
-  document.addEventListener("keydown", e => e.key === "Escape" && closeAll());
-  document.addEventListener("htmx:afterRequest", closeAll);
-
-  // Active state synchronization for links and parent dropdown buttons
-  function syncNav() {
-    const path = location.pathname;
-    const links = [...document.querySelectorAll("#app-navbar [data-nav-url]")];
-    const best = links
-      .filter(l => path.startsWith(l.dataset.navUrl))
-      .sort((a, b) => b.dataset.navUrl.length - a.dataset.navUrl.length)[0];
-
-    links.forEach(l => l.classList.toggle("selected", l === best));
-    document.querySelectorAll("#app-navbar .nav-dropdown-wrap").forEach(wrap => {
-      const hasActive = !!wrap.querySelector(".nav-dd-link.selected");
-      const btn = wrap.querySelector("[data-dropdown]");
-      if (btn) btn.classList.toggle("selected", hasActive);
-    });
-  }
-
-  ["DOMContentLoaded", "htmx:pushedIntoHistory", "htmx:historyRestore", "htmx:afterSettle"]
-    .forEach(evt => document.addEventListener(evt, syncNav));
-  window.addEventListener("popstate", syncNav);
-})();
-</script>

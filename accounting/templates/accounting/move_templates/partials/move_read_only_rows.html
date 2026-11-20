@@ -1,0 +1,46 @@
+<tr>
+
+  <td>
+    {{ item.product }}
+  </td>
+
+    <td >
+    {{ item.description }}
+  </td>
+
+  <td >
+  {{item.quantity}}
+  </td>
+
+
+      <td>
+    {{ item.product_uom }}
+  </td>
+
+  <td >
+    {{ item.price_unit }}
+
+  </td>
+
+  <td>
+    {{ item.discount_percent }}
+  </td>
+
+  <td class="td-editable col-left">
+      <span class="td-amount">{{ item.subtotal|floatformat:2 }}</span>
+
+  </td>
+
+    <td>
+  {% for tax in item.taxes.all %}
+    <span class="badge badge--partial">{{ tax.name }}</span>
+  {% empty %}
+    <span style="color:var(--color-fog);">—</span>
+  {% endfor %}
+</td>
+
+  <td class="td-editable">
+    {{ item.account }}
+
+  </td>
+</tr>

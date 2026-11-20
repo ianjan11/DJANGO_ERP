@@ -11,12 +11,11 @@ from accounting.services.account_move_services.shared.account_utils import (
 # ================================================================
 
 # Product field -> (ProductsCategory getter, CompanyAccountSetting key).
-# NOTE: the company keys for revenue / cogs / expense are assumptions --
 # rename them to whatever you actually store in CompanyAccountSetting.
 PRODUCT_ACCOUNT_SOURCES = {
     "revenue_account": ("get_revenue_account", "default_revenue_account"),
     "cogs_account":    ("get_cogs_account",    "default_cogs_account"),
-    "expense_account": ("get_expense_account", "default_expense_account"),
+    "expense_account": ("get_cogs_account",    "default_cogs_account"), # Uses COGS method & setting as fallback
 }
 
 # Which product-level accounts each product type actually needs.
@@ -94,6 +93,8 @@ def populate_product_accounts(product):
 
         getter_name, company_key = PRODUCT_ACCOUNT_SOURCES[field]
         account = _resolve(product, getter_name, company_key)
+
+        print(account)
 
         if account is None:
             missing.append(field.replace("_", " "))

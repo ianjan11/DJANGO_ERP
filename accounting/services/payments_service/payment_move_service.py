@@ -11,55 +11,78 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 
+from accounting.services.account_resolver import Role, resolve_account
+
 
 # ======================================================================
 # ACCOUNT RESOLUTION
 # ======================================================================
 
+def _allocated_invoice_account(payment):
+    """
+    If the payment is already allocated to invoices, reuse the receivable /
+    payable control account of the first allocated invoice, so the payment
+    posts to the same account it will be reconciled against.
+
+    Only the control line counts: an invoice also carries GRNI/GDNI lines
+    on reconcilable accounts, which must never be picked up here.
+    """
+    from accounting.models import AccountMoveLine
+
+    if not hasattr(payment, 'invoice_allocations'):
+        return None
+
+    first_alloc = (
+        payment.invoice_allocations
+        .select_related('invoice_move')
+        .first()
+    )
+    if first_alloc is None:
+        return None
+
+    line = (
+        first_alloc.invoice_move.lines
+        .filter(
+            line_type=AccountMoveLine.LineType.RECEIVABLE,
+            account__allow_reconciliation=True,
+        )
+        .select_related('account')
+        .first()
+    )
+    return line.account if line else None
+
+
+def _is_customer_side(payment):
+    if payment.partner_type == 'customer':
+        return True
+    if payment.partner_type == 'supplier':
+        return False
+    return payment.payment_type == 'INCOMING'
+
+
 def resolve_counterpart_account(payment):
     """
     Resolve the AR / AP counterpart account for a payment.
 
-    Order of resolution:
-      1. If the payment already has invoice allocations, reuse the
-         reconciliation account on the first allocated invoice line —
-         keeps the payment's GL account consistent with what it's
-         actually being matched against.
-      2. Otherwise, fall back to the company's default receivable /
-         payable account for the payment's partner_type.
+      1. Reuse the account of the first allocated invoice (if any).
+      2. Otherwise the resolver: partner account, then company default.
 
     TRANSFER payments have no counterpart account.
     """
-    from accounting.models import CompanyAccountSetting
-
     if payment.payment_type == 'TRANSFER':
         return None
 
-    if hasattr(payment, 'invoice_allocations') and payment.invoice_allocations.exists():
-        first_alloc = payment.invoice_allocations.select_related('invoice_move').first()
-        line = first_alloc.invoice_move.lines.filter(
-            account__allow_reconciliation=True
-        ).first()
-        if line:
-            return line.account
+    account = _allocated_invoice_account(payment)
+    if account is not None:
+        return account
 
-    if payment.partner_type == 'customer':
-        setting_key = 'default_receivable'
-    elif payment.partner_type == 'supplier':
-        setting_key = 'default_payable'
-    else:
-        setting_key = (
-            'default_receivable'
-            if payment.payment_type == 'INCOMING'
-            else 'default_payable'
-        )
+    role = Role.RECEIVABLE if _is_customer_side(payment) else Role.PAYABLE
+    return resolve_account(
+        role,
+        company=payment.company,
+        partner=payment.partner,
+    )
 
-    try:
-        return CompanyAccountSetting.objects.get(
-            company=payment.company, key=setting_key
-        ).account
-    except CompanyAccountSetting.DoesNotExist:
-        raise ValidationError(f"Accounting configuration missing for: {setting_key}")
 
 def _resolve_liquidity_account(payment):
     liquidity_account = payment.journal.get_liquidity_account(payment.payment_type)
@@ -70,21 +93,24 @@ def _resolve_liquidity_account(payment):
         )
     return liquidity_account
 
+
 def _resolve_counterpart_for_build(payment):
-    settings_map = payment.company.get_settings_dict()
+    if payment.payment_type == 'TRANSFER':
+        return None
 
     if payment.is_prepayment:
-        if payment.payment_type == 'INCOMING':
-            counterpart_account = settings_map.get('default_customer_prepayments')
-        else:
-            counterpart_account = settings_map.get('default_vendor_advances')
+        role = (
+            Role.CUSTOMER_PREPAYMENT
+            if payment.payment_type == 'INCOMING'
+            else Role.VENDOR_ADVANCE
+        )
+        return resolve_account(
+            role,
+            company=payment.company,
+            partner=payment.partner,
+        )
 
-        if not counterpart_account:
-            counterpart_account = resolve_counterpart_account(payment)
-    else:
-        counterpart_account = resolve_counterpart_account(payment)
-
-    return counterpart_account
+    return resolve_counterpart_account(payment)
 
 
 # ======================================================================
@@ -94,9 +120,13 @@ def _resolve_counterpart_for_build(payment):
 def _build_lines(payment, move, liquidity_account, counterpart_account):
     from accounting.models import AccountMoveLine
 
+    LT = AccountMoveLine.LineType
+
     amt = payment.amount_company_currency
     amt_ccy = payment.amount
     is_foreign = payment.currency != payment.company.currency
+    memo = payment.ref or payment.payment_number
+    fx = payment.currency if is_foreign else None
 
     if payment.payment_type == 'INCOMING':
         # DR Bank, CR AR
@@ -105,19 +135,15 @@ def _build_lines(payment, move, liquidity_account, counterpart_account):
                 move=move, account=liquidity_account, partner=payment.partner,
                 debit=amt, credit=Decimal('0'),
                 original_amount=amt_ccy if is_foreign else Decimal('0'),
-                foreign_currency=payment.currency if is_foreign else None,
-                date=payment.date, memo=payment.ref or payment.payment_number,
-                line_type=AccountMoveLine.LineType.RECEIVABLE,
-
+                foreign_currency=fx, date=payment.date, memo=memo,
+                line_type=LT.PLAIN,
             ),
             AccountMoveLine(
                 move=move, account=counterpart_account, partner=payment.partner,
                 debit=Decimal('0'), credit=amt,
                 original_amount=-amt_ccy if is_foreign else Decimal('0'),
-                foreign_currency=payment.currency if is_foreign else None,
-                date=payment.date, memo=payment.ref or payment.payment_number,
-                line_type=AccountMoveLine.LineType.RECEIVABLE,
-
+                foreign_currency=fx, date=payment.date, memo=memo,
+                line_type=LT.RECEIVABLE,
             ),
         ]
 
@@ -128,19 +154,15 @@ def _build_lines(payment, move, liquidity_account, counterpart_account):
                 move=move, account=counterpart_account, partner=payment.partner,
                 debit=amt, credit=Decimal('0'),
                 original_amount=amt_ccy if is_foreign else None,
-                foreign_currency=payment.currency if is_foreign else None,
-                date=payment.date, memo=payment.ref or payment.payment_number,
-                line_type=AccountMoveLine.LineType.RECEIVABLE
-
+                foreign_currency=fx, date=payment.date, memo=memo,
+                line_type=LT.RECEIVABLE,
             ),
             AccountMoveLine(
                 move=move, account=liquidity_account, partner=payment.partner,
                 debit=Decimal('0'), credit=amt,
                 original_amount=-amt_ccy if is_foreign else None,
-                foreign_currency=payment.currency if is_foreign else None,
-                date=payment.date, memo=payment.ref or payment.payment_number,
-                line_type=AccountMoveLine.LineType.RECEIVABLE
-
+                foreign_currency=fx, date=payment.date, memo=memo,
+                line_type=LT.PLAIN,
             ),
         ]
 
@@ -155,16 +177,12 @@ def _build_lines(payment, move, liquidity_account, counterpart_account):
         AccountMoveLine(
             move=move, account=dest_account,
             debit=amt, credit=Decimal('0'),
-            date=payment.date, memo=payment.ref or payment.payment_number,
-            line_type = AccountMoveLine.LineType.RECEIVABLE
-
+            date=payment.date, memo=memo, line_type=LT.PLAIN,
         ),
         AccountMoveLine(
             move=move, account=liquidity_account,
             debit=Decimal('0'), credit=amt,
-            date=payment.date, memo=payment.ref or payment.payment_number,
-            line_type = AccountMoveLine.LineType.RECEIVABLE
-
+            date=payment.date, memo=memo, line_type=LT.PLAIN,
         ),
     ]
 
@@ -178,16 +196,19 @@ def build_payment_account_move(payment, user, move_type="payment"):
     Constructs, saves and posts the double-entry AccountMove for `payment`.
 
     INCOMING (customer pays us):
-        DR  Bank / Cash          (journal default debit account)
-        CR  Accounts Receivable  (partner's AR account)
+        DR  Bank / Cash          (journal liquidity account)
+        CR  Accounts Receivable  (allocated invoice / partner / company default)
 
     OUTGOING (we pay vendor):
-        DR  Accounts Payable     (partner's AP account)
-        CR  Bank / Cash          (journal default credit account)
+        DR  Accounts Payable     (allocated invoice / partner / company default)
+        CR  Bank / Cash          (journal liquidity account)
 
     TRANSFER (internal):
         DR  Destination journal's default debit account
-        CR  Source journal's default credit account
+        CR  Source journal's liquidity account
+
+    Prepayments use the customer-prepayment / vendor-advance accounts instead
+    of AR / AP.
 
     Returns the posted AccountMove. Does NOT save `payment` — the caller
     (Payment.confirm()) attaches it (payment.account_move = move) and saves.
@@ -223,8 +244,7 @@ def build_payment_account_move(payment, user, move_type="payment"):
     move.amount_total = payment.amount_company_currency
     move.amount_untaxed = payment.amount_company_currency
     move.amount_residual = payment.amount_company_currency
-
-    move.save(update_fields=['amount_total', 'amount_untaxed','amount_residual'])
+    move.save(update_fields=['amount_total', 'amount_untaxed', 'amount_residual'])
 
     move.post(user)
 

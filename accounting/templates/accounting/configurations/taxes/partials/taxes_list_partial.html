@@ -1,7 +1,7 @@
 {% load humanize %}
 
 <div id="tax-display"
-     hx-get="{% url 'accounting:taxes_list' %}"
+     hx-get="{% url 'accounting:taxes_list' %}?module={{ module }}"
      hx-trigger="TaxSuccess from:body">
 
   <div class="main-wrapper">
@@ -22,9 +22,9 @@
 
           <div>
             <button class="btn btn-primary btn-sm"
-                    hx-get="{% url 'accounting:get_empty_tax_form' %}"
+                    hx-get="{% url 'accounting:get_empty_tax_form' %}?module={{ module }}"
                     hx-disable-elt="this"
-                    hx-target="#accounting-display"
+                   hx-target="closest .module-display"
                     hx-push-url="true"
             >
               <i class="bi bi-plus-lg"></i> New
@@ -32,10 +32,11 @@
 
             <button type="button"
                     class="btn btn-danger btn-sm"
-                    hx-post="{% url 'accounting:taxes_delete' %}"
+                    hx-post="{% url 'accounting:taxes_delete' %}?module={{ module }}"
                     hx-include="[name='tax_ids']:checked"
                     hx-confirm="Are you sure you want to delete the selected taxes?"
-                    hx-target="#accounting-display">
+                   hx-target="closest .module-display"
+            >
               <i class="ti ti-trash me-1"></i> Delete
             </button>
           </div>
@@ -44,9 +45,9 @@
           <form data-toolbar
                 class="toolbar"
                 id="tax-filters"
-                hx-get="{% url 'accounting:taxes_list' %}"
+                hx-get="{% url 'accounting:taxes_list' %}?module={{ module }}"
                 hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
-                hx-target="#accounting-display"
+                   hx-target="closest .module-display"
                 hx-replace-url="true">
 
             <div class="toolbar-search-wrap">
@@ -169,7 +170,7 @@
                                name="is_active"
                                value="true"
                                {% if tax.is_active %}checked{% endif %}
-                               hx-post="{% url 'accounting:toggle_tax' tax.id %}"
+                               hx-post="{% url 'accounting:toggle_tax' tax.id %}?module={{ module }}"
                                hx-trigger="change"
                                hx-swap="none">
                     </div>
@@ -178,8 +179,8 @@
                 <td>
                   <button type="button"
                           class="btn btn-secondary btn-sm"
-                          hx-get="{% url 'accounting:tax_detail' tax.id %}"
-                          hx-target="#accounting-display"
+                          hx-get="{% url 'accounting:tax_detail' tax.id %}?module={{ module }}"
+                   hx-target="closest .module-display"
                           hx-push-url="true"
                           hx-disable-elt="this">
                     <i class="ti ti-eye"></i> View
@@ -234,8 +235,8 @@
               {% if taxes.has_previous %}
 
                 <a class="page-btn page-btn--arrow"
-                   hx-get="?page=1"
-                   hx-target="#accounting-display"
+                   hx-get="?page=1&module={{ module }}"
+                   hx-target="closest .module-display"
                    hx-swap="innerHTML"
                    hx-push-url="true">
                   <i class="bi bi-chevron-double-left"></i>
@@ -255,8 +256,8 @@
               {% if taxes.has_previous %}
 
                 <a class="page-btn page-btn--arrow"
-                   hx-get="?page={{ taxes.previous_page_number }}"
-                   hx-target="#accounting-display"
+                   hx-get="?page={{ taxes.previous_page_number}}&module={{ module }}}"
+                   hx-target="closest .module-display"
                    hx-swap="innerHTML"
                    hx-push-url="true">
                   <i class="bi bi-chevron-left"></i>
@@ -284,8 +285,8 @@
                 {% elif num > taxes.number|add:'-3' and num < taxes.number|add:'3' %}
 
                   <a class="page-btn"
-                     hx-get="?page={{ num }}"
-                     hx-target="#accounting-display"
+                     hx-get="?page={{ num }}&module={{ module }}"
+                   hx-target="closest .module-display"
                      hx-swap="innerHTML"
                      hx-push-url="true">
                     {{ num }}
@@ -300,8 +301,8 @@
               {% if taxes.has_next %}
 
                 <a class="page-btn page-btn--arrow"
-                   hx-get="?page={{ taxes.next_page_number }}"
-                   hx-target="#accounting-display"
+                   hx-get="?page={{ taxes.next_page_number }}&module={{ module }}"
+                   hx-target="closest .module-display"
                    hx-swap="innerHTML"
                    hx-push-url="true">
                   <i class="bi bi-chevron-right"></i>
@@ -321,8 +322,8 @@
               {% if taxes.has_next %}
 
                 <a class="page-btn page-btn--arrow"
-                   hx-get="?page={{ taxes.paginator.num_pages }}"
-                   hx-target="#accounting-display"
+                   hx-get="?page={{ taxes.paginator.num_pages }}&module={{ module }}"
+                   hx-target="closest .module-display"
                    hx-swap="innerHTML"
                    hx-push-url="true">
                   <i class="bi bi-chevron-double-right"></i>

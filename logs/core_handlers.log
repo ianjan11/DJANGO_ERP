@@ -3248,3 +3248,855 @@
 [WARNING] 2026-11-03 14:45:17,725 core.events.handlers dispatch: No handlers registered for: invoice.created
 [INFO] 2026-11-06 14:38:11,457 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
 [WARNING] 2026-11-06 14:38:11,458 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 16:53:05,579 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-09 16:53:05,579 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-09 16:53:05,583 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-09 16:53:05,583 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-09 16:54:31,163 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-09 16:54:31,163 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-09 16:54:31,163 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-09 16:54:31,163 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-09 16:58:23,406 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 16:58:23,406 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 17:11:23,810 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-09 17:11:23,810 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-09 17:11:23,812 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-09 17:11:23,812 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-09 17:11:31,744 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-09 17:11:31,744 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-09 17:11:31,744 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-09 17:11:31,744 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-09 17:13:55,145 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-09 17:13:55,145 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-09 17:13:55,145 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-09 17:13:55,146 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-09 17:14:41,591 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 17:14:41,591 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 17:14:56,570 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 17:14:56,570 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 17:15:00,219 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 17:15:00,219 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 17:15:28,850 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 17:15:28,850 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 17:15:46,280 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 17:15:46,280 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 15:39:12,481 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-09 15:39:12,481 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-09 15:39:12,482 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-09 15:39:12,482 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-09 15:39:25,705 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-09 15:39:25,706 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-09 15:39:25,714 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-09 15:39:25,714 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-09 15:48:40,460 core.events.handlers dispatch: Handler pipeline started for: order.deleted
+[INFO] 2026-11-09 15:48:40,460 core.events.handlers dispatch: Handler started: handle_order_deleted
+[INFO] 2026-11-09 15:48:40,460 core.events.handlers dispatch: Handler success: handle_order_deleted
+[INFO] 2026-11-09 15:48:40,460 core.events.handlers dispatch: Handler pipeline finished for: order.deleted
+[INFO] 2026-11-09 15:48:42,249 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-09 15:48:42,249 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-09 15:48:42,252 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-09 15:48:42,252 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-09 15:50:01,100 core.events.handlers dispatch: Handler pipeline started for: purchase.created
+[WARNING] 2026-11-09 15:50:01,100 core.events.handlers dispatch: No handlers registered for: purchase.created
+[INFO] 2026-11-09 15:50:23,730 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-09 15:50:23,731 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-09 15:50:23,731 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-09 15:50:23,731 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-09 15:50:32,379 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-09 15:50:32,379 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-09 15:50:32,379 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-09 15:50:32,379 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-09 15:52:00,013 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-09 15:52:00,013 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-09 15:52:00,014 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-09 15:52:00,014 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-09 15:52:25,489 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-09 15:52:25,489 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-09 15:52:25,489 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-09 15:52:25,489 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-09 15:53:41,656 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-09 15:53:41,657 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-09 15:53:41,660 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-09 15:53:41,661 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-09 15:53:52,015 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-09 15:53:52,015 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-09 15:53:52,015 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-09 15:53:52,015 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-09 15:53:55,039 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-09 15:53:55,039 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-09 15:53:55,039 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-09 15:53:55,039 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-09 15:57:15,941 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-09 15:57:15,941 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-09 15:57:15,941 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-09 15:57:15,942 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-09 16:01:37,953 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-09 16:01:37,953 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-09 16:01:37,953 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-09 16:01:37,953 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-09 16:02:02,614 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-09 16:02:02,614 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-09 16:02:02,622 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-09 16:02:02,622 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-09 16:02:41,802 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-09 16:02:41,802 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-09 16:02:41,802 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-09 16:02:41,802 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-09 16:04:02,042 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-09 16:04:02,042 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-09 16:04:02,048 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-09 16:04:02,048 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-09 17:14:05,988 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-09 17:14:05,988 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-09 17:14:05,988 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-09 17:14:05,988 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-09 18:01:49,536 core.events.handlers dispatch: Handler pipeline started for: purchase.sent
+[WARNING] 2026-11-09 18:01:49,536 core.events.handlers dispatch: No handlers registered for: purchase.sent
+[INFO] 2026-11-09 18:07:54,386 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-09 18:07:54,386 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-09 18:07:54,390 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-09 18:07:54,390 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-09 18:08:55,162 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-09 18:08:55,162 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-09 18:08:55,162 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-09 18:08:55,162 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-09 18:08:57,609 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-09 18:08:57,609 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-09 18:08:57,609 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-09 18:08:57,609 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-09 18:16:42,498 core.events.handlers dispatch: Handler pipeline started for: purchase.confirmed
+[WARNING] 2026-11-09 18:16:42,498 core.events.handlers dispatch: No handlers registered for: purchase.confirmed
+[INFO] 2026-11-09 18:21:30,815 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:21:30,815 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:21:36,849 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:21:36,849 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:21:42,814 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:21:42,814 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:21:48,164 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:21:48,164 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:21:58,338 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:21:58,338 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:22:03,620 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:22:03,620 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:22:09,843 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:22:09,843 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:22:15,233 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:22:15,233 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:22:27,152 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:22:27,153 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:22:35,064 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:22:35,064 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:22:42,150 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:22:42,150 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:22:51,525 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:22:51,526 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:22:57,191 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:22:57,191 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:23:19,052 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:23:19,052 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:23:46,970 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:23:46,970 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 18:23:53,971 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-09 18:23:53,971 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-09 19:11:25,608 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-09 19:11:25,608 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-09 19:27:42,056 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-09 19:27:42,056 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-10 09:27:30,460 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-10 09:27:30,460 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-10 09:55:57,990 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-10 09:55:57,990 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-10 10:17:17,631 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-10 10:17:17,631 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-10 10:28:43,791 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-10 10:28:43,791 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-10 10:33:14,255 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-10 10:33:14,255 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-10 11:04:20,019 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-10 11:04:20,019 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-10 12:21:47,904 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-10 12:21:47,905 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-10 12:21:58,900 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-10 12:21:58,900 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-10 12:22:28,254 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-10 12:22:28,254 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-10 12:22:40,222 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-10 12:22:40,222 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-10 12:31:52,340 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-10 12:31:52,341 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-10 13:30:08,672 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-10 13:30:08,672 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-10 13:39:23,486 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-10 13:39:23,486 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-10 13:40:36,293 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-10 13:40:36,293 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-10 13:51:36,501 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-10 13:51:36,501 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-10 13:51:46,686 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-10 13:51:46,686 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-10 14:44:28,766 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-10 14:44:28,766 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-10 14:56:06,141 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-10 14:56:06,141 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-10 15:02:35,264 core.events.handlers dispatch: Handler pipeline started for: purchase.created
+[WARNING] 2026-11-10 15:02:35,264 core.events.handlers dispatch: No handlers registered for: purchase.created
+[INFO] 2026-11-10 16:13:42,206 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-10 16:13:42,206 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-10 17:11:24,848 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-10 17:11:24,848 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-10 17:12:25,715 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-10 17:12:25,715 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-10 17:33:13,956 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-10 17:33:13,956 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-10 17:33:18,475 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-10 17:33:18,475 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-10 17:34:50,178 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-10 17:34:50,178 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-10 17:34:59,642 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-10 17:34:59,642 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-10 17:37:53,641 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-10 17:37:53,642 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-10 17:38:01,241 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-10 17:38:01,241 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-11 11:15:25,623 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-11 11:15:25,623 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-11 11:17:59,639 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-11 11:17:59,639 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-11 11:18:40,211 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-11 11:18:40,211 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-11 11:19:01,634 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-11 11:19:01,634 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-11 11:19:15,252 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-11 11:19:15,252 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-11 11:53:23,129 core.events.handlers dispatch: Handler pipeline started for: account_move.created
+[WARNING] 2026-11-11 11:53:23,130 core.events.handlers dispatch: No handlers registered for: account_move.created
+[INFO] 2026-11-11 11:59:17,719 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-11 11:59:17,719 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-11 11:59:24,428 core.events.handlers dispatch: Handler pipeline started for: account_move.created
+[WARNING] 2026-11-11 11:59:24,428 core.events.handlers dispatch: No handlers registered for: account_move.created
+[INFO] 2026-11-11 12:06:25,487 core.events.handlers dispatch: Handler pipeline started for: account_move.posted
+[WARNING] 2026-11-11 12:06:25,487 core.events.handlers dispatch: No handlers registered for: account_move.posted
+[INFO] 2026-11-11 14:17:34,069 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-11 14:17:34,069 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-11 15:53:16,848 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-11 15:53:16,848 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-11 15:53:19,394 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-11 15:53:19,394 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-11 16:02:27,755 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-11 16:02:27,756 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-11 16:02:41,097 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-11 16:02:41,097 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-11 16:15:42,966 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-11 16:15:42,966 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-11 16:15:50,785 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-11 16:15:50,785 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-11 16:16:19,050 core.events.handlers dispatch: Handler pipeline started for: account_move.created
+[WARNING] 2026-11-11 16:16:19,050 core.events.handlers dispatch: No handlers registered for: account_move.created
+[INFO] 2026-11-11 16:37:04,122 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-11 16:37:04,122 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-11 16:37:12,398 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-11 16:37:12,398 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-11 18:01:43,831 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-11 18:01:43,831 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-11 18:02:09,133 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-11 18:02:09,133 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-11 18:03:10,940 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-11 18:03:10,940 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-11 18:03:47,796 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-11 18:03:47,797 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-11 18:04:36,951 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-11 18:04:36,951 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-12 14:57:20,568 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-12 14:57:20,569 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-12 14:58:03,671 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-12 14:58:03,671 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-12 16:01:59,279 core.events.handlers dispatch: Handler pipeline started for: account_move.created
+[WARNING] 2026-11-12 16:01:59,279 core.events.handlers dispatch: No handlers registered for: account_move.created
+[INFO] 2026-11-12 18:45:44,797 core.events.handlers dispatch: Handler pipeline started for: account_move.created
+[WARNING] 2026-11-12 18:45:44,797 core.events.handlers dispatch: No handlers registered for: account_move.created
+[INFO] 2026-11-13 11:55:29,705 core.events.handlers dispatch: Handler pipeline started for: account_move.created
+[WARNING] 2026-11-13 11:55:29,705 core.events.handlers dispatch: No handlers registered for: account_move.created
+[INFO] 2026-11-13 11:56:14,971 core.events.handlers dispatch: Handler pipeline started for: account_move.created
+[WARNING] 2026-11-13 11:56:14,971 core.events.handlers dispatch: No handlers registered for: account_move.created
+[INFO] 2026-11-13 11:56:36,602 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-13 11:56:36,602 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-13 13:40:29,348 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-13 13:40:29,348 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-13 13:40:29,352 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-13 13:40:29,352 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-13 14:05:38,343 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-13 14:05:38,344 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-13 16:22:41,240 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-13 16:22:41,241 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-13 16:23:17,783 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-13 16:23:17,783 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-13 16:23:31,610 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-13 16:23:31,610 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-13 16:26:11,090 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-13 16:26:11,090 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-13 16:53:34,843 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-13 16:53:34,843 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-13 16:56:04,136 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-13 16:56:04,137 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-13 16:56:26,567 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-13 16:56:26,567 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-13 16:56:42,167 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-13 16:56:42,167 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-13 17:01:19,714 core.events.handlers dispatch: Handler pipeline started for: account_move.created
+[WARNING] 2026-11-13 17:01:19,715 core.events.handlers dispatch: No handlers registered for: account_move.created
+[INFO] 2026-11-13 17:29:09,932 core.events.handlers dispatch: Handler pipeline started for: account_move.created
+[WARNING] 2026-11-13 17:29:09,932 core.events.handlers dispatch: No handlers registered for: account_move.created
+[INFO] 2026-11-13 17:29:54,876 core.events.handlers dispatch: Handler pipeline started for: account_move.posted
+[WARNING] 2026-11-13 17:29:54,876 core.events.handlers dispatch: No handlers registered for: account_move.posted
+[INFO] 2026-11-13 17:30:15,181 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-13 17:30:15,181 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-13 17:49:17,759 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-13 17:49:17,759 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-14 10:23:49,275 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-14 10:23:49,275 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-14 10:23:49,276 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-14 10:23:49,276 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-14 10:23:57,803 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-14 10:23:57,803 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-14 10:23:57,804 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-14 10:23:57,804 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-16 15:54:25,132 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-16 15:54:25,133 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-16 16:50:19,742 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-16 16:50:19,742 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-16 16:50:28,147 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-16 16:50:28,147 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-16 19:11:19,857 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-16 19:11:19,859 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-16 19:11:19,862 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-16 19:11:19,862 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-16 19:11:26,602 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-16 19:11:26,602 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-16 19:11:26,602 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-16 19:11:26,602 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-16 19:11:29,026 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-16 19:11:29,026 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-16 19:11:29,027 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-16 19:11:29,027 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-16 19:11:33,280 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-16 19:11:33,280 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-17 19:01:41,398 core.events.handlers dispatch: Handler pipeline started for: purchase.sent
+[WARNING] 2026-11-17 19:01:41,399 core.events.handlers dispatch: No handlers registered for: purchase.sent
+[INFO] 2026-11-17 19:01:44,399 core.events.handlers dispatch: Handler pipeline started for: purchase.confirmed
+[WARNING] 2026-11-17 19:01:44,399 core.events.handlers dispatch: No handlers registered for: purchase.confirmed
+[INFO] 2026-11-17 19:02:06,024 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-17 19:02:06,024 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-17 19:03:19,093 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-17 19:03:19,093 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-17 19:03:19,101 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-17 19:03:19,102 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-17 19:03:25,138 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-17 19:03:25,138 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-17 19:03:25,138 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-17 19:03:25,138 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-17 19:03:29,260 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-17 19:03:29,260 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-17 19:03:29,261 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-17 19:03:29,261 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-17 19:03:31,613 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-17 19:03:31,613 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-17 19:03:37,481 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-17 19:03:37,481 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-17 19:25:43,749 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-17 19:25:43,749 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-17 19:25:49,740 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-17 19:25:49,740 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 09:18:49,634 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-18 09:18:49,635 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-18 09:18:49,639 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-18 09:18:49,639 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-18 09:35:45,022 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 09:35:45,023 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 09:36:26,506 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-18 09:36:26,507 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-18 09:36:26,514 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-18 09:36:26,514 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-18 09:36:37,173 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-18 09:36:37,173 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-18 09:36:37,174 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-18 09:36:37,174 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-18 09:36:41,810 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-18 09:36:41,810 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-18 09:36:41,810 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-18 09:36:41,810 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-18 09:36:44,391 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 09:36:44,391 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 09:37:08,562 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 09:37:08,562 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 09:41:36,211 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 09:41:36,211 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 09:45:41,680 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 09:45:41,680 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 10:07:01,471 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 10:07:01,471 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 10:07:15,830 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 10:07:15,830 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 10:13:27,149 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 10:13:27,149 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 10:18:37,594 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 10:18:37,595 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 10:18:48,250 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 10:18:48,250 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 10:33:02,824 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 10:33:02,824 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 10:33:13,291 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 10:33:13,291 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 10:33:59,743 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-18 10:33:59,743 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-18 10:33:59,747 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-18 10:33:59,747 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-18 10:34:09,462 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-18 10:34:09,462 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-18 10:34:09,462 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-18 10:34:09,462 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-18 10:34:13,801 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-18 10:34:13,801 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-18 10:34:13,801 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-18 10:34:13,801 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-18 10:34:15,729 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 10:34:15,730 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 10:34:39,836 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 10:34:39,836 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 10:43:56,416 core.events.handlers dispatch: Handler pipeline started for: payment.refunded
+[WARNING] 2026-11-18 10:43:56,416 core.events.handlers dispatch: No handlers registered for: payment.refunded
+[INFO] 2026-11-18 10:57:11,096 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-18 10:57:11,096 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-18 10:57:11,099 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-18 10:57:11,099 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-18 10:57:17,647 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-18 10:57:17,647 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-18 10:57:17,647 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-18 10:57:17,647 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-18 10:57:20,096 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-18 10:57:20,097 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-18 10:57:20,097 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-18 10:57:20,097 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-18 10:57:46,022 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 10:57:46,022 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 10:58:01,645 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 10:58:01,645 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 10:58:11,274 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 10:58:11,274 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 10:58:52,466 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 10:58:52,466 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 10:58:57,199 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 10:58:57,199 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 11:01:18,720 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 11:01:18,720 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 11:01:25,888 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 11:01:25,888 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 11:01:58,680 core.events.handlers dispatch: Handler pipeline started for: purchase.created
+[WARNING] 2026-11-18 11:01:58,680 core.events.handlers dispatch: No handlers registered for: purchase.created
+[INFO] 2026-11-18 11:02:06,351 core.events.handlers dispatch: Handler pipeline started for: purchase.sent
+[WARNING] 2026-11-18 11:02:06,351 core.events.handlers dispatch: No handlers registered for: purchase.sent
+[INFO] 2026-11-18 11:02:09,611 core.events.handlers dispatch: Handler pipeline started for: purchase.confirmed
+[WARNING] 2026-11-18 11:02:09,612 core.events.handlers dispatch: No handlers registered for: purchase.confirmed
+[INFO] 2026-11-18 11:02:23,938 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 11:02:23,938 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 11:12:52,608 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-18 11:12:52,608 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-18 11:12:52,610 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-18 11:12:52,610 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-18 11:13:07,204 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-18 11:13:07,204 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-18 11:13:07,205 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-18 11:13:07,205 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-18 11:13:10,341 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-18 11:13:10,341 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-18 11:13:10,341 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-18 11:13:10,341 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-18 11:13:29,362 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 11:13:29,362 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 11:13:32,443 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 11:13:32,443 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 11:13:39,317 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 11:13:39,317 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 11:31:44,214 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-18 11:31:44,215 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-18 11:31:44,217 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-18 11:31:44,217 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-18 11:31:51,717 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-18 11:31:51,717 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-18 11:31:51,717 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-18 11:31:51,718 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-18 11:31:55,253 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-18 11:31:55,254 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-18 11:31:55,254 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-18 11:31:55,254 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-18 11:32:12,764 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 11:32:12,764 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 11:32:16,692 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 11:32:16,692 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 11:32:20,106 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 11:32:20,106 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 11:40:18,735 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 11:40:18,735 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 11:56:13,016 core.events.handlers dispatch: Handler pipeline started for: purchase.created
+[WARNING] 2026-11-18 11:56:13,018 core.events.handlers dispatch: No handlers registered for: purchase.created
+[INFO] 2026-11-18 11:56:30,646 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 11:56:30,646 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 13:08:35,830 core.events.handlers dispatch: Handler pipeline started for: purchase.sent
+[WARNING] 2026-11-18 13:08:35,831 core.events.handlers dispatch: No handlers registered for: purchase.sent
+[INFO] 2026-11-18 13:08:38,787 core.events.handlers dispatch: Handler pipeline started for: purchase.confirmed
+[WARNING] 2026-11-18 13:08:38,787 core.events.handlers dispatch: No handlers registered for: purchase.confirmed
+[INFO] 2026-11-18 13:08:54,596 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 13:08:54,596 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 13:09:05,798 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 13:09:05,798 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 14:06:14,761 core.events.handlers dispatch: Handler pipeline started for: purchase.created
+[WARNING] 2026-11-18 14:06:14,761 core.events.handlers dispatch: No handlers registered for: purchase.created
+[INFO] 2026-11-18 14:06:24,139 core.events.handlers dispatch: Handler pipeline started for: purchase.sent
+[WARNING] 2026-11-18 14:06:24,139 core.events.handlers dispatch: No handlers registered for: purchase.sent
+[INFO] 2026-11-18 14:06:26,856 core.events.handlers dispatch: Handler pipeline started for: purchase.confirmed
+[WARNING] 2026-11-18 14:06:26,856 core.events.handlers dispatch: No handlers registered for: purchase.confirmed
+[INFO] 2026-11-18 14:06:42,339 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 14:06:42,339 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 14:24:58,147 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 14:24:58,147 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 14:33:08,732 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 14:33:08,732 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 14:33:16,887 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 14:33:16,887 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 14:33:23,861 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 14:33:23,861 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 14:33:33,196 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 14:33:33,196 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 14:38:01,814 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 14:38:01,814 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 14:38:27,939 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 14:38:27,939 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 14:39:17,491 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 14:39:17,491 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 16:22:28,140 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-18 16:22:28,141 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-18 16:22:28,146 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-18 16:22:28,146 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-18 16:22:43,315 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-18 16:22:43,315 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-18 16:22:43,316 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-18 16:22:43,316 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-18 16:22:46,783 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-18 16:22:46,783 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-18 16:22:46,783 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-18 16:22:46,783 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-18 16:23:34,817 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 16:23:34,818 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 16:23:37,690 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 16:23:37,690 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 16:23:42,196 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 16:23:42,196 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 16:24:32,817 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 16:24:32,817 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 16:24:39,613 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 16:24:39,613 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 16:25:09,164 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-18 16:25:09,164 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-18 16:25:09,166 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-18 16:25:09,166 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-18 16:25:28,140 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-18 16:25:28,140 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-18 16:25:28,140 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-18 16:25:28,140 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-18 16:25:33,298 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-18 16:25:33,298 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-18 16:25:33,298 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-18 16:25:33,298 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-18 16:25:36,321 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 16:25:36,321 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 16:25:43,112 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 16:25:43,112 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 16:35:10,585 core.events.handlers dispatch: Handler pipeline started for: purchase.created
+[WARNING] 2026-11-18 16:35:10,585 core.events.handlers dispatch: No handlers registered for: purchase.created
+[INFO] 2026-11-18 16:35:21,340 core.events.handlers dispatch: Handler pipeline started for: purchase.sent
+[WARNING] 2026-11-18 16:35:21,341 core.events.handlers dispatch: No handlers registered for: purchase.sent
+[INFO] 2026-11-18 16:35:23,265 core.events.handlers dispatch: Handler pipeline started for: purchase.confirmed
+[WARNING] 2026-11-18 16:35:23,265 core.events.handlers dispatch: No handlers registered for: purchase.confirmed
+[INFO] 2026-11-18 16:35:45,974 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-18 16:35:45,975 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-18 16:37:19,565 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 16:37:19,565 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 16:37:30,410 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 16:37:30,410 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 18:38:26,990 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 18:38:26,990 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 18:38:38,430 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 18:38:38,430 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 18:39:05,386 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 18:39:05,386 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-18 18:44:30,349 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 18:44:30,349 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 18:45:04,974 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-18 18:45:04,974 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-18 18:46:26,971 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-18 18:46:26,971 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 09:09:47,003 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-19 09:09:47,004 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-19 09:09:47,008 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-19 09:09:47,008 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-19 09:09:56,962 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-19 09:09:56,963 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-19 09:09:56,963 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-19 09:09:56,963 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-19 09:09:59,253 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-19 09:09:59,253 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-19 09:09:59,253 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-19 09:09:59,253 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-19 09:10:01,510 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 09:10:01,510 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 09:10:10,573 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 09:10:10,573 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 09:10:24,998 core.events.handlers dispatch: Handler pipeline started for: purchase.created
+[WARNING] 2026-11-19 09:10:24,998 core.events.handlers dispatch: No handlers registered for: purchase.created
+[INFO] 2026-11-19 09:10:34,005 core.events.handlers dispatch: Handler pipeline started for: purchase.sent
+[WARNING] 2026-11-19 09:10:34,005 core.events.handlers dispatch: No handlers registered for: purchase.sent
+[INFO] 2026-11-19 09:10:39,408 core.events.handlers dispatch: Handler pipeline started for: purchase.confirmed
+[WARNING] 2026-11-19 09:10:39,408 core.events.handlers dispatch: No handlers registered for: purchase.confirmed
+[INFO] 2026-11-19 09:10:53,867 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 09:10:53,867 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 09:11:02,614 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 09:11:02,614 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 09:11:07,701 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 09:11:07,701 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 09:12:14,909 core.events.handlers dispatch: Handler pipeline started for: purchase.created
+[WARNING] 2026-11-19 09:12:14,910 core.events.handlers dispatch: No handlers registered for: purchase.created
+[INFO] 2026-11-19 09:12:21,468 core.events.handlers dispatch: Handler pipeline started for: purchase.sent
+[WARNING] 2026-11-19 09:12:21,468 core.events.handlers dispatch: No handlers registered for: purchase.sent
+[INFO] 2026-11-19 09:12:24,285 core.events.handlers dispatch: Handler pipeline started for: purchase.confirmed
+[WARNING] 2026-11-19 09:12:24,285 core.events.handlers dispatch: No handlers registered for: purchase.confirmed
+[INFO] 2026-11-19 09:13:07,499 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 09:13:07,499 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 09:13:17,848 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 09:13:17,848 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 09:30:27,191 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-19 09:30:27,191 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-19 09:30:27,194 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-19 09:30:27,195 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-19 09:30:42,389 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 09:30:42,389 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 09:30:52,006 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 09:30:52,006 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 09:31:32,283 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 09:31:32,283 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 09:33:03,308 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 09:33:03,308 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 09:33:26,266 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 09:33:26,266 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 09:46:48,644 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 09:46:48,644 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 09:46:58,340 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 09:46:58,340 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 10:15:09,449 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 10:15:09,450 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 10:15:31,690 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 10:15:31,690 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 10:21:48,472 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-19 10:21:48,472 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-19 10:21:48,476 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-19 10:21:48,476 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-19 10:22:07,545 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-19 10:22:07,546 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-19 10:22:07,546 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-19 10:22:07,546 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-19 10:22:10,002 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-19 10:22:10,002 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-19 10:22:10,002 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-19 10:22:10,002 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-19 10:22:13,106 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 10:22:13,106 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 10:23:05,048 core.events.handlers dispatch: Handler pipeline started for: purchase.created
+[WARNING] 2026-11-19 10:23:05,048 core.events.handlers dispatch: No handlers registered for: purchase.created
+[INFO] 2026-11-19 10:23:15,915 core.events.handlers dispatch: Handler pipeline started for: purchase.sent
+[WARNING] 2026-11-19 10:23:15,915 core.events.handlers dispatch: No handlers registered for: purchase.sent
+[INFO] 2026-11-19 10:23:17,846 core.events.handlers dispatch: Handler pipeline started for: purchase.confirmed
+[WARNING] 2026-11-19 10:23:17,846 core.events.handlers dispatch: No handlers registered for: purchase.confirmed
+[INFO] 2026-11-19 10:24:08,064 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 10:24:08,064 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 10:24:13,245 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 10:24:13,245 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 10:43:05,714 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 10:43:05,714 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 10:43:11,489 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 10:43:11,489 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 10:50:37,482 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-19 10:50:37,482 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-19 10:50:37,484 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-19 10:50:37,484 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-19 10:50:44,123 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-19 10:50:44,123 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-19 10:50:44,123 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-19 10:50:44,123 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-19 10:50:47,118 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-19 10:50:47,118 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-19 10:50:47,119 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-19 10:50:47,119 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-19 10:51:00,647 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 10:51:00,647 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 10:51:02,916 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 10:51:02,916 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 10:51:39,196 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 10:51:39,196 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 10:51:52,225 core.events.handlers dispatch: Handler pipeline started for: account_move.created
+[WARNING] 2026-11-19 10:51:52,225 core.events.handlers dispatch: No handlers registered for: account_move.created
+[INFO] 2026-11-19 10:52:30,705 core.events.handlers dispatch: Handler pipeline started for: account_move.posted
+[WARNING] 2026-11-19 10:52:30,705 core.events.handlers dispatch: No handlers registered for: account_move.posted
+[INFO] 2026-11-19 10:55:09,145 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 10:55:09,145 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 11:03:50,188 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-19 11:03:50,188 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-19 11:03:50,190 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-19 11:03:50,190 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-19 11:03:55,358 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-19 11:03:55,358 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-19 11:03:55,358 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-19 11:03:55,358 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-19 11:04:27,697 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 11:04:27,697 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 11:04:35,871 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 11:04:35,871 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 14:35:23,703 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 14:35:23,704 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 14:35:35,331 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 14:35:35,331 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 17:38:56,416 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-19 17:38:56,416 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-19 17:38:56,419 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-19 17:38:56,419 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-19 18:04:09,740 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-19 18:04:09,740 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-19 18:04:09,740 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-19 18:04:09,740 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-19 18:04:13,281 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-19 18:04:13,281 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-19 18:04:13,281 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-19 18:04:13,282 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-19 18:04:44,077 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 18:04:44,077 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 18:04:47,660 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 18:04:47,660 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 18:04:50,448 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 18:04:50,449 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 18:05:27,765 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 18:05:27,765 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 18:18:41,052 core.events.handlers dispatch: Handler pipeline started for: picking.cancelled
+[WARNING] 2026-11-19 18:18:41,053 core.events.handlers dispatch: No handlers registered for: picking.cancelled
+[INFO] 2026-11-19 18:24:10,759 core.events.handlers dispatch: Handler pipeline started for: order.resetToDraft
+[INFO] 2026-11-19 18:24:10,760 core.events.handlers dispatch: Handler started: handle_reset_to_draft
+[INFO] 2026-11-19 18:24:10,760 core.events.handlers dispatch: Handler success: handle_reset_to_draft
+[INFO] 2026-11-19 18:24:10,760 core.events.handlers dispatch: Handler pipeline finished for: order.resetToDraft
+[INFO] 2026-11-19 18:24:18,223 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-19 18:24:18,223 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-19 18:24:18,223 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-19 18:24:18,223 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-19 18:24:20,974 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-19 18:24:20,974 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-19 18:24:20,974 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-19 18:24:20,974 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-19 18:24:28,496 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 18:24:28,496 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 18:24:59,606 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-19 18:24:59,607 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-19 18:24:59,608 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-19 18:24:59,608 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-19 18:25:06,391 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-19 18:25:06,391 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-19 18:25:06,391 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-19 18:25:06,391 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-19 18:25:08,527 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-19 18:25:08,527 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-19 18:25:08,527 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-19 18:25:08,527 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-19 18:25:24,057 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 18:25:24,057 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 18:26:57,491 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 18:26:57,491 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 18:27:03,512 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 18:27:03,512 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 18:33:02,171 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 18:33:02,171 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 18:43:37,617 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 18:43:37,617 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 18:45:03,311 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 18:45:03,312 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 18:45:18,877 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 18:45:18,878 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 18:46:02,190 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 18:46:02,191 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 18:46:10,273 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-19 18:46:10,273 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-19 18:57:08,178 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-19 18:57:08,178 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-19 18:57:20,933 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-19 18:57:20,933 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-19 19:00:08,620 core.events.handlers dispatch: Handler pipeline started for: picking.cancelled
+[WARNING] 2026-11-19 19:00:08,620 core.events.handlers dispatch: No handlers registered for: picking.cancelled
+[INFO] 2026-11-19 19:00:22,143 core.events.handlers dispatch: Handler pipeline started for: picking.cancelled
+[WARNING] 2026-11-19 19:00:22,143 core.events.handlers dispatch: No handlers registered for: picking.cancelled
+[INFO] 2026-11-19 19:00:24,583 core.events.handlers dispatch: Handler pipeline started for: picking.cancelled
+[WARNING] 2026-11-19 19:00:24,583 core.events.handlers dispatch: No handlers registered for: picking.cancelled
+[INFO] 2026-11-19 19:00:53,518 core.events.handlers dispatch: Handler pipeline started for: picking.cancelled
+[WARNING] 2026-11-19 19:00:53,518 core.events.handlers dispatch: No handlers registered for: picking.cancelled
+[INFO] 2026-11-19 19:09:45,897 core.events.handlers dispatch: Handler pipeline started for: picking.cancelled
+[WARNING] 2026-11-19 19:09:45,897 core.events.handlers dispatch: No handlers registered for: picking.cancelled
+[INFO] 2026-11-19 19:10:49,005 core.events.handlers dispatch: Handler pipeline started for: picking.cancelled
+[WARNING] 2026-11-19 19:10:49,005 core.events.handlers dispatch: No handlers registered for: picking.cancelled
+[INFO] 2026-11-20 13:50:27,634 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-20 13:50:27,634 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-20 13:50:27,640 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-20 13:50:27,640 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-20 13:50:36,510 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-20 13:50:36,510 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-20 13:50:36,510 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-20 13:50:36,510 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-20 13:50:39,323 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-20 13:50:39,323 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-20 13:50:39,323 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-20 13:50:39,323 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-20 13:53:33,754 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-20 13:53:33,755 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-20 13:53:37,102 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-20 13:53:37,102 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-20 13:53:41,584 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-20 13:53:41,584 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-20 14:32:26,841 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-20 14:32:26,841 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-20 14:32:26,845 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-20 14:32:26,845 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-20 14:32:35,329 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-20 14:32:35,329 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-20 14:32:35,329 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-20 14:32:35,329 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-20 14:32:39,701 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-20 14:32:39,701 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-20 14:32:39,701 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-20 14:32:39,701 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-20 14:32:42,471 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-20 14:32:42,472 core.events.handlers dispatch: No handlers registered for: invoice.created
+[INFO] 2026-11-20 14:59:08,468 core.events.handlers dispatch: Handler pipeline started for: invoice.posted
+[WARNING] 2026-11-20 14:59:08,469 core.events.handlers dispatch: No handlers registered for: invoice.posted
+[INFO] 2026-11-20 14:59:26,286 core.events.handlers dispatch: Handler pipeline started for: order.created
+[INFO] 2026-11-20 14:59:26,286 core.events.handlers dispatch: Handler started: handle_order_created
+[INFO] 2026-11-20 14:59:26,288 core.events.handlers dispatch: Handler success: handle_order_created
+[INFO] 2026-11-20 14:59:26,288 core.events.handlers dispatch: Handler pipeline finished for: order.created
+[INFO] 2026-11-20 14:59:34,321 core.events.handlers dispatch: Handler pipeline started for: order.sent
+[INFO] 2026-11-20 14:59:34,321 core.events.handlers dispatch: Handler started: handle_order_sent
+[INFO] 2026-11-20 14:59:34,321 core.events.handlers dispatch: Handler success: handle_order_sent
+[INFO] 2026-11-20 14:59:34,321 core.events.handlers dispatch: Handler pipeline finished for: order.sent
+[INFO] 2026-11-20 14:59:37,079 core.events.handlers dispatch: Handler pipeline started for: order.confirmed
+[INFO] 2026-11-20 14:59:37,079 core.events.handlers dispatch: Handler started: handle_order_confirmed
+[INFO] 2026-11-20 14:59:37,079 core.events.handlers dispatch: Handler success: handle_order_confirmed
+[INFO] 2026-11-20 14:59:37,079 core.events.handlers dispatch: Handler pipeline finished for: order.confirmed
+[INFO] 2026-11-20 15:00:04,658 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-20 15:00:04,659 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-20 15:00:29,404 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-20 15:00:29,404 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-20 15:00:34,357 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-20 15:00:34,357 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-20 15:00:39,609 core.events.handlers dispatch: Handler pipeline started for: picking.confirmed
+[WARNING] 2026-11-20 15:00:39,609 core.events.handlers dispatch: No handlers registered for: picking.confirmed
+[INFO] 2026-11-20 15:00:53,189 core.events.handlers dispatch: Handler pipeline started for: invoice.created
+[WARNING] 2026-11-20 15:00:53,189 core.events.handlers dispatch: No handlers registered for: invoice.created

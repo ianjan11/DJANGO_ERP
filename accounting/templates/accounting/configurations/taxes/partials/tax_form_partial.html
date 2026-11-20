@@ -6,16 +6,18 @@
     {# ── Card title ── #}
     <div class="table-toolbar">
       <h5 class="table-toolbar-title">
-        {% if tax and tax.pk %}Edit Tax: {{ tax.name }}{% else %}New Tax{% endif %}
+        {% if tax and tax.pk %}{{ tax.name }}{% else %}New Tax{% endif %}
       </h5>
+                       {% include "core/bread_crumbs.html" %}
+
     </div>
 
     <form id="taxForm"
           method="post"
-          hx-post="{% if tax and tax.pk %}{% url 'accounting:tax_edit' tax.id %}{% else %}{% url 'accounting:tax_create' %}{% endif %}"
-          hx-target="#accounting-display"
+          hx-post="{% if tax and tax.pk %}{% url 'accounting:tax_edit' tax.id %}?module={{ module }}{% else %}{% url 'accounting:tax_create' %}?module={{ module }}{% endif %}"
+          hx-target="closest .module-display"
           hx-swap="innerHTML"
-          hx-push-url="true">
+          >
 
       {% csrf_token %}
 
@@ -59,6 +61,21 @@
 
           {# Column 2 — Rate & Hierarchy #}
           <div class="detail-col">
+
+                              <div class="form-group">
+                <div class="form-check form-switch">
+                  {{ form.is_active }}
+                  <label class="form-label mx-2" for="{{ form.is_active.id_for_label }}">
+                    Active
+                  </label>
+                </div>
+                <small class="text-muted d-block mt-1">Active taxes can be selected on sales and purchase documents.</small>
+                {% for error in form.is_active.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+
+
             <div class="form-group">
               <label for="{{ form.rate.id_for_label }}" class="form-label mb-0">Rate <span style="color:#b91c1c">*</span></label>
               {{ form.rate }}
@@ -147,8 +164,11 @@
         <div class="tabs-panel" data-tab-panel="behaviour" role="tabpanel">
           <div class="tabs-grid">
             <div>
+
+
+
               <div class="form-group">
-                <div class="form-check">
+                <div class="form-check  form-switch">
                   {{ form.price_include }}
                   <label class="form-check-label" for="{{ form.price_include.id_for_label }}">
                     Included in Price
@@ -161,7 +181,7 @@
               </div>
 
               <div class="form-group">
-                <div class="form-check">
+                <div class="form-check form-switch">
                   {{ form.include_base_amount }}
                   <label class="form-check-label" for="{{ form.include_base_amount.id_for_label }}">
                     Compound Tax
@@ -174,20 +194,7 @@
               </div>
             </div>
 
-            <div>
-              <div class="form-group">
-                <div class="form-check">
-                  {{ form.is_active }}
-                  <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
-                    Active
-                  </label>
-                </div>
-                <small class="text-muted d-block mt-1">Active taxes can be selected on sales and purchase documents.</small>
-                {% for error in form.is_active.errors %}
-                  <div class="invalid-feedback d-block">{{ error }}</div>
-                {% endfor %}
-              </div>
-            </div>
+
           </div>
         </div>
 
@@ -206,8 +213,8 @@
       <div class="detail-card-footer">
         <button type="button"
                 class="btn btn-secondary"
-                hx-get="{% url 'accounting:taxes_list' %}"
-                hx-target="#accounting-display"
+                hx-get="{% url 'accounting:taxes_list' %}?module={{ module }}"
+                hx-target="closest .module-display"
                 hx-swap="innerHTML"
                 hx-push-url="true">
           <i class="bi bi-arrow-left me-1"></i> Back

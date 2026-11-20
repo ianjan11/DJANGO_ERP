@@ -1,7 +1,11 @@
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import date
 import logging
+
+from django.core.exceptions import ValidationError
 from django.utils import timezone
+
+from accounting.services.account_resolver import resolve_account, Role
 from core.services.pricing_service import authoritative_price
 from core.utils.result import fail, ok
 
@@ -14,7 +18,12 @@ class DocumentValidationService:
     supplier_invoice, and journal entries.
 
     Includes unit of measure (UoM) compatibility, price enforcement, header date rules,
-    and plain (non-product) journal line rules.
+    vendor-bill account rules, and plain (non-product) journal line rules.
+
+    Warnings (non-blocking) are returned through the same `warnings` / `row_warnings`
+    channels as every other warning:
+      * warnings["source_document"]      -> draft document created from another document
+      * row_warnings[<line id>][<field>] -> line drifted from its source order line
 
     Stock is deliberately NOT validated here (Odoo-style permissive inventory):
     documents can be created, edited and invoiced regardless of on-hand quantity.
@@ -46,6 +55,14 @@ class DocumentValidationService:
 
     DRAFT_STATUSES = {"draft", "DRAFT", "quotation", "sent", "SENT"}
 
+    # origin_type values that mean "this document was generated from another one"
+    SOURCE_ORIGIN_LABELS = {
+        "sales_order": "sales order",
+        "purchase_order": "purchase order",
+        "customer_return": "customer return",
+        "supplier_return": "supplier return",
+    }
+
     # ------------------------------------------------------------------
     # MAIN ENTRYPOINT
     # ------------------------------------------------------------------
@@ -71,11 +88,14 @@ class DocumentValidationService:
         if date_errors:
             errors.update(date_errors)
 
-        # 3. Extract line items safely
+        # 3. Document-level warnings (editing a document that came from a source document)
+        warnings.update(self._source_origin_warnings(doc_instance))
+
+        # 4. Extract line items safely
         lines = list(self._get_lines(doc_instance))
         policy = self.LINE_VALIDATION_POLICIES[doc_type]
 
-        # 4. Row-level checks
+        # 5. Row-level checks
         for item in lines:
             item_errors, item_warnings = self._validate_item(item, doc_instance, doc_type, policy)
             item_id = str(getattr(item, "id", getattr(item, "prefix", "new")))
@@ -101,7 +121,7 @@ class DocumentValidationService:
     def _validate_item(self, item, doc_instance, doc_type, policy):
         """Validate a single document line item. A plain journal line
         (line_type == PLAIN, no product) gets account/debit/credit rules;
-        a product line gets the UoM/pricing/discount rules."""
+        a product line gets the UoM/account/pricing/discount rules."""
         errors = {}
         warnings = {}
 
@@ -132,13 +152,121 @@ class DocumentValidationService:
             ]
             return errors, warnings
 
+        # Vendor bill: account override rules
+        if doc_type == "supplier_invoice":
+            try:
+                self.validate_bill_line_account(item, doc_instance)
+            except ValidationError as exc:
+                errors["account"] = exc.messages
+
         if policy["pricing"]:
             errors.update(self._validate_pricing(item, doc_instance, product))
 
         if policy["discount"]:
             errors.update(self._validate_discount(item, product))
 
+        # Warnings: line drifted from its source order line
+        warnings.update(self._source_line_warnings(item))
+
         return errors, warnings
+
+    # ------------------------------------------------------------------
+    # VENDOR BILL ACCOUNT VALIDATION
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def validate_bill_line_account(line, move=None):
+        """A vendor-bill product line may use its default account, or be
+        overridden to an expense account when no receipt is expected.
+
+        `move` is optional so unsaved form rows can be checked against the
+        document being edited; saved lines fall back to `line.move`.
+        Raises ValidationError when the account is not allowed.
+        """
+        from accounting.models import AccountMove
+        from inventory.models import StockMove
+
+        move = move or getattr(line, "move", None)
+        if move is None:
+            return
+        if move.move_type != AccountMove.MoveType.IN_INVOICE:
+            return
+        if line.line_type != line.LineType.PRODUCT or not line.account_id:
+            return
+
+        product = line.product
+        if not (product.is_stockable and product.inventory_valuation == "automated"):
+            return  # non-stock lines use normal expense rules
+
+        default = resolve_account(
+            Role.STOCK_INPUT, company=move.company, product=product, required=False
+        )
+        if default and line.account_id == default.pk:
+            return  # the default is always fine
+
+        # Override: must be an expense-type account
+        if line.account.account_type.internal_group != "EXPENSE":
+            raise ValidationError(
+                f"'{line.account}' can't be used for a stock item. "
+                "Choose the stock input account or an expense account."
+            )
+
+        # Block the override if goods have already been received for this line
+        src = getattr(line, "source_line", None)
+        if src is not None and StockMove.objects.filter(
+                purchase_line=src, status=StockMove.Status.COMPLETED
+        ).exists():
+            raise ValidationError(
+                f"{product.name} was already received, so its cost sits in GRNI. "
+                "It can't be expensed; leave the stock input account."
+            )
+
+    # ------------------------------------------------------------------
+    # WARNINGS
+    # ------------------------------------------------------------------
+
+    def _source_origin_warnings(self, doc_instance):
+        """Header warning for a draft document generated from another document."""
+        origin_type = getattr(doc_instance, "origin_type", None)
+        label = self.SOURCE_ORIGIN_LABELS.get(origin_type)
+        if not label:
+            return {}
+
+        status = getattr(doc_instance, "state", getattr(doc_instance, "status", None))
+        if status and status not in self.DRAFT_STATUSES:
+            return {}
+
+        ref = getattr(doc_instance, "origin_reference", "") or ""
+        ref_text = f" {ref}" if ref else ""
+        return {
+            "source_document": [
+                f"This document was created from {label}{ref_text}. "
+                "Changes here won't update the source and may cause mismatches."
+            ]
+        }
+
+    @staticmethod
+    def _source_line_warnings(item):
+        """Row warnings when a line differs from the order line it came from.
+        Quantity is intentionally not compared: it legitimately differs on
+        partial invoicing."""
+        src = getattr(item, "source_line", None)
+        if src is None:
+            return {}
+
+        out = {}
+
+        src_price = getattr(src, "price_unit", None)
+        item_price = getattr(item, "price_unit", None)
+        if src_price is not None and item_price is not None and item_price != src_price:
+            out["price_unit"] = [f"Differs from the source line ({src_price})."]
+
+        src_disc = getattr(src, "discount_percent", None)
+        item_disc = getattr(item, "discount_percent", None)
+        if src_disc is not None and item_disc is not None and item_disc != src_disc:
+            out["discount_percent"] = [f"Differs from the source line ({src_disc}%)."]
+
+        return out
 
     # ------------------------------------------------------------------
     # PLAIN LINE VALIDATION

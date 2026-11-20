@@ -16,9 +16,9 @@
         <div>
          
          <button class="btn btn-primary btn-sm"
-                    hx-get="{% url 'accounting:get_empty_account_form' %}"
+                    hx-get="{% url 'accounting:get_empty_account_form' %}?module={{ module }}"
                     hx-disable-elt="this"
-                    hx-target="#accounting-display"
+                   hx-target="closest .module-display"
                     hx-push-url="true"
          >
               <i class="bi bi-plus-lg"></i> New
@@ -26,10 +26,12 @@
     
           <button type="button"
                   class="btn btn-danger btn-sm"
-                  hx-post="{% url 'accounting:delete_account' %}"
+                  hx-post="{% url 'accounting:delete_account' %}?module={{ module }}"
                   hx-include="[name='account_ids']:checked"
                   hx-confirm="Are you sure you want to delete the selected accounts?"
-                  hx-target="#accounting-display">
+                  hx-target="closest .module-display"
+
+          >
             <i class="ti ti-trash me-1"></i> Delete
           </button>
         </div>
@@ -38,7 +40,7 @@
         <form data-toolbar
               class="toolbar"
               id="account-filters"
-              hx-get="{% url 'accounting:accounts_list' %}"
+              hx-get="{% url 'accounting:accounts_list' %}?module={{ module }}"
               hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
               hx-target="#accounting-display"
               hx-replace-url="true">
@@ -51,10 +53,10 @@
                    name="allow_reconciliation"
                    value="true"
                    {% if request.GET.allow_reconciliation == 'true' %}checked{% endif %}
-                   hx-get="{% url 'accounting:accounts_list' %}"
+                   hx-get="{% url 'accounting:accounts_list' %}?module={{ module }}"
                    hx-trigger="change"
-                   hx-target="#accounting-display"
                    hx-include="#toolbar-search-input"
+                   hx-target="closest .module-display"
                    hx-push-url="true">
             <label class="form-check-label fw-semibold" for="allow-reconciliation-toggle">
               Allow Reconciliation
@@ -87,10 +89,11 @@
             {{ formset.management_form }}
         {% endif %}
 
-        <table class="data-table" data-checkbox-table>
+   <div class="inv-table-wrap">
+        <table class="inv-table" data-checkbox-table>
           <thead>
             <tr>
-              <th style="text-align: center; padding: 4px 4px 8px 16px; width: 32px;">
+              <th>
                 <input type="checkbox" data-select-all>
               </th>
               <th>Code</th>
@@ -136,7 +139,7 @@
                                name="is_active"
                                value="true"
                                {% if account.is_active %}checked{% endif %}
-                               hx-post="{% url 'accounting:toggle_account' account.id %}"
+                               hx-post="{% url 'accounting:toggle_account' account.id %}?module={{ module }}"
                                hx-trigger="change"
                                hx-swap="none">
                     </div>
@@ -151,7 +154,7 @@
                                name="allow_reconciliation"
                                value="true"
                                {% if account.allow_reconciliation %}checked{% endif %}
-                               hx-post="{% url 'accounting:toggle_reconciliation' account.id %}"
+                               hx-post="{% url 'accounting:toggle_reconciliation' account.id %}?module={{ module }}"
                                hx-trigger="change"
                                hx-swap="none">
                     </div>
@@ -159,8 +162,9 @@
                 <td>
                   <button type="button"
                           class="btn btn-secondary btn-sm"
-                          hx-get="{% url 'accounting:account_detail' account.id %}"
-                          hx-target="#accounting-display"
+                          hx-get="{% url 'accounting:account_detail' account.id %}?module={{ module }}"
+                                             hx-target="closest .module-display"
+
                           hx-push-url="true"
                           hx-disable-elt="this"
                   >
@@ -181,6 +185,7 @@
             {% endfor %}
           </tbody>
         </table>
+   </div>
 
       {# ── Pagination (only when more than one page) ────────────── #}
       {% if accounts.paginator.num_pages > 1 %}
@@ -194,8 +199,9 @@
             {# First #}
             {% if accounts.has_previous %}
               <a class="page-btn page-btn--arrow"
-                 hx-get="?page=1"
-                 hx-target="#accounting-display"
+                 hx-get="?page=1&module={{ module }}"
+                                    hx-target="closest .module-display"
+
                  hx-swap="innerHTML"
                  hx-push-url="true">
                 <i class="bi bi-chevron-double-left"></i>
@@ -209,8 +215,9 @@
             {# Prev #}
             {% if accounts.has_previous %}
               <a class="page-btn page-btn--arrow"
-                 hx-get="?page={{ accounts.previous_page_number }}"
-                 hx-target="#accounting-display"
+                 hx-get="?page={{ accounts.previous_page_number }}&module={{ module }}"
+                                    hx-target="closest .module-display"
+
                  hx-swap="innerHTML"
                  hx-push-url="true">
                 <i class="bi bi-chevron-left"></i>
@@ -227,8 +234,9 @@
                 <span class="page-btn active">{{ num }}</span>
               {% elif num > accounts.number|add:'-3' and num < accounts.number|add:'3' %}
                 <a class="page-btn"
-                   hx-get="?page={{ num }}"
-                   hx-target="#accounting-display"
+                   hx-get="?page={{ num }}&module={{ module }}"
+                                      hx-target="closest .module-display"
+
                    hx-swap="innerHTML"
                    hx-push-url="true">{{ num }}</a>
               {% endif %}
@@ -237,8 +245,9 @@
             {# Next #}
             {% if accounts.has_next %}
               <a class="page-btn page-btn--arrow"
-                 hx-get="?page={{ accounts.next_page_number }}"
-                 hx-target="#accounting-display"
+                 hx-get="?page={{ accounts.next_page_number }}&module={{ module }}"
+                                    hx-target="closest .module-display"
+
                  hx-swap="innerHTML"
                  hx-push-url="true">
                 <i class="bi bi-chevron-right"></i>
@@ -252,8 +261,9 @@
             {# Last #}
             {% if accounts.has_next %}
               <a class="page-btn page-btn--arrow"
-                 hx-get="?page={{ accounts.paginator.num_pages }}"
-                 hx-target="#accounting-display"
+                 hx-get="?page={{ accounts.paginator.num_pages }}&module={{ module }}"
+                                    hx-target="closest .module-display"
+
                  hx-swap="innerHTML"
                  hx-push-url="true">
                 <i class="bi bi-chevron-double-right"></i>

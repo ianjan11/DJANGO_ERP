@@ -1,195 +1,198 @@
-from datetime import timezone
-from django.db.models import When, F
-from collections import OrderedDict, defaultdict
-import random
-from pygments.lexers import data
+from collections import defaultdict
+from datetime import datetime, time
+from decimal import Decimal
+
 from dateutil.relativedelta import relativedelta
-from django.utils import timezone
-from django.db.models import DecimalField
-from django.db.models import Q, Sum, Count,Case
+
+from django.contrib.auth.decorators import login_required
+from django.db.models import (
+    Sum,
+    Count,
+    Case,
+    When,
+    F,
+    Value,
+    DecimalField,
+    Q,
+)
 from django.db.models.functions import TruncMonth
 from django.http import JsonResponse
-from inventory.models import StockMove
+from django.utils import timezone
+
+from inventory.models import (
+    StockLocation,
+    StockMove,
+    StockMoveLine,
+    StockPicking,
+    StockPickingType,
+)
 
 
+def _aware(d):
+    """date -> timezone-aware datetime at 00:00 (avoids naive-datetime warnings)."""
+    return timezone.make_aware(datetime.combine(d, time.min))
 
+
+@login_required
 def stock_view_charts(request):
-    now = timezone.now()
-    start_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    company = request.company
+    today = timezone.localdate()
 
-    # =========================================================
-    # 1️⃣ BAR CHART – Best selling products (current month)
-    # =========================================================
-    bestselling_qs = (
-        StockMove.objects
-        .filter(
-            status="COMPLETED",
-            created_at__year=now.year,
-            created_at__month=now.month,
-            product__company=request.company
-        )
-        .values("product__name")
-        .annotate(
-            total_quantity=Sum(
-                Case(
-                    When(move_type="SALES", then=F("quantity")),
-                    When(then=-F("quantity")),
-                    output_field=DecimalField()
-                )
-            )
-        )
-        .filter(total_quantity__gt=0)
-        .order_by("-total_quantity")[:10]
+    INTERNAL = StockLocation.Usage.INTERNAL
+    CUSTOMER = StockLocation.Usage.CUSTOMER
+
+    # ---------------------------------------------------------
+    # DATE RANGE: LAST 12 MONTHS
+    # ---------------------------------------------------------
+    current_month = today.replace(day=1)
+    start_month = current_month - relativedelta(months=11)
+    end_month = current_month + relativedelta(months=1)
+
+    start_dt = _aware(start_month)
+    end_dt = _aware(end_month)
+
+    months = [start_month + relativedelta(months=i) for i in range(12)]
+    month_labels = [m.strftime("%b %Y") for m in months]
+
+    # ---------------------------------------------------------
+    # BASE EXECUTED STOCK MOVEMENTS
+    # ---------------------------------------------------------
+    movement_lines = StockMoveLine.objects.filter(
+        move__product__company=company,
+        move__status=StockMove.Status.COMPLETED,
+        created_at__gte=start_dt,
+        created_at__lt=end_dt,
     )
 
-    def random_color():
-        return f"rgba({random.randint(0,255)}, {random.randint(0,255)}, {random.randint(0,255)}, 0.6)"
-
-    bar_labels = [item["product__name"] for item in bestselling_qs]
-    bar_data = [float(item["total_quantity"]) for item in bestselling_qs]
-    bar_bg = [random_color() for _ in bar_data]
-    bar_border = [c.replace("0.6", "1") for c in bar_bg]
-
-    # =========================================================
-    # 2️⃣ PIE CHART – Delivery status (current month)
-    # =========================================================
-    delivery_stats = (
-        DeliveryOrder.objects
-        .filter(created_at__gte=start_month, company=request.company)
-        .aggregate(
-            pending=Count("id", filter=Q(status="PENDING")),
-            completed=Count("id", filter=Q(status="COMPLETED")),
-            cancelled=Count("id", filter=Q(status="CANCELLED")),
-        )
+    # ---------------------------------------------------------
+    # LINE CHART: MONTHLY NET SALES (out = +, customer return = -)
+    # ---------------------------------------------------------
+    net_quantity = Case(
+        When(source_location__usage=INTERNAL, dest_location__usage=CUSTOMER,
+             then=F("quantity")),
+        When(source_location__usage=CUSTOMER, dest_location__usage=INTERNAL,
+             then=-F("quantity")),
+        default=Value(0),
+        output_field=DecimalField(max_digits=20, decimal_places=6),
     )
 
-    pie_labels = ["Pending", "Completed", "Cancelled"]
-    pie_data = [
-        delivery_stats["pending"],
-        delivery_stats["completed"],
-        delivery_stats["cancelled"],
-    ]
-
-    # =========================================================
-    # 3️⃣ LINE CHART – Sales trend (last 12 months)
-    # =========================================================
-    movement_qs = (
-        StockMove.objects
-        .filter(
-            status="COMPLETED",
-            product__company=request.company,
-        )
-        .annotate(month=TruncMonth("created_at"))
+    monthly_sales = (
+        movement_lines
+        .annotate(month=TruncMonth("created_at"), net_quantity=net_quantity)
         .values("month")
-        .annotate(
-            total_quantity=Sum(
-                Case(
-                    When(move_type="SALES", then=F("quantity")),
-                    When(move_type="CUSTOMER RETURN", then=-F("quantity")),
-                    output_field=DecimalField()
-                )
-            )
-        )
+        .annotate(total=Sum("net_quantity"))
         .order_by("month")
     )
 
-    months_dict = OrderedDict()
-    for i in range(11, -1, -1):
-        month = (now - relativedelta(months=i)).replace(day=1)
-        months_dict[month.strftime("%b %Y")] = 0
+    # TruncMonth returns an aware datetime; localise before formatting the key.
+    def _key(dt):
+        return timezone.localtime(dt).strftime("%Y-%m") if timezone.is_aware(dt) else dt.strftime("%Y-%m")
 
-    for entry in movement_qs:
-        key = entry["month"].strftime("%b %Y")
-        if key in months_dict:
-            months_dict[key] = float(entry["total_quantity"] or 0)
+    monthly_sales_map = {_key(r["month"]): r["total"] or Decimal("0") for r in monthly_sales}
 
-    line_labels = list(months_dict.keys())
-    line_data = list(months_dict.values())
+    line_chart = {
+        "labels": month_labels,
+        "data": [float(monthly_sales_map.get(m.strftime("%Y-%m"), Decimal("0"))) for m in months],
+    }
 
-    # =========================================================
-    # 4️⃣ APEX COLUMN – Top 5 products per month (last 12 months)
-    # =========================================================
-    top_products_qs = (
-        StockMove.objects
-        .filter(
-            status="COMPLETED",
-            move_type__in=["SALES", "CUSTOMER RETURN"],
-            product__company=request.company,
-        )
-        .annotate(month=TruncMonth("created_at"))
-        .values("month", "product__name")
-        .annotate(
-            total_quantity=Sum(
-                Case(
-                    When(move_type="SALES", then=F("quantity")),
-                    When(move_type="CUSTOMER RETURN", then=-F("quantity")),
-                    output_field=DecimalField()
-                )
-            )
-        )
-        .filter(total_quantity__gt=0)
-        .order_by("month", "-total_quantity")
+    # ---------------------------------------------------------
+    # TOP 5 PRODUCTS PER MONTH (outgoing only)
+    # ---------------------------------------------------------
+    outgoing_lines = movement_lines.filter(
+        source_location__usage=INTERNAL,
+        dest_location__usage=CUSTOMER,
     )
 
-    # Prepare months
-    apex_months = OrderedDict()
-    for i in range(11, -1, -1):
-        m = (now - relativedelta(months=i)).replace(day=1)
-        apex_months[m.strftime("%b %Y")] = {}
+    top_products = (
+        outgoing_lines
+        .values("move__product__name")
+        .annotate(total_quantity=Sum("quantity"))
+        .order_by("-total_quantity")[:5]
+    )
+    top_product_names = [r["move__product__name"] for r in top_products]
 
-    # Group rows by month
-    monthly_products = defaultdict(list)
-    for row in top_products_qs:
-        key = row["month"].strftime("%b %Y")
-        if key in apex_months:
-            monthly_products[key].append(row)
+    product_monthly_data = (
+        outgoing_lines
+        .filter(move__product__name__in=top_product_names)
+        .annotate(month=TruncMonth("created_at"))
+        .values("move__product__name", "month")
+        .annotate(total=Sum("quantity"))
+        .order_by("month")
+    )
 
-    # Keep only best 5 products per month
-    for month, rows in monthly_products.items():
-        for r in rows[:5]:
-            apex_months[month][r["product__name"]] = float(r["total_quantity"])
+    product_data_map = defaultdict(dict)
+    for row in product_monthly_data:
+        product_data_map[row["move__product__name"]][_key(row["month"])] = row["total"] or Decimal("0")
 
-    # Collect all unique products
-    products = set()
-    for data in apex_months.values():
-        products.update(data.keys())
-
-    # Build Apex series
-    apex_series = []
-    for product in products:
-        apex_series.append({
-            "name": product,
-            "data": [apex_months[m].get(product, 0) for m in apex_months]
-        })
-
-    # =========================================================
-    # 🔁 FINAL RESPONSE
-    # =========================================================
-    return JsonResponse({
-        "bar_chart": {
-            "labels": bar_labels,
-            "data": bar_data,
-            "background": bar_bg,
-            "border": bar_border,
-        },
-        "pie_chart_series": {
-            "labels": pie_labels,
-            "series": pie_data,
-        },
-        "line_chart": {
-            "labels": line_labels,
-            "data": line_data,
-        },
-        "apex_top_products": {
-            "months": list(apex_months.keys()),
-            "series": apex_series
+    apex_series = [
+        {
+            "name": name,
+            "data": [
+                float(product_data_map.get(name, {}).get(m.strftime("%Y-%m"), Decimal("0")))
+                for m in months
+            ],
         }
+        for name in top_product_names
+    ]
+
+    apex_top_products = {"months": month_labels, "series": apex_series}
+
+    # ---------------------------------------------------------
+    # BEST / LEAST SELLING — CURRENT MONTH
+    # Only products that actually sold this month are ranked.
+    # ---------------------------------------------------------
+    this_month_sales = list(
+        outgoing_lines
+        .filter(created_at__gte=_aware(current_month), created_at__lt=end_dt)
+        .values("move__product__name")
+        .annotate(total=Sum("quantity"))
+        .order_by("-total")
+    )
+
+    def _ranking(rows):
+        return {
+            "labels": [r["move__product__name"] for r in rows],
+            "data": [float(r["total"] or 0) for r in rows],
+        }
+
+    best_selling = _ranking(this_month_sales[:5])
+    least_selling = _ranking(sorted(this_month_sales, key=lambda r: r["total"])[:5])
+
+    # ---------------------------------------------------------
+    # PICKING STATUS HELPER
+    # Pending = draft + waiting + confirmed | Ready = assigned
+    # ---------------------------------------------------------
+    def get_picking_status(code):
+        counts = StockPicking.objects.filter(
+            company=company,
+            picking_type__code=code,
+            created_at__gte=start_dt,
+            created_at__lt=end_dt,
+        ).aggregate(
+            draft=Count("id", filter=Q(status=StockPicking.Status.DRAFT)),
+            waiting=Count("id", filter=Q(status=StockPicking.Status.WAITING)),
+            confirmed=Count("id", filter=Q(status=StockPicking.Status.CONFIRMED)),
+            assigned=Count("id", filter=Q(status=StockPicking.Status.ASSIGNED)),
+            completed=Count("id", filter=Q(status=StockPicking.Status.COMPLETED)),
+            cancelled=Count("id", filter=Q(status=StockPicking.Status.CANCELLED)),
+        )
+        return {
+            "labels": ["Pending", "Ready", "Completed", "Cancelled"],
+            "series": [
+                counts["draft"] + counts["waiting"] + counts["confirmed"],
+                counts["assigned"],
+                counts["completed"],
+                counts["cancelled"],
+            ],
+        }
+
+    return JsonResponse({
+        "line_chart": line_chart,
+        "apex_top_products": apex_top_products,
+        "best_selling": best_selling,
+        "least_selling": least_selling,
+        "pie_delivery": get_picking_status(StockPickingType.Code.OUTGOING),
+        "pie_receipts": get_picking_status(StockPickingType.Code.INCOMING),
+        "pie_transfers": get_picking_status(StockPickingType.Code.INTERNAL),
+        "pie_returns": get_picking_status(StockPickingType.Code.RETURN),
     })
-
-
-
-
-
-
-
-

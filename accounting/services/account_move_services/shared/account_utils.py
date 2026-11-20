@@ -1,6 +1,11 @@
 from decimal import Decimal, ROUND_HALF_UP
 from django.core.exceptions import ValidationError
 
+from accounting.services.account_resolver import resolve_account, Role
+
+_KIND = {"revenue": Role.REVENUE, "expense": Role.EXPENSE,
+         "inventory": Role.INVENTORY, "cogs": Role.COGS}
+
 
 # ---------------------------------------------------------------------------
 # Shared utility
@@ -28,20 +33,19 @@ def round2(val) -> Decimal:
 # ---------------------------------------------------------------------------
 
 
+from accounting.services.account_resolver import resolve_account, Role, SPEC
+
+_KEY_ROLE = {s["setting"]: r for r, s in SPEC.items() if "setting" in s}
+
 def get_company_account(company, key: str):
-    from accounting.models import CompanyAccountSetting
-
-    """Fetch a company-level default GL account or raise ValidationError."""
+    role = _KEY_ROLE.get(key)
+    if role:
+        return resolve_account(role, company=company)
+    from accounting.models import CompanyAccountSetting   # keys not modelled as roles (cash, bank, ...)
     try:
-        return CompanyAccountSetting.objects.get(
-            company=company, key=key
-        ).account
+        return CompanyAccountSetting.objects.get(company=company, key=key).account
     except CompanyAccountSetting.DoesNotExist:
-        raise ValidationError(
-            f"No '{key}' account configured for company '{company}'. "
-            "Add it in Company Account Settings."
-        )
-
+        raise ValidationError(f"No '{key}' account configured for company '{company}'.")
 
 def assert_reconcilable(account, label: str) -> None:
     if not account.allow_reconciliation:
@@ -119,48 +123,10 @@ def make_move_line(
         memo=memo,
     )
 
-def resolve_line_account(item, invoice, account_type):
-    product = item.product
-    category = product.category
 
-    if account_type == "revenue":
-        if product.revenue_account:
-            return product.revenue_account
 
-        account = category.get_revenue_account()
-        if account:
-            return account
-
-    elif account_type == "cogs":
-        if product.cogs_account:
-            return product.cogs_account
-
-        account = category.get_cogs_account()
-        if account:
-            return account
-
-    elif account_type == "expense":
-        if product.expense_account:
-            return product.expense_account
-
-        account = category.get_expense_account()
-        if account:
-            return account
-
-    elif account_type == "inventory":
-        account = category.get_valuation_account()
-        if account:
-            return account
-
-    elif account_type == "stock_input":
-        account = category.get_stock_input_account()
-        if account:
-            return account
-
-    raise ValidationError(
-        f"No {account_type} account configured for "
-        f"product '{product.name}'."
-    )
+def resolve_line_account(item, invoice, kind):
+    return resolve_account(_KIND[kind], company=invoice.company, line=item)
 
 
 def get_company_journal(company, key: str):

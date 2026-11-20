@@ -1,0 +1,113 @@
+
+  /* ── Warehouse cards (uses tokens from base.css) ── */
+  .wh-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-16);
+    padding: var(--spacing-16);
+  }
+
+  .wh-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-16);
+    padding: var(--spacing-20);
+    background: var(--surface-card);
+    border: 1px solid var(--color-mist);
+    border-radius: var(--radius-cards);
+    cursor: pointer;
+    transition: border-color .12s ease, box-shadow .12s ease;
+  }
+
+  .wh-card:hover,
+  .wh-card:focus-visible {
+    border-color: var(--color-fog);
+    box-shadow: rgba(17, 26, 74, 0.06) 0px 2px 6px;
+    outline: none;
+  }
+
+  .wh-card:focus-visible {
+    outline: 2px solid var(--color-sky-blue);
+    outline-offset: 2px;
+  }
+
+  .wh-card-top {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-12);
+  }
+
+  .wh-icon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-body-lg);
+    color: var(--color-deep-indigo);
+    background: var(--surface-canvas);
+    border: 1px solid var(--color-mist);
+    border-radius: var(--radius-lg);
+  }
+
+  .wh-title {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .wh-name {
+    margin: 0;
+    font-size: var(--text-body);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-body);
+    color: var(--color-deep-indigo);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .wh-code {
+    font-family: var(--font-sfmono);
+    font-size: var(--text-caption);
+    color: var(--color-slate);
+  }
+
+  .wh-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-8);
+    padding-top: var(--spacing-12);
+    border-top: 1px solid var(--color-mist);
+    font-size: var(--text-body-sm);
+    color: var(--color-slate);
+  }
+
+  .wh-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-8);
+  }
+
+  .wh-meta-item i { color: var(--color-fog); }
+
+  .wh-meta-item strong {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-deep-indigo);
+  }
+
+  .wh-chevron {
+    color: var(--color-fog);
+    transition: transform .12s ease, color .12s ease;
+  }
+
+  .wh-card:hover .wh-chevron {
+    color: var(--color-deep-indigo);
+    transform: translateX(2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wh-card, .wh-chevron { transition: none; }
+    .wh-card:hover .wh-chevron { transform: none; }
+  }

@@ -36,7 +36,7 @@ class HeaderService:
 
             # 1. Coerce
             try:
-                coerced = self._coerce(field, raw_value, updatable_fields)
+                coerced = self._coerce(source,field, raw_value, updatable_fields)
             except ValueError as exc:
                 errors[field] = [str(exc)]
                 continue
@@ -78,9 +78,9 @@ class HeaderService:
     # COERCE
     # =====================================================
 
-    def _coerce(self, field, value, updatable_fields):
+    def _coerce(self,source, field, value, updatable_fields):
         if value in (None, ""):
-            return None
+            return self._blank_value(source, field)
 
         target = updatable_fields.get(field)
 
@@ -115,6 +115,15 @@ class HeaderService:
             return FieldNormalizerService.to_bool(value)
 
         return value
+
+    @staticmethod
+    def _blank_value(source, field):
+        model_field = source._meta.get_field(field)
+        if model_field.null:
+            return None  # partner, payment_term, due_date...
+        if model_field.empty_strings_allowed:
+            return ""  # narration, ref, memo (CharField/TextField)
+        raise ValueError("This field is required.")
 
     # =====================================================
     # RESOLVE FK

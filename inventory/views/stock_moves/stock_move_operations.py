@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
+from django.urls.base import reverse
 from django.views.decorators.http import require_GET
 
 from inventory.models import StockMoveLine, StockPicking
@@ -28,6 +29,8 @@ def _build_context(request, picking, lines_queryset):
     return {
         "picking": picking,
         "lines": page_obj,
+        "back_url": reverse("inventory:picking_detail", kwargs={"picking_id": picking.id}),
+        "back_label": "Return to source",
     }
 
 
@@ -59,6 +62,7 @@ def stock_move_operations(request, picking_id):
         .order_by("-created_at",)
     )
 
+
     context = _build_context(request, picking, lines_queryset)
 
     if request.headers.get("HX-Request"):
@@ -73,3 +77,4 @@ def stock_move_operations(request, picking_id):
         "inventory/move_operations/move_operations.html",
         context,
     )
+

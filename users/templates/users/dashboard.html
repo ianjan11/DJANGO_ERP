@@ -6,6 +6,15 @@
 
 <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 <div class="dash-wrapper content-area" id="main-display">
+
+     <div class="dash-toolbar">
+        <a class="dash-switch" href="{% url 'users:select-company' %}">
+    <i class="bi bi-arrow-left-right"></i>
+    <span>Switch Company</span>
+</a>
+    </div>
+
+
     <div class="dash-nav-grid">
 
         <div class="dash-item">

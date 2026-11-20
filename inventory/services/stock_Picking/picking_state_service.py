@@ -128,6 +128,9 @@ class PickingStateService:
         label = self._label(picking)
         counts = self._move_counts(picking) if counts is None else counts
 
+        if not counts:
+            return fail({label: [f"cannot validate {label} without items"]})
+
         if counts.get(StockMove.Status.COMPLETED):
             return fail({label: [f"cannot cancel {label} with completed lines; "
                                  "create a reverse move instead"]})

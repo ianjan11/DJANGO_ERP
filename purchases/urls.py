@@ -7,7 +7,9 @@ urlpatterns = [
 #------------------------------------------ purchase Urls------------------------------------------------#
 
    path('purchases/dashboard/', views.purchases_dashboard, name='purchases_dashboard'),
-   path("purchases/create/", views.purchase_create_or_detail, name="purchase_create_or_detail"),
+    path('purchases/charts/', views.purchases_view_charts, name='purchases_charts'),
+
+    path("purchases/create/", views.purchase_create_or_detail, name="purchase_create_or_detail"),
    path("purchases/<int:purchase_id>/", views.purchase_create_or_detail, name="purchase_create_or_detail"),
 
    path('purchases/', views.purchases_list, name='purchases_list'),

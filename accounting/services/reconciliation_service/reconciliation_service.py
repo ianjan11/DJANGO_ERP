@@ -212,6 +212,7 @@ class ReconciliationService:
                 for line in self.lines
             }
 
+
             missing_ids = (
                 self.line_ids - loaded_ids
             )
@@ -1058,7 +1059,7 @@ class ReconciliationService:
         Derived from PartialReconcile records.
 
         NOTE:
-        This assumes move.amount_total represents the amount whose
+        Move.amount_total represents the amount whose
         reconciliation should drive the move's residual.
 
         If payment AccountMoves use a different residual model, payment
@@ -1152,6 +1153,28 @@ class ReconciliationService:
                     "amount_residual",
                 ]
             )
+
+        # --------------------------------------------------------------
+        # SALES INVOICE
+        # --------------------------------------------------------------
+
+        if hasattr(move, "sales_invoice"):
+            invoice = move.sales_invoice
+
+            invoice.payment_state = (
+                    payment_state
+                )
+
+            invoice.amount_residual = (
+                    amount_residual
+                )
+
+            invoice.save(
+                    update_fields=[
+                        "payment_state",
+                        "amount_residual",
+                    ]
+                )
 
     # ==================================================================
     # EXECUTE
@@ -1458,3 +1481,34 @@ class ReconciliationService:
         # --------------------------------------------------------------
 
         return self.build_result()
+
+
+
+
+    def unreconcile(self, line_ids, reconcile_date=None):
+        ids = {int(i) for i in line_ids}
+        with transaction.atomic():
+            partials = list(
+                PartialReconcile.objects.select_for_update(of=("self",))
+                .select_related("debit_line__move", "credit_line__move")
+                .filter(Q(debit_line_id__in=ids) | Q(credit_line_id__in=ids),
+                        company=self.company)
+            )
+            if not partials:
+                return 0
+
+            lines = {}
+            moves = {}
+            for p in partials:
+                lines[p.debit_line_id] = p.debit_line
+                lines[p.credit_line_id] = p.credit_line
+                moves[p.debit_line.move_id] = p.debit_line.move
+                moves[p.credit_line.move_id] = p.credit_line.move
+
+            PartialReconcile.objects.filter(pk__in=[p.pk for p in partials]).delete()
+
+            for line in lines.values():
+                self._sync_line_state(line)
+            for move in moves.values():
+                self._sync_move_state(move, reconcile_date or timezone.now().date())
+            return len(partials)

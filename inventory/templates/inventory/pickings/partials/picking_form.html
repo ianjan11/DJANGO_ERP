@@ -9,9 +9,9 @@
     {# ── Card title ── #}
     <div class="table-toolbar">
       <h5 class="table-toolbar-title">
-        {% if picking and picking.pk %}Edit Picking: {{ picking.name|default:picking.pk }}{% else %}New Picking{% endif %}
+        {% if picking and picking.name %} {{ picking.name }}{% else %}New {{picking.picking_type.code }} Picking{% endif %}
       </h5>
-
+                       {% include "core/bread_crumbs.html" %}
 
     </div>
 
@@ -50,10 +50,8 @@
       <div class="detail-header">
 
 
-        <div class="detail-cols w-100">
-          <div id="header-form-wrapper" class="form-header w-100">
+        <div class="detail-cols">
             {% include 'inventory/pickings/partials/picking_header_form.html' %}
-          </div>
 
         </div>
       </div>

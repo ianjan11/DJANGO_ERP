@@ -1,9 +1,10 @@
 {% extends "core/settings/base.html" %}
 {% load static %}
 
-
- {% block content %}
-  {% include "core/settings/partials/settings_partial.html" %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/settings.css' %}?v={{ now|date:'U' }}">
 {% endblock %}
 
-
+{% block content %}
+  {% include "core/settings/partials/settings_partial.html" %}
+{% endblock %}

@@ -1,71 +1,164 @@
-<form id="order-header-form"
-      hx-post="{% url 'sales:sales_order_update' %}"
-      hx-trigger="change[event.target.classList.contains('order-header-field')] delay:300ms"
-      hx-swap="none"
-      hx-sync="this:queue last">
+{% load humanize %}
 
-    {% csrf_token %}
-    <input type="hidden" id="order-id-input" name="order_id" value="{{ order.id }}">
-    <input type="hidden" id="status" name="status" value="{{ order.status }}">
-   
- <div id="header-form-wrapper" class="form-header">
-           {% include "sales/partials/order_header_form_inner.html" %}
-     </div>
-     
-    
-    <div id="items-management-form">
-    {{ formset.management_form }}
-</div>
-    <div class="inv-table-wrap ">
-  <table class="inv-table">
-     <thead>
-  <tr>
-    <th style="display:none"></th>
-    <th style="width:200px; min-width:200px">Product</th>
-      <th style="width:200px; min-width:200px">Description</th>
-    <th style="width:100px; min-width:100px">Quantity</th>
-          <th style="width:100px; min-width:100px">Uom</th>
-    <th style="width:140px; min-width:140px">Unit Price</th>
-    <th style="width:130px; min-width:130px">Discount %</th>
-      <th style="width:240px; min-width:240px" class="col-left">Taxes</th>
-    <th style="width:140px; min-width:140px" class="col-left">Subtotal</th>
-    <th style="width:48px;  min-width:48px"  class="col-center"></th>
-  </tr>
+<div class="main-wrapper">
+  <div class="detail-card">
 
+    {# ── Card title ── #}
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        {% if order and order.order_number %} {{ order.order_number|default:order.pk }}{% else %}New Sales Order{% endif %}
+      </h5>
+                       {% include "core/bread_crumbs.html" %}
 
-</thead>
-
-<tbody id="order-items">
-    {% for form in formset %}
-        {% include "sales/partials/order_item_row.html" with form=form %}
-    {% endfor %}
-</tbody>
-
-    </table>
     </div>
-    <!-- Add button -->
-    <button
-    id="row-btn"
-    style="display:none"
-    class="btn btn-secondary m-1 btn-sm"
-    type="button"
-    hx-get="{% url 'sales:sales_order_item_row' order.id %}"
-    hx-target="#order-items"
-    hx-swap="beforeend"
-    hx-vals='js:{
-    total_forms: document.querySelector("[name=items-TOTAL_FORMS]").value,
-    partner_id: document.querySelector("#partner-select")?.value ?? ""
-}'
-    hx-on::after:swap="
-    let total = document.querySelector('[name=items-TOTAL_FORMS]');
-    total.value = parseInt(total.value) + 1;" >
-    <i class="bi bi-plus"> </i>  Add Row
-</button>
 
-     <div id="invoice-total-container" class="totals-container">
-         <div>
-             {% include "sales/partials/order_totals.html" with form=form %}
-         </div>
-     </div>
-</form>
+    <div class="action-card">
+      {% include "sales/partials/action_buttons.html" %}
 
+      <div class="action-card-status">
+        {% if order.status == "DRAFT" %}
+          <span class="badge badge--draft"><i class="bi bi-pencil-square"></i> Quotation</span>
+        {% elif order.status == "SENT" %}
+          <span class="badge badge--posted"><i class="bi bi-send-fill"></i> Quotation Sent</span>
+        {% elif order.status == "CONFIRMED" %}
+          <span class="badge badge--completed"><i class="bi bi-check-circle-fill"></i> Confirmed</span>
+        {% elif order.status == "CANCELLED" %}
+          <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
+        {% else %}
+          <span class="badge">{{ order.status }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <form id="order-header-form"
+          hx-post="{% url 'sales:sales_order_update' %}"
+          hx-trigger="change[event.target.classList.contains('order-header-field')] delay:300ms"
+          hx-swap="none"
+          hx-sync="this:queue last">
+
+      {% csrf_token %}
+      <input type="hidden" id="order-id-input" name="order_id" value="{{ order.id }}">
+      <input type="hidden" id="status" name="status" value="{{ order.status }}">
+
+      {# ══════════ HEADER: IMPORTANT INFO ══════════ #}
+      <div class="detail-header">
+        <div class="detail-cols">
+            {% include 'sales/partials/order_header_form_inner.html' %}
+        </div>
+      </div>
+
+      {# ══════════ TABS: OPERATIONS & SECONDARY DETAILS ══════════ #}
+      <div class="tabs" data-tabs>
+
+        <div class="tabs-bar" role="tablist">
+          <button type="button" class="tabs-btn active" data-tab="operations" role="tab"
+                  {% if formset.non_form_errors %}data-error="1"{% endif %}>
+            <i class="bi bi-list-check"></i> Order Lines &amp; Items
+            {% if formset.non_form_errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
+
+          <button type="button" class="tabs-btn" data-tab="notes" role="tab">
+            <i class="bi bi-journal-text"></i> Additional Info &amp; Notes
+          </button>
+        </div>
+
+        {# ── Tab 1: Order Lines & Items ── #}
+        <div class="tabs-panel active" data-tab-panel="operations" role="tabpanel">
+
+          <div id="items-management-form">
+            {{ formset.management_form }}
+          </div>
+
+          {% if formset.non_form_errors %}
+            <div style="margin-bottom: var(--spacing-12);
+                        padding: var(--spacing-12);
+                        background: #fce8e8;
+                        border: 1px solid #f7c1c1;
+                        border-radius: var(--radius-cards);
+                        font-size: var(--text-body-sm);
+                        color: #9b2626;">
+              {{ formset.non_form_errors }}
+            </div>
+          {% endif %}
+
+          <div class="inv-table-wrap">
+            <table class="inv-table">
+              <thead>
+                <tr>
+                  <th style="display:none"></th>
+                  <th style="width:200px; min-width:200px">Product</th>
+                  <th style="width:200px; min-width:200px">Description</th>
+                  <th style="width:100px; min-width:100px">Quantity</th>
+                  <th style="width:100px; min-width:100px">Uom</th>
+                  <th style="width:140px; min-width:140px">Unit Price</th>
+                  <th style="width:130px; min-width:130px">Discount %</th>
+                  <th style="width:240px; min-width:240px" class="col-left">Taxes</th>
+                  <th style="width:140px; min-width:140px" class="col-left">Subtotal</th>
+                  <th style="width:48px;  min-width:48px" class="col-center"></th>
+                </tr>
+              </thead>
+              <tbody id="order-items">
+                {% for form in formset %}
+                  {% include "sales/partials/order_item_row.html" with form=form %}
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <button
+                id="row-btn"
+                style="display:none"
+                class="btn btn-secondary m-1 btn-sm mt-3"
+                type="button"
+                hx-get="{% url 'sales:sales_order_item_row' order.id %}"
+                hx-target="#order-items"
+                hx-swap="beforeend"
+                hx-vals='js:{
+                    total_forms: document.querySelector("[name=items-TOTAL_FORMS]").value,
+                    partner_id: document.querySelector("#partner-select")?.value ?? ""
+                }'
+                hx-on::after:swap="
+                    let total = document.querySelector('[name=items-TOTAL_FORMS]');
+                    total.value = parseInt(total.value) + 1;
+                ">
+                <i class="bi bi-plus me-1"></i> Add Row
+            </button>
+          </div>
+
+          <div id="invoice-total-container" class="totals-container mt-4">
+            <div>
+              {% include "sales/partials/order_totals.html" with form=form %}
+            </div>
+          </div>
+
+        </div>
+
+        {# ── Tab 2: Additional Info & Notes ── #}
+        <div class="tabs-panel" data-tab-panel="notes" role="tabpanel">
+          <div class="tabs-grid">
+            <div>
+              <div class="form-group">
+                <label for="{{ header_form.notes.id_for_label }}" class="form-label mb-0">Note</label>
+                {{ header_form.notes }}
+                {% for error in header_form.notes.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+
+                <div class="form-group">
+    <label for="{{ header_form.currency.id_for_label }}" class="form-label mb-0">Currency</label>
+    {{ header_form.currency }}
+    {% for error in header_form.currency.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>{# /tabs #}
+
+    </form>
+  </div>
+</div>

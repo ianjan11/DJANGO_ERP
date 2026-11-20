@@ -33,7 +33,9 @@ from core.utils import htmx_error, htmx_success
 logger = logging.getLogger("sales.invoice")
 
 from django.db.models import Q
-from accounting.models import AccountMove,  PartialReconcile
+from accounting.models import AccountMove, PartialReconcile, AccountMoveLine
+
+journal_state = AccountMoveStateService()
 
 CUSTOMER_MOVE_TYPES = ["out_invoice", "out_refund"]
 VENDOR_MOVE_TYPES = ["in_invoice", "in_refund"]
@@ -47,7 +49,9 @@ def _get_applicable_move_types(move_type: str) -> list[str]:
     return CUSTOMER_MOVE_TYPES + VENDOR_MOVE_TYPES
 
 def _build_context(request, move, header_form, formset):
-    lines = list(move.lines.select_related("account").all())
+    lines = list(move.lines.select_related("account").exclude(
+        line_type = AccountMoveLine.LineType.PRODUCT
+    ))
 
     # 1. Existing Reconciliations linked to this move's lines
     partial_reconcile = PartialReconcile.objects.filter(
@@ -98,6 +102,11 @@ def _build_context(request, move, header_form, formset):
         "formset": formset,
         "lines": lines,
         "partial_reconcile": partial_reconcile,
+        "flags" : journal_state.get_flags(move),
+        "back_url": reverse("accounting:journal_entries"),
+        "back_label": "Journal Entries ",
+        "target": "#accounting-display"
+
     }
 
 @login_required
@@ -207,6 +216,7 @@ def journal_create_or_detail(request, move_id=None):
         instance=move,
     )
 
+
     formset = MoveLineFormSet(
         request.POST or None,
         instance=move,
@@ -232,7 +242,6 @@ def journal_create_or_detail(request, move_id=None):
 @login_required
 def journal_item_row(request, move_id):
     move = load_account_move(move_id, request, for_update=False)
-
 
     partner_id = move.partner_id
 
@@ -269,7 +278,6 @@ def journal_item_row(request, move_id):
         {
             'form': form,
             'move': move,
-            'invoice': move,  # Compatibility alias if template references invoice
         },
         request=request,
     )

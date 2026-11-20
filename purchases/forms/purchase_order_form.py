@@ -54,7 +54,7 @@ class PurchaseOrderForm(forms.ModelForm):
                     'Manually adjusted prices may be overwritten. Continue?'
                 ),
             }),
-            'notes': forms.Textarea(attrs={
+            'notes': forms.TextInput(attrs={
                 'id': 'notes-textarea',
                 'class': 'purchase-header-field form-textarea',
             }),

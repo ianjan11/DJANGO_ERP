@@ -6,21 +6,23 @@
     {# ── Card title ── #}
     <div class="table-toolbar">
       <h5 class="table-toolbar-title">
-        {% if account and account.pk %}Edit Account: {{ Account.name }}{% else %}New Account{% endif %}
+        {% if account and account.pk %}{{ Account.name }}{% else %}New Account{% endif %}
       </h5>
+                       {% include "core/bread_crumbs.html" %}
+
     </div>
 
     <form id="accountForm"
           method="post"
-          hx-post="{% if account and account.pk %}{% url 'accounting:account_edit' account.id %}{% else %}{% url 'accounting:create_account' %}{% endif %}"
-          hx-target="#accounting-display"
-          hx-swap="innerHTML"
-          hx-push-url="true">
+          hx-post="{% if account and account.pk %}{% url 'accounting:account_edit' account.id %}?module={{ module }}{% else %}{% url 'accounting:create_account' %}?module={{ module }}{% endif %}"
+          hx-target="closest .module-display"
+          hx-swap="innerHTML">
 
       {% csrf_token %}
 
       {# ══════════ HEADER ══════════ #}
       <div class="detail-header">
+
 
         <div class="detail-cols">
 
@@ -35,6 +37,7 @@
               {% for error in account_form.code.errors %}
                 <div class="invalid-feedback d-block">{{ error }}</div>
               {% endfor %}
+
             </div>
 
             <div class="form-group">
@@ -62,6 +65,21 @@
 
           {# Column 2 — Structure & Currency #}
           <div class="detail-col">
+
+
+              <div class="form-group">
+                <div class="form-check form-switch">
+                  {{ account_form.is_active }}
+                  <label class="form-label mx-2" for="{{ account_form.is_active.id_for_label }}">
+                    Active
+                  </label>
+                </div>
+                <small class="text-muted d-block mt-1">Inactive accounts are hidden from dropdowns but retain their history.</small>
+                {% for error in account_form.is_active.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+
             <div class="form-group">
               <label for="{{ account_form.internal_type.id_for_label }}" class="form-label mb-0">Internal Type</label>
               {{ account_form.internal_type }}
@@ -118,8 +136,11 @@
         <div class="tabs-panel active" data-tab-panel="settings" role="tabpanel">
           <div class="tabs-grid">
             <div>
+
+
+
               <div class="form-group">
-                <div class="form-check">
+                <div class="form-check form-switch">
                   {{ account_form.is_control_account }}
                   <label class="form-check-label" for="{{ account_form.is_control_account.id_for_label }}">
                     Control Account
@@ -131,8 +152,11 @@
                 {% endfor %}
               </div>
 
+
+
               <div class="form-group">
-                <div class="form-check">
+
+                  <div class="form-check form-switch">
                   {{ account_form.allow_reconciliation }}
                   <label class="form-check-label" for="{{ account_form.allow_reconciliation.id_for_label }}">
                     Allow Reconciliation
@@ -145,20 +169,7 @@
               </div>
             </div>
 
-            <div>
-              <div class="form-group">
-                <div class="form-check">
-                  {{ account_form.is_active }}
-                  <label class="form-check-label" for="{{ account_form.is_active.id_for_label }}">
-                    Active
-                  </label>
-                </div>
-                <small class="text-muted d-block mt-1">Inactive accounts are hidden from dropdowns but retain their history.</small>
-                {% for error in account_form.is_active.errors %}
-                  <div class="invalid-feedback d-block">{{ error }}</div>
-                {% endfor %}
-              </div>
-            </div>
+
           </div>
         </div>
 
@@ -191,8 +202,8 @@
       <div class="detail-card-footer">
         <button type="button"
                 class="btn btn-secondary"
-                hx-get="{% url 'accounting:accounts_list' %}"
-                hx-target="#accounting-display"
+                hx-get="{% url 'accounting:accounts_list' %}?module={{ module }}"
+                hx-target="closest .module-display"
                 hx-swap="innerHTML"
                 hx-push-url="true">
           <i class="bi bi-arrow-left me-1"></i> Back

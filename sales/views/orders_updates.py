@@ -34,6 +34,7 @@ from sales.services.sales_order_service.sales_order_confirm import confirm_sales
 from sales.services.sales_order_service.sales_order_state_service import SalesOrdersStateService
 
 logger = logging.getLogger('sales.invoice')
+order_state = SalesOrdersStateService()
 
 def _build_context(request, order, header_form, formset):
 
@@ -76,8 +77,11 @@ def _build_context(request, order, header_form, formset):
         'currencies': Currency.objects.all(),
         'is_new': order is None,
         'partner_type': 'customer',
+        'flags' : order_state.get_flags(order),
+        "back_url": reverse("sales:sales_orders_list"),
+        "back_label": "Orders ",
+        "target": "#sales-display"
     }
-
 
 def sales_order_item_row(request, order_id):
     order = load_sales_order(order_id=order_id, request=request)
@@ -332,8 +336,8 @@ def delete_order_view(request, order_id):
             if not request.user.is_staff and order.created_by != request.user:
                 raise PermissionDenied
 
-            state_service = SalesOrdersStateService()
-            if not state_service.can_delete(order):
+
+            if not order_state.can_delete(order):
                 raise ValidationError("This sales order can no longer be deleted.")
 
             order_pk, partner_id, order_status = order.pk, order.partner_id, order.status
@@ -369,7 +373,6 @@ def delete_order_view(request, order_id):
 
 @login_required
 def confirm_order_view(request, order_id):
-
     detail_url = reverse("sales:sales_order_create_or_detail", kwargs={"order_id": order_id})
 
     try:
@@ -379,15 +382,7 @@ def confirm_order_view(request, order_id):
             if not request.user.is_staff and order.created_by != request.user:
                 raise PermissionDenied
 
-            state_service = SalesOrdersStateService()
-            result = state_service.transition(order, state_service.CONFIRMED)
-
-            if not result.get("success"):
-                raise ValidationError(
-                    result.get("errors") or "This sales order cannot be confirmed right now."
-                )
-
-            confirm_sales_order(order)
+            confirm_sales_order(order)   # transition + save + procurement
 
             event = create_event(
                 event_type=SalesEventType.ORDER_CONFIRMED,
@@ -404,18 +399,12 @@ def confirm_order_view(request, order_id):
 
     except ProcurementException as e:
         return htmx_error(request, f"Procurement Error: {e}", detail_url)
-
     except ValueError as e:
-        # Handles uninitialized warehouse picking types / routes cleanly
         return htmx_error(request, f"Warehouse Configuration Error: {e}", detail_url)
-
     except ValidationError as e:
-        # e.message_dict or e.message will automatically be parsed by htmx_error!
-        return htmx_error(request, e.message if hasattr(e, 'message') else str(e), detail_url)
-
+        return htmx_error(request, " ".join(e.messages), detail_url)   # was e.message / str(e)
     except (Http404, PermissionDenied):
         raise
-
     except Exception:
         logger.exception("Failed to confirm sales order %s", order_id)
         return htmx_error(request, "Something went wrong. Please try again.", detail_url)
@@ -452,7 +441,6 @@ def cancel_order_view(request, order_id):
             ):
                 raise PermissionDenied
 
-            state_service = SalesOrdersStateService()
 
             # 3. Capture original state BEFORE transition()
             previous_state = order.status
@@ -468,8 +456,8 @@ def cancel_order_view(request, order_id):
             #
             if not request.user.is_staff:
                 if previous_state not in (
-                    state_service.DRAFT,
-                    state_service.SENT,
+                    order_state.DRAFT,
+                    order_state.SENT,
                 ):
                     raise PermissionDenied(
                         "You are not allowed to cancel this sales order."
@@ -485,9 +473,9 @@ def cancel_order_view(request, order_id):
 
             # 6. Let the state service perform ALL
             # cancellation business validation.
-            result = state_service.transition(
+            result = order_state.transition(
                 order,
-                state_service.CANCELLED,
+                order_state.CANCELLED,
             )
 
             if not result.get("success"):
@@ -516,7 +504,7 @@ def cancel_order_view(request, order_id):
             # PARTIAL/COMPLETED delivery exists.
             if (
                 request.user.is_staff
-                and previous_state == state_service.CONFIRMED
+                and previous_state == order_state.CONFIRMED
             ):
                 for delivery in active_deliveries:
                     delivery.cancel()
@@ -542,7 +530,7 @@ def cancel_order_view(request, order_id):
                     "order_number": order.order_number,
                     "partner_id": order.partner_id,
                     "previous_status": previous_state,
-                    "new_status": state_service.CANCELLED,
+                    "new_status": order_state.CANCELLED,
                 },
                 user_id=request.user.pk,
                 source=(
@@ -621,7 +609,6 @@ def reset_order_view(request, order_id):
             ):
                 raise PermissionDenied
 
-            state_service = SalesOrdersStateService()
 
             # 3. Capture original state BEFORE transition()
             previous_state = order.status
@@ -634,7 +621,7 @@ def reset_order_view(request, order_id):
             #
             if not request.user.is_staff:
                 if previous_state not in (
-                    state_service.SENT,
+                    order_state.SENT,
                 ):
                     raise PermissionDenied(
                         "You are not allowed to reset this sales order."
@@ -650,9 +637,9 @@ def reset_order_view(request, order_id):
 
             # 6. Let the state service perform ALL
             # reset-to-draft business validation.
-            result = state_service.transition(
+            result = order_state.transition(
                 order,
-                state_service.DRAFT,
+                order_state.DRAFT,
             )
 
             if not result.get("success"):
@@ -681,7 +668,7 @@ def reset_order_view(request, order_id):
             # there is no partial/completed delivery.
             if (
                 request.user.is_staff
-                and previous_state == state_service.CONFIRMED
+                and previous_state == order_state.CONFIRMED
             ):
                 for delivery in active_deliveries:
                     delivery.cancel()
@@ -707,7 +694,7 @@ def reset_order_view(request, order_id):
                     "order_number": order.order_number,
                     "partner_id": order.partner_id,
                     "previous_status": previous_state,
-                    "new_status": state_service.DRAFT,
+                    "new_status": order_state.DRAFT,
                 },
                 user_id=request.user.pk,
                 source=(

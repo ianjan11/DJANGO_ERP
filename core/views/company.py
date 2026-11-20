@@ -10,9 +10,12 @@ from django.views.decorators.http import require_POST
 from core.forms.company_form import CompanyForm
 from core.models import Company
 from core.utils import htmx_error, htmx_success
+from core.utils.module import _module, _render
 from users.models import CompanyMembership
 
 logger = logging.getLogger(__name__)
+
+MODULE = "settings"
 
 @login_required
 def company_list(request):
@@ -28,7 +31,9 @@ def company_list(request):
         else "core/settings/company/company_list.html"
 
     )
-    return render(request, template, context)
+
+    return _render(request, template, context, default_module=MODULE)
+
 
 
 @login_required
@@ -39,7 +44,7 @@ def get_empty_company_form(request):
         'company_form': company_form,
         "form_context": "settings",
         "back_url": reverse("core:company_list"),
-
+        "back_label": "Companies"
     }
 
     template = (
@@ -49,7 +54,8 @@ def get_empty_company_form(request):
 
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
+
 
 
 @login_required
@@ -78,6 +84,7 @@ def company_details(request, company_id):
         'company_form': company_form,
         'form_context': "settings",
         "back_url": reverse("core:company_list"),
+        "back_label": "Companies",
     }
 
 
@@ -87,7 +94,9 @@ def company_details(request, company_id):
         else "core/settings/company/company_detail.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
+
+
 
 
 @login_required
@@ -118,6 +127,8 @@ def company_create_view(request):
             redirect_url = reverse(
                 "users:select-company",
             )
+            redirect_url += f"?module={_module(request)}"
+
 
         return htmx_success(
             request,
@@ -164,12 +175,8 @@ def company_edit_view(request, company_id):
     try:
         company = form.save()
         redirect_url = reverse("core:company_details", args=[company.id])
+        redirect_url += f"?module={_module(request)}"
 
-        return htmx_success(
-            request,
-            "Company successfully updated.",
-            redirect_url=redirect_url,
-        )
 
     except ValidationError as e:
         errors = (
@@ -183,6 +190,12 @@ def company_edit_view(request, company_id):
             request,
             "Failed to update company due to an internal server error.",
         )
+
+    return htmx_success(
+        request,
+        "Company successfully updated.",
+    )
+
 
 
 

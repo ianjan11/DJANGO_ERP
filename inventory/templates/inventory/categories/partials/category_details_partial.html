@@ -7,14 +7,16 @@
     {# ── Card title ── #}
     <div class="table-toolbar">
       <h5 class="table-toolbar-title">
-        {% if category and category.pk %}Edit Category : {{ category.name }}{% else %}New Category{% endif %}
+        {% if category and category.pk %}{{ category.name }}{% else %}New Category{% endif %}
       </h5>
+                       {% include "core/bread_crumbs.html" %}
+
     </div>
 
     <form id="category-form"
           method="post"
-          hx-post="{% if category and category.pk %}{% url 'inventory:edit_category' category.id %}{% else %}{% url 'inventory:create_category' %}{% endif %}"
-          hx-target="#inventory-display"
+          hx-post="{% if category and category.pk %}{% url 'inventory:edit_category' category.id %}?module={{ module }}{% else %}{% url 'inventory:create_category' %}?module={{ module }}{% endif %}"
+          hx-target="closest .module-display"
           hx-push-url="true">
 
       {% csrf_token %}
@@ -133,8 +135,8 @@
       <div class="detail-card-footer">
         <button type="button"
                 class="btn btn-secondary"
-                hx-get="{% url 'inventory:view_categories' %}"
-                hx-target="#inventory-display"
+                hx-get="{% url 'inventory:view_categories' %}?module={{ module }}"
+                hx-target="closest .module-display"
                 hx-swap="innerHTML"
                 hx-push-url="true">
           <i class="bi bi-arrow-left me-1"></i> Back

@@ -1,9 +1,8 @@
 {% if swap.header %}
 <hx-partial hx-target="#header-form-wrapper" hx-swap="outerHTML">
-  <div id="header-form-wrapper" class="form-header" >
+        <div class="detail-cols ">
       {% include "purchases/partials/purchase_header_form_inner.html" %}
-</div>
-
+        </div>
 </hx-partial>
 {% endif %}
 
@@ -15,7 +14,7 @@
 
 {% if swap.items %}
 <hx-partial hx-target="#purchase-items" hx-swap="outerHTML">
-  <tbody id="order-items">
+  <tbody id="purchase-items">
     {% for form in formset %}
         {% include "purchases/partials/purchase_item_row.html" with form=form %}
     {% endfor %}

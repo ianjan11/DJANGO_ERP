@@ -9,9 +9,22 @@ from core.services.currency_exchange_service import exchange_price
 from core.services.document_service.field_normalize_service import FieldNormalizerService
 from core.utils.result import ok, fail
 from decimal import Decimal, ROUND_HALF_UP
+from accounting.services.account_resolver import Role, resolve_account, invoice_line_role
 
 normalizer = FieldNormalizerService()
 logger = logging.getLogger("sales.invoice")
+
+
+def _invoice_role(default_move_type):
+    """Use the line's real move type when the move is attached (so credit
+    notes resolve correctly); otherwise assume the doc type's default."""
+
+    def pick(product, item):
+        move = getattr(item, "move", None)
+        return invoice_line_role(product, move.move_type if move else default_move_type)
+
+    return pick
+
 
 
 class ItemsService:
@@ -60,6 +73,10 @@ class ItemsService:
     # "line_types": True marks document types whose line model has a
     # LineType enum (PRODUCT / PLAIN). Document types without it (orders)
     # only ever have product lines.
+
+    from accounting.services.account_resolver import Role, invoice_line_role
+
+
     SOURCE_MAP = {
         "sales_invoice": {
             "parent_model": AccountMove,
@@ -70,8 +87,7 @@ class ItemsService:
             "tax_use": "SALE",
             "tax_source_field": "sales_taxes",
             "price_field": "default_price",
-            "account_field": "revenue_account",
-            "fallback_account_method": "get_stock_output_account",
+            "account_role": _invoice_role("out_invoice"),
         },
         "supplier_invoice": {
             "parent_model": AccountMove,
@@ -81,9 +97,8 @@ class ItemsService:
             "tax_field": "taxes",
             "tax_use": "PURCHASE",
             "tax_source_field": "purchase_taxes",
-            "price_field": "cost_price",
-            "account_field": "expense_account",
-            "fallback_account_method": "get_stock_input_account",
+            "price_field": "product_cost",  # was "cost_price", see below
+            "account_role": _invoice_role("in_invoice"),
         },
         "sales_order": {
             "parent_model": SalesOrder,
@@ -664,19 +679,21 @@ class ItemsService:
         tax_manager.set(product_taxes)
         return {"old": sorted(old_tax_ids), "new": sorted(new_tax_ids)}
 
+
     def _load_default_account(self, item, config, reload=False):
         """
-        Resolve and set item.account_id from the product's dedicated account
-        field, falling back to the product's category chain (via the
-        inheritance-aware get_*_account() methods) when the product itself
-        doesn't override it.
+        Resolve and set item.account_id through the central account resolver.
 
-        On create (item.pk is None): sets the attribute only: the caller's
+        config["account_role"] is either a Role, or a callable
+        (product, item) -> Role for doc types where the role depends on the
+        line (e.g. a vendor bill line for a valued stock product clears GRNI).
+
+        On create (item.pk is None): sets the attribute only; the caller's
         full_clean()/save() persists it.
         On update (item.pk is set): saves immediately, same as taxes' .set().
         """
-        account_field = config.get("account_field")
-        if not account_field:
+        role = config.get("account_role")
+        if not role:
             # Doc type has no accounting concept (sales_order / purchase_order).
             return {}
 
@@ -687,33 +704,37 @@ class ItemsService:
         if not product:
             return {}
 
-        new_account = getattr(product, account_field, None)
+        # Same policy as taxes: only overwrite an existing value on reload (product change).
+        if not reload and item.account_id:
+            return {}
 
-        if not new_account:
-            fallback_method = config.get("fallback_account_method")
-            category = getattr(product, "category", None)
-            if fallback_method and category:
-                new_account = getattr(category, fallback_method, lambda: None)()
+        if callable(role):
+            role = role(product, item)
 
-        if not new_account:
+        move = getattr(item, "move", None)
+        company = getattr(move, "company", None) or product.company
+
+        new_account = resolve_account(
+            role,
+            company=company,
+            product=product,
+            partner=getattr(move, "partner", None),
+            settings_map=getattr(self, "_settings_map", None),
+            required=False,  # keep old behaviour: leave the line blank, validate on post
+        )
+        if new_account is None:
             return {}
 
         old_account_id = item.account_id
-        new_account_id = new_account.pk if hasattr(new_account, "pk") else new_account
-
-        # Same policy as taxes: only overwrite an existing value on reload (product change).
-        if not reload and old_account_id:
+        if old_account_id == new_account.pk:
             return {}
 
-        if old_account_id == new_account_id:
-            return {}
-
-        item.account_id = new_account_id
-
+        item.account_id = new_account.pk
         if item.pk:
             item.save(update_fields=["account"])
 
-        return {"old": old_account_id, "new": new_account_id}
+        return {"old": old_account_id, "new": new_account.pk}
+
 
     def _load_default_uom(self, item, reload=False, persist=True):
         """

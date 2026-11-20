@@ -15,8 +15,8 @@
 
         <button type="button"
                 class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm"
-                hx-get="{% url 'core:get_company_form' %}"
-                hx-target="#settings-display"
+                hx-get="{% url 'core:get_company_form' %}?module={{ module }}"
+                hx-target="closest .module-display"
                 hx-push-url="true">
           <i class="bi bi-plus-circle-fill"></i>
           <span> New </span>
@@ -24,7 +24,7 @@
       </div>
 
       {# ── DATA TABLE ────────────────────────────────── #}
-      <table class="data-table" data-checkbox-table>
+      <table class="inv-table data-table" data-checkbox-table>
         <thead>
           <tr>
             <th style="text-align: center; padding: 4px 4px 8px 16px; width: 32px;">
@@ -53,8 +53,8 @@
               <td>
                 <button type="button"
                         class="btn btn-secondary btn-sm"
-                        hx-get="{% url 'core:company_details' company.id %}"
-                        hx-target="#settings-display"
+                        hx-get="{% url 'core:company_details' company.id %}?module={{ module }}"
+                        hx-target="closest .module-display"
                         hx-push-url="true"
                         hx-disable-elt="this">
                   <i class="ti ti-eye"></i> View

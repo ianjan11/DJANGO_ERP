@@ -18,9 +18,12 @@ from core.models import Currency, ExchangeRate
 from core.models.currency import CompanyCurrency
 from core.services.exchange_rate_service import ExchangeRateService
 from core.utils import htmx_error, htmx_success
-
+from core.utils.module import _render
 
 logger = logging.getLogger("sales.invoice")
+
+
+MODULE = "accounting"
 
 
 def _build_context(request):
@@ -86,7 +89,8 @@ def currency_view(request):
         else "accounting/configurations/currency/currencies_list.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
+
 
 
 @login_required
@@ -246,7 +250,7 @@ def get_empty_currency_row(request):
         company=request.company,
     )
 
-    return render(
+    return _render(
         request,
         "accounting/configurations/currency/currency_row_form.html",
         {

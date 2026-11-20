@@ -36,13 +36,13 @@ class TaxForm(forms.ModelForm):
 
             "type_tax_use": forms.Select(
                 attrs={
-                    "class": "form-select",
+                    "class": "form-select select2-widget",
                 }
             ),
 
             "computation": forms.Select(
                 attrs={
-                    "class": "form-select",
+                    "class": "form-select select2-widget",
                 }
             ),
 
@@ -100,7 +100,7 @@ class TaxForm(forms.ModelForm):
 
             "is_active": forms.CheckboxInput(
                 attrs={
-                    "class": "form-check-input",
+                    "class": "form-check-input", 'role': 'switch',
                 }
             ),
         }

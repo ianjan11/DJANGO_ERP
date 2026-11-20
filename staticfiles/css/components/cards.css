@@ -49,21 +49,6 @@
   background: var(--surface-canvas);
   margin: 0 10px;
 
-.action-card {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: center;
-  align-content: stretch;
-  gap: 2px;
-  background: var(--surface-card);
-  margin: 6px 10px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  height: 50px;
-}
-
 
 .form-card {
   display: flex;

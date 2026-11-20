@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="htmx-config" content='{"responseHandling": [{"code":"400", "swap": true}]}'>
     {% load static %}
-    {% load bootstrap5 %}
     {% load group_tags %}
 
     <!-- Core CSS -->
@@ -17,37 +16,35 @@
 
 
 
+
     <!-- App CSS -->
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=1">
-
     <link rel="stylesheet" href="{% static 'css/base.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/notification.css' %}?v=1">
-    <link rel="stylesheet" href="{% static 'css/p.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/detail_card.css' %}">
     <link rel="stylesheet" href="{% static 'css/tabs.css' %}">
-    <link rel="stylesheet" href="{% static 'css/components/outstanding_credits.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/modal.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/components/forms.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/components/buttons.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/components/cards.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/components/invoice.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/components/table.css' %}?v=1">
-    <link rel="stylesheet" href="{% static 'css/components/inv_tables.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/components/toolbar.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/components/confirmation.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/components/badges.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/components/htmx.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/components/inventory_dashboard.css' %}?v=1">
-        <link rel="stylesheet" href="{% static 'css/components/stock.css' %}?v=1">
-
+    <link rel="stylesheet" href="{% static 'css/company_select.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/warehouse.css' %}?v=1">
 
 
 
 
     {% block extra_css %}{% endblock %}
-</head>
 
+</head>
 <body class="body" hx-headers:inherited='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
          {% include "layouts/navbar.html" %}
@@ -87,17 +84,23 @@
          <script src="https://unpkg.com/htmx.org@4.0.0/dist/htmx.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 
 
     <!-- App JS -->
     <script src="{% static 'js/general/UI/notification.js' %}?v={{ now|date:'U' }}"></script>
     <script src="{% static 'js/general/UI/confirmation.js' %}"></script>
-       <script src="{% static 'js/general/UI/htmx-ui.js' %}"></script>
-          <script src="{% static 'js/general/form_errors.js' %}"></script>
-             <script src="{% static 'js/general/UI/tabs.js' %}" defer></script>
+         <script src="{% static 'js/general/UI/htmx-ui.js' %}"></script>
+         <script src="{% static 'js/general/form_errors.js' %}"></script>
+         <script src="{% static 'js/general/UI/tabs.js' %}"></script>
+         <script src="{% static 'js/general/UI/user_pill.js' %}"></script>
+         <script src="{% static 'js/general/UI/navbar.js' %}"></script>
+         <script src="{% static 'js/general/chart_core.js' %}"></script>
+         <script src="{% static 'js/general/UI/button_loader.js' %}"></script>
+         <script src="{% static 'js/general/doc_table.js' %}"></script>
 
 
 

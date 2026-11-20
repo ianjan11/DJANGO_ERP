@@ -8,6 +8,7 @@ urlpatterns = [
 
    path("inventory/pickings/", views.get_pickings, name="get_pickings"),
 
+
    path("inventory/receipts/", views.receipts_view, name="receipt_list"),
     path("inventory/deliveries/", views.deliveries_view, name="delivery_list"),
     path("inventory/returns/", views.returns_view, name="return_list"),
@@ -69,6 +70,8 @@ urlpatterns = [
    path("inventory/physical_inventory/", views.physical_inventory_views, name="physical_inventory"),
    path("inventory/physical_inventory/<int:quant_id>/adjustment/", views.stock_adjust_view, name="stock_adjustment"),
    path("inventory/physical_inventory/relocation/", views.stock_relocate_view, name="stock_relocation"),
+
+    path("inventory/charts/", views.stock_view_charts, name="stock_charts"),
 
 ]
 

@@ -84,12 +84,12 @@ class CompanyForm(forms.ModelForm):
                         start=1,
                     )
                 ],
-                attrs={"class": "form-select"},
+                attrs={"class": "form-select select2-widget"},
             ),
             "fiscal_year_start_day": forms.NumberInput(attrs={"class": "form-control", "min": 1, "max": 31}),
             "lock_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
             "tax_lock_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
-            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role': 'switch'})
         }
         labels = {
             "fiscal_year_start_month": "Fiscal Year Start Month",

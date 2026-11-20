@@ -161,14 +161,6 @@ class PurchaseOrder(models.Model):
     def has_items(self):
         return self.lines.exists()
 
-    from django.core.exceptions import ValidationError
-    from django.db import transaction
-    from django.utils import timezone
-
-    from django.core.exceptions import ValidationError
-    from django.db import transaction
-    from django.utils import timezone
-
     @transaction.atomic
     def confirm(self):
         """
@@ -176,9 +168,19 @@ class PurchaseOrder(models.Model):
         via receive_purchase().
 
         Raises:
-            ValidationError: If the PO has no items.
+            ValidationError: If the PO is already confirmed/closed or has no items.
             ValueError: If warehouse receipt configuration is missing.
         """
+        # Lock the row and re-read the status from the DB, so a double click cannot
+        # confirm twice (which would run receive_purchase twice and create duplicate
+        # receipts). The state service only mutates status in memory, so this re-read
+        # gives the real, persisted status.
+        type(self).objects.select_for_update().get(pk=self.pk)
+        self.refresh_from_db(fields=["status"])
+
+        if self.status not in ("DRAFT", "SENT", "TO_APPROVE"):
+            raise ValidationError("This purchase order has already been confirmed or closed.")
+
         if not self.has_items():
             raise ValidationError("Purchase order has no items.")
 
@@ -188,33 +190,26 @@ class PurchaseOrder(models.Model):
 
         self.status = "PURCHASE"
         self.updated_at = timezone.now()
-
-        self.save(
-            update_fields=[
-                "status",
-                "reference",
-                "updated_at",
-            ]
-        )
+        self.save(update_fields=["status", "reference", "updated_at"])
 
         from inventory.services.stock_Picking.procurement_engine import ReceiptLine, receive_purchase
 
-
-        # 1. Filter Stockable Items
+        # 1. Stockable lines only
         stock_lines = [
-            line for line in self.lines.select_related('product')
+            line for line in self.lines.select_related("product")
             if line.product.is_stockable
         ]
-
         if not stock_lines:
             return self
 
-        # 2. Build Receipt Shapes & Execute Engine
+        # 2. Build receipt lines
         receipt_lines = [
             ReceiptLine(
                 product=item.product,
-                quantity=item.quantity,
-                uom=getattr(item, "product_uom", item.product.uom),
+                quantity=Decimal(str(item.quantity)),
+                # `or`, not a getattr default: a product_uom that exists but is None
+                # would otherwise reach the engine as None.
+                uom=getattr(item, "product_uom", None) or item.product.uom,
                 purchase_line=item,
                 move_dest_ids=(
                     tuple(item.move_destinations.values_list("pk", flat=True))
@@ -226,7 +221,7 @@ class PurchaseOrder(models.Model):
             for item in stock_lines
         ]
 
-        # Procurement execution without local fallback
+        # 3. Run the procurement engine
         receive_purchase(
             name=self.reference or self.name,
             company=self.company,
@@ -234,7 +229,8 @@ class PurchaseOrder(models.Model):
             vendor=self.partner,
             lines=receipt_lines,
             purchase_order=self,
-            date_planned=getattr(self, "date_planned", None),
+            # Same None-safe pattern as the sales side.
+            date_planned=getattr(self, "date_planned", None) or timezone.now(),
         )
 
         return self

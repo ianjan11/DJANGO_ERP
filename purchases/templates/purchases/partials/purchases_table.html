@@ -92,8 +92,6 @@
             <th style="width:130px">Expected Date</th>
             <th style="width:140px" class="col-right">Amount</th>
             <th style="width:140px" class="col-center">Status</th>
-            <th style="width:140px" class="col-center">Payment</th>
-            <th style="width:140px" class="col-center">Shipment</th>
           </tr>
         </thead>
         <tbody>
@@ -134,32 +132,6 @@
                 <span class="badge badge--cancelled"><span class="badge-dot"></span>Cancelled</span>
               {% else %}
                 <span class="badge badge--draft"><span class="badge-dot"></span>{{ purchase.status }}</span>
-              {% endif %}
-            </td>
-
-            <td class="col-center">
-              {% if purchase.payment_state == "paid" %}
-                <span class="badge badge--paid"><span class="badge-dot"></span>Reconciled</span>
-              {% elif purchase.payment_state == "not_paid" %}
-                <span class="badge badge--overdue"><span class="badge-dot"></span>Awaiting Payment</span>
-              {% elif purchase.payment_state == "partial" %}
-                <span class="badge badge--pending"><span class="badge-dot"></span>Partial</span>
-              {% else %}
-                <span class="td-dash">—</span>
-              {% endif %}
-            </td>
-
-            <td class="col-center">
-              {% if purchase.shipment_status == "RECEIVED" %}
-                <span class="badge badge--paid"><span class="badge-dot"></span>Received</span>
-              {% elif purchase.shipment_status == "PENDING" %}
-                <span class="badge badge--draft"><span class="badge-dot"></span>Pending</span>
-              {% elif purchase.shipment_status == "PARTIAL" %}
-                <span class="badge badge--pending"><span class="badge-dot"></span>Partial</span>
-              {% elif purchase.shipment_status == "CANCELLED" %}
-                <span class="badge badge--cancelled"><span class="badge-dot"></span>Cancelled</span>
-              {% else %}
-                <span class="td-dash">—</span>
               {% endif %}
             </td>
 

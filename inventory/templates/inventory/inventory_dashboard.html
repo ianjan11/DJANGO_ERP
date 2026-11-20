@@ -14,12 +14,8 @@
 
 {% block scripts %}
 {{ block.super }}
-<script>
-    window.CREATE_PRODUCT_URL = "{% url 'inventory:create_product' %}";
-    window.CHARTS_URL = "{% url 'inventory:stock_charts' %}";
-</script>
-    <script src="{% static 'js/stock/product_graphs_and_charts/dashboard_charts.js' %}?v={{ now|date:'U' }}"></script>
 
+<script src="{% static 'js/stock/Product_graphs_and_charts/dashboard_charts.js' %}?v=20261117a"></script>
 {% endblock %}
 
 

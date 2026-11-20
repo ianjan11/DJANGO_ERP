@@ -83,8 +83,6 @@
                 <th>Date</th>
                 <th class="col-right">Amount</th>
                 <th class="col-center">Order Status</th>
-                <th class="col-center">Payment Status</th>
-                <th class="col-center">Delivery Status</th>
             </tr>
         </thead>
 
@@ -96,7 +94,7 @@
 
                 <td class="td-mono">{{ order.order_number }}</td>
 
-                <td class="td-primary">{{ order.customer }}</td>
+                <td class="td-primary">{{ order.partner.name }}</td>
 
                 <td>{{ order.created_at|date:'M d, Y H:i:s' }}</td>
 
@@ -120,31 +118,7 @@
                     {% endif %}
                 </td>
 
-                <td class="col-center">
-                    {% if order.payment_state == "paid" %}
-                        <span class="badge badge--paid"><i class="bi bi-shield-check"></i> Reconciled</span>
-                    {% elif order.payment_state == "not_paid" %}
-                        <span class="badge badge--overdue"><i class="bi bi-clock"></i> Awaiting Payment</span>
-                    {% elif order.payment_state == "partial" %}
-                        <span class="badge badge--partial"><i class="bi bi-circle-half"></i> Partial</span>
-                    {% else %}
-                        <span style="color:var(--color-fog);">—</span>
-                    {% endif %}
-                </td>
 
-                <td class="col-center">
-                    {% if order.delivery_status == "DELIVERED" %}
-                        <span class="badge badge--paid"><i class="bi bi-truck"></i> Delivered</span>
-                    {% elif order.delivery_status == "PENDING" %}
-                        <span class="badge badge--draft"><i class="bi bi-hourglass-split"></i> Pending</span>
-                    {% elif order.delivery_status == "PARTIAL" %}
-                        <span class="badge badge--partial"><i class="bi bi-box-seam"></i> Partial</span>
-                    {% elif order.delivery_status == "CANCELLED" %}
-                        <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
-                    {% else %}
-                        <span style="color:var(--color-fog);">—</span>
-                    {% endif %}
-                </td>
             </tr>
             {% empty %}
             <tr>

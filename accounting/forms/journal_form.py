@@ -34,7 +34,7 @@ class JournalForm(forms.ModelForm):
                     "maxlength": "10",
                 }
             ),
-            "type": forms.Select(attrs={"class": "form-select"}),
+            "type": forms.Select(attrs={"class": "form-select select2-widget"}),
             "currency": forms.Select(attrs={"class": "form-select select2-widget"}),
             "default_debit_account": forms.Select(
                 attrs={"class": "form-select select2-widget"}

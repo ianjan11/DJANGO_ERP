@@ -1,0 +1,85 @@
+  <div class="inv-table-wrap">
+            <table class="inv-table">
+      <thead>
+        <tr>
+          <th style="width:25%; min-width:200px">Account</th>
+          <th style="width:25%; min-width:180px">Memo / Label</th>
+          <th style="width:15%; min-width:120px" class="col-right">Debit</th>
+          <th style="width:15%; min-width:120px" class="col-right">Credit</th>
+
+        </tr>
+      </thead>
+        {% load humanize %}
+
+<tbody id="journal-items">
+  {% for line in journal_lines %}
+  <tr>
+    <td>
+      {% if line.account %}{{ line.account.code }} {{ line.account.name }}{% else %}—{% endif %}
+    </td>
+    <td>{{ line.label|default:"—" }}</td>
+    <td class="col-right">
+      {% if line.debit %}{{ line.debit|floatformat:2|intcomma }}{% endif %}
+    </td>
+    <td class="col-right">
+      {% if line.credit %}{{ line.credit|floatformat:2|intcomma }}{% endif %}
+    </td>
+  </tr>
+  {% empty %}
+  <tr>
+    <td colspan="4" class="table-empty">
+      <div class="table-empty-title">No journal items yet</div>
+      <div class="table-empty-desc">They are created when the invoice is posted.</div>
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+    </table>
+
+  </div>
+
+
+  <div class="totals-container mt-4">
+      <div>
+  <div>
+
+  {% if journal_totals.debit != journal_totals.credit %}
+    <span class="text-danger small ms-2"><i class="bi-journal-x"></i></span>
+  {% else %}
+    <span class="text-success small ms-2"><i class="bi bi-journal-check"></i></span>
+  {% endif %}
+  <label>Total Debit:</label>
+  <span>{{ invoice.currency.symbol }} {{ journal_totals.debit|default:0|floatformat:2|intcomma }}</span>
+
+  <label>Total Credit:</label>
+  <span>{{ invoice.currency.symbol }} {{ journal_totals.credit|default:0|floatformat:2|intcomma }}</span>
+
+  </div>
+  </div>
+  </div>
+
+
+    {% if journal_lines.paginator.num_pages > 1 %}
+<div class="table-pagination">
+  {% if journal_lines.has_previous %}
+  <a class="page-btn page-btn--arrow"
+     hx-get="{% url 'accounting:invoice_create_or_detail' invoice.id %}?journal_page={{ journal_lines.previous_page_number }}&page={{ items.number }}"
+     hx-target="#journal-panel" hx-select="#journal-panel"
+     hx-swap="outerHTML" hx-push-url="false">
+    <i class="bi bi-chevron-left"></i>
+  </a>
+  {% endif %}
+
+  <span class="page-btn active">{{ journal_lines.number }}</span>
+
+  {% if journal_lines.has_next %}
+  <a class="page-btn page-btn--arrow"
+     hx-get="{% url 'accounting:invoice_create_or_detail' invoice.id %}?journal_page={{ journal_lines.next_page_number }}&page={{ items.number }}"
+     hx-target="#journal-panel" hx-select="#journal-panel"
+     hx-swap="outerHTML" hx-push-url="false">
+    <i class="bi bi-chevron-right"></i>
+  </a>
+  {% endif %}
+</div>
+{% endif %}
+

@@ -29,6 +29,7 @@ from django.shortcuts import render
 from purchases.services.purchase_state_service import PurchaseOrdersStateService
 
 logger = logging.getLogger("purchases.invoice")
+purchase_state = PurchaseOrdersStateService()
 
 def _build_context(request, purchase, header_form, formset):
     from django.core.paginator import Paginator
@@ -58,6 +59,10 @@ def _build_context(request, purchase, header_form, formset):
         "products": products,
         "lines": page_obj,
         "is_new": purchase is None,
+        "flags": purchase_state.get_flags(purchase),
+        "back_url": reverse("purchases:purchases_list"),
+        "back_label": "Purchases ",
+        "target": "#purchases-display"
     }
 
 

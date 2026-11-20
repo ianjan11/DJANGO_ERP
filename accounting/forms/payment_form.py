@@ -38,12 +38,13 @@ class PaymentForm(forms.ModelForm):
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'journal': forms.Select(attrs={'class': 'form-select select2-widget'}),
-            'payment_method': forms.Select(attrs={'class': 'form-select'}),
-            'payment_type': forms.Select(attrs={'class': 'form-select'}),
-            'partner_type': forms.Select(attrs={'class': 'form-select'}),
+            'payment_method': forms.Select(attrs={'class': 'form-select select2-widget'}),
+            'payment_type': forms.Select(attrs={'class': 'form-select select2-widget'}),
+            'partner_type': forms.Select(attrs={'class': 'form-select select2-widget'}),
             'currency': forms.Select(attrs={'class': 'form-select select2-widget'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'memo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. INV/2026/001'}),
+            'partner': forms.Select(attrs={'class': 'form-select select2-widget'}),
         }
 
     def __init__(self, *args, **kwargs):

@@ -11,6 +11,7 @@ from accounting.services.account_move_services.shared.invoice.clearing import (
     netted_sales_return_qty,
     open_total,
 )
+from accounting.services.account_resolver import resolve_account, Role
 
 ZERO = Decimal("0.00")
 
@@ -27,9 +28,8 @@ def get_customer_context(invoice, item, product, item_amount_ccy, state):
     item_amount_ccy = _validate_item_amount(item_amount_ccy)
     allocations = []
 
-    revenue_account = (
-        item.account if item.account else resolve_line_account(item, invoice, "revenue")
-    )
+    revenue_account = resolve_account(Role.REVENUE, company=invoice.company, line=item)
+
     allocations.append({
         "account": revenue_account,
         "amount": item_amount_ccy,

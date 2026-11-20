@@ -1,132 +1,230 @@
+/* ── Dashboard / App launcher ─────────────────────────── */
 
-    /* ── DASHBOARD LAYOUT ────────────────────────── */
-    .dash-wrapper {
-        display: flex;
-        gap: 24px;
-        justify-content: center;
-        margin: 40px 40px 40px 40px;
-
-    }
-    .dash-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-
+.dash-wrapper {
+  flex: 1;
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-40) var(--page-padding, var(--spacing-16));
 }
 
+/* Grid */
+.dash-nav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--spacing-24);
+  justify-items: center;
+}
 
+/* Tile (card + label) */
+.dash-item {
+  width: 100%;
+  max-width: 180px;
+}
 
-.dash-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-primary);
-    text-align: center;
+.dash-item a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-12);
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius-cards);
+}
+
+/* Keyboard focus */
+.dash-item a:focus-visible {
+  outline: 2px solid var(--color-sky-blue);
+  outline-offset: 4px;
+}
+
+/* Icon card */
+.dash-nav-card {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-24);
+  background: var(--surface-card);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-subtle);
+  transition: transform .15s ease,
+              box-shadow .15s ease,
+              border-color .15s ease;
 }
 
 .dash-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    padding: 1px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform .15s ease;
+}
+
+/* Label */
+.dash-label {
+  display: block;
+  text-align: center;
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-slate);
+  transition: color .12s ease;
+}
+
+/* Hover (linked tiles only) */
+.dash-item a:hover .dash-nav-card {
+  transform: translateY(-3px);
+  border-color: var(--color-fog);
+  box-shadow: var(--shadow-sm);
+}
+
+.dash-item a:hover .dash-img {
+  transform: scale(1.04);
+}
+
+.dash-item a:hover .dash-label {
+  color: var(--color-deep-indigo);
+  font-weight: var(--font-weight-semibold);
+}
+
+.dash-item a:active .dash-nav-card {
+  transform: translateY(-1px);
+}
+
+/* Tiles without a link (Knowledge, Documents): shown as "coming soon" */
+.dash-item:not(:has(a)) {
+  opacity: .55;
+  cursor: not-allowed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-12);
+}
+
+.dash-item:not(:has(a)) .dash-nav-card {
+  box-shadow: none;
+  background: var(--surface-canvas);
+}
+
+.dash-item:not(:has(a)) .dash-img {
+  filter: grayscale(1);
 }
 
 
-    /* ── NAV CARDS ───────────────────────────────── */
-    .dash-nav-grid {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 26px;
-    }
+/* ── Toolbar / Switch company ─────────────────────────── */
 
-    .dash-nav-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 40px 38px;
-        min-height: 80px;
-        box-shadow: var(--shadow-sm);
-        text-decoration: none;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-        position: relative;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-    }
+.dash-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-24);
+}
 
+.dash-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-family: var(--font-suisseintl);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-slate);
+  text-decoration: none;
+  background: var(--surface-card);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-buttons);
+  transition: background .12s ease, color .12s ease, border-color .12s ease;
+}
 
-    .dash-nav-card:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-md);
-        border-color: black;
-        text-decoration: none;
-    }
-    .dash-nav-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0.1);
+.dash-switch i {
+  font-size: 15px;
+  color: var(--color-fog);
+  transition: color .12s ease;
+}
+
+.dash-switch:hover {
+  color: var(--color-deep-indigo);
+  background: var(--surface-canvas);
+  border-color: var(--color-fog);
+}
+
+.dash-switch:hover i { color: var(--color-deep-indigo); }
+
+.dash-switch:focus-visible {
+  outline: 2px solid var(--color-sky-blue);
+  outline-offset: 2px;
 }
 
 
-    .dash-nav-card-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: var(--radius-sm);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-    }
 
-    .dash-nav-card h4 {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin: 0;
-    }
+/* Soft lavender card look for the inventory dashboard.
+   Load after your base CSS; it only touches .dashboard-page. */
 
-    .dash-nav-card p {
-        font-size: 13px;
-        color: var(--text-secondary);
-        margin: 0;
-        line-height: 1.5;
-    }
+.dashboard-page {
+  background: #eef0fb;
+  border-radius: 24px;
+  padding: 20px;
+}
 
-    .dash-nav-card-arrow {
-        margin-top: auto;
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--accent);
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        opacity: 0;
-        transform: translateX(-4px);
-        transition: all 0.2s;
-    }
+.dashboard-page .chart-card {
+  background: #fff;
+  border: 0;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(31, 42, 103, 0.10);
+  padding: 18px 20px 12px;
+}
 
-    .dash-nav-card:hover .dash-nav-card-arrow {
-        opacity: 1;
-        transform: translateX(0);
-    }
+.dashboard-page .chart-card-header {
+  border-bottom: 0;
+  padding: 0 0 8px;
+}
+
+.dashboard-page .chart-eyebrow {
+  color: #9aa1bf;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.dashboard-page .chart-title {
+  color: #1b2250;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Apex tooltip: soft bubble */
+.apexcharts-tooltip {
+  border: 0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(31, 42, 103, 0.18) !important;
+}
+.apexcharts-tooltip-title {
+  background: #f4f5fc !important;
+  border-bottom: 0 !important;
+  color: #1b2250;
+}
 
 
-    /* ── RESPONSIVE ──────────────────────────────── */
-    @media (max-width: 992px) {
-        .dash-stats    { grid-template-columns: repeat(2, 1fr); }
-        .dash-nav-grid { grid-template-columns: repeat(2, 1fr); }
-    }
 
-    @media (max-width: 576px) {
-        .dash-stats    { grid-template-columns: 1fr; }
-        .dash-nav-grid { grid-template-columns: 1fr; }
-        .dash-banner   { padding: 20px; }
-    }
+@media (max-width: 575px) {
+  .dash-toolbar { margin-bottom: var(--spacing-16); }
+  .dash-switch span { display: none; } /* icon-only on phones, like the navbar */
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+
+@media (max-width: 575px) {
+  .dash-wrapper { padding-top: var(--spacing-24); }
+  .dash-nav-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-16);
+  }
+  .dash-nav-card { padding: var(--spacing-12); border-radius: var(--radius-lg); }
+  .dash-label { font-size: var(--text-caption); }
+}
+
+@media (min-width: 1200px) {
+  .dash-nav-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+}

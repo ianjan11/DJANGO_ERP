@@ -7,7 +7,6 @@ from django.db import transaction
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from pygments.lexers import data
 from django.shortcuts import  render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest, Http404
 from accounting.events.accounting_events import create_event
@@ -23,23 +22,67 @@ from accounting.services.invoice.creator import create_invoice
 from core.events import dispatch
 from core.services.document_service.document_service import DocumentService
 from core.services.document_service.presentation.htmx_swap_service import UIResponseService
-from core.services.document_service.quant_service import resolve_warehouse, pre_resolve
 from core.services.document_service.core.payload_builder import build_payload
 from core.utils import htmx_error, htmx_success
-from inventory.models import StockQuant, StockLocation, Warehouse, StockPicking
-import json
+from inventory.models import StockQuant, StockLocation,  StockPicking
+from django.db.models import Sum
+
 
 
 logger = logging.getLogger('sales.invoice')
 
 
 INVOICE_TYPE_REDIRECTS = {
-    AccountMove.MoveType.IN_INVOICE: "accounting:vendor_invoices",
-    AccountMove.MoveType.IN_REFUND: "accounting:vendor_credit_notes",
-    AccountMove.MoveType.OUT_REFUND: "accounting:customer_credit_notes",
-    AccountMove.MoveType.OUT_INVOICE: "accounting:customer_invoices",
+    AccountMove.MoveType.OUT_INVOICE: ("accounting:customer_invoices", "Customer Invoices"),
+    AccountMove.MoveType.OUT_REFUND: ("accounting:customers_credit_notes", "Customer Credit Notes"),
+    AccountMove.MoveType.IN_INVOICE: ("accounting:vendor_invoices", "Vendor Bills"),
+    AccountMove.MoveType.IN_REFUND: ("accounting:vendors_credit_notes", "Vendor Credit Notes"),
 }
 
+CREDIT_TYPE_MAP = {
+    "out_invoice": "out_refund",  # customer invoice -> customer credit notes
+    "out_refund": "out_invoice",  # customer credit note -> customer invoices to apply against
+    "in_invoice": "in_refund",
+    "in_refund": "in_invoice",
+}
+
+move_state = InvoiceStateService()
+PRODUCT = AccountMoveLine.LineType.PRODUCT
+PAGE_SIZE = 10
+
+
+def _get_outstanding(invoice, partner_type, company):
+    empty = AccountMove.objects.none()
+    if (not invoice or not invoice.pk or not invoice.partner_id or not company
+            or partner_type not in ("customer", "supplier")):
+        return empty, empty
+
+    base = (AccountMove.objects
+            .filter(partner_id=invoice.partner_id, company=company,
+                    state=AccountMove.State.POSTED, amount_residual__gt=0)
+            .exclude(pk=invoice.pk)
+            .select_related("partner"))
+
+    # Prepayments: list the SWAP move (the one whose credit sits on AR/AP),
+    # not the original payment move.
+    prepayment_ids = Payment.objects.filter(
+        company=company,
+        partner_id=invoice.partner_id,
+        is_prepayment=True,
+        payment_type="INCOMING" if partner_type == "customer" else "OUTGOING",
+    ).values("pk")
+
+    payments = base.filter(
+        is_prepayment_swap=True,
+        origin_type="payment",
+        origin_id__in=prepayment_ids,
+    ).order_by("issue_date", "pk")
+
+    counterpart = CREDIT_TYPE_MAP.get(invoice.move_type)
+    credits = (base.filter(move_type=counterpart, is_prepayment_swap=False)
+                   .order_by("-issue_date", "-pk")
+               if counterpart else empty)
+    return payments, credits
 
 def _build_context(request, invoice, header_form, formset):
     invoice_id = invoice.id if invoice else None
@@ -47,82 +90,88 @@ def _build_context(request, invoice, header_form, formset):
     company = invoice.company if invoice else getattr(request, "company", None)
     invoice_type = getattr(invoice, "move_type", None)
 
-    # 1. Stock Location Quants
-    fulfillment_location = getattr(invoice, "fulfillment_location", None) if invoice else None
 
+    # 1. Stock Location Quants  (unchanged)
+    fulfillment_location = getattr(invoice, "fulfillment_location", None) if invoice else None
     if fulfillment_location and fulfillment_location.view_location:
-        # Get all descendant locations under the warehouse's root view_location
         location_ids = StockLocation.objects.filter(
             parent_path__startswith=fulfillment_location.view_location.parent_path
         ).values_list("id", flat=True)
-
         quants = StockQuant.objects.filter(
             location_id__in=location_ids
         ).select_related("product", "location")
     else:
         quants = StockQuant.objects.none()
 
-    # 2. Invoice Lines (Paginator)
+    # 2. Invoice lines + journal lines, each with its own paginator
     if invoice:
-        items_qs = invoice.lines.all().select_related("product").order_by("id")
+        product_qs = invoice.lines.filter(line_type=PRODUCT)
+        journal_qs = invoice.lines.exclude(line_type=PRODUCT)
     else:
-        items_qs = AccountMoveLine.objects.none()
+        product_qs = journal_qs = AccountMoveLine.objects.none()
 
-    paginator = Paginator(items_qs, 10)
-    page_obj = paginator.get_page(request.GET.get("page"))
+    items_page = Paginator(
+        product_qs.select_related("product").prefetch_related("taxes").order_by("id"), PAGE_SIZE
+    ).get_page(request.GET.get("page"))
 
-    # 3. Linked Credit Notes / Refunds
-    # FIXED: Uses reversed_invoice_id to avoid "Must be Invoice instance" ValueError
-    refund_types = ("out_refund", "in_refund")
+    journal_page = Paginator(
+        journal_qs.select_related("account").order_by("id"), PAGE_SIZE
+    ).get_page(request.GET.get("journal_page"))
+
+    # Totals come from the FULL queryset, not the current page
+    journal_totals = journal_qs.aggregate(debit=Sum("debit"), credit=Sum("credit"))
+
+    credit_lines = product_qs  # fine for the credit-note modal, and safe when invoice is None
+
+    # 3. Linked credit notes / refunds  (unchanged)
     if invoice_id:
         credit_notes = (
-            AccountMove.objects.filter(
-                reversal_of=invoice_id,
-            )
+            AccountMove.objects.filter(reversal_of=invoice_id)
             .select_related("partner")
             .order_by("-issue_date", "-pk")
         )
     else:
         credit_notes = AccountMove.objects.none()
 
-    # 4. Partner Type Mapping
+
+
+    # 4. Partner type  (unchanged)
     partner_type = ""
     if invoice_type in ("out_invoice", "out_refund"):
         partner_type = "customer"
     elif invoice_type in ("in_refund", "in_invoice"):
         partner_type = "supplier"
 
-    # 5. Outstanding Prepayments
-    if partner and company:
-        payment_partner_type = "customer" if partner_type == "customer" else "supplier"
-        outstanding_payments = Payment.objects.filter(
-            is_prepayment=True,
-            partner=partner,
-            company=company,
-            state="posted",
-            payment_type="INCOMING" if partner_type == "customer" else "OUTGOING",
-            partner_type=payment_partner_type,
-        ).order_by("date")
-    else:
-        outstanding_payments = Payment.objects.none()
 
-    credit_lines = invoice.lines.filter(
-        line_type = AccountMoveLine.LineType.PRODUCT
+    outstanding_payments, outstanding_credits = _get_outstanding(invoice, partner_type, company)
+
+    back_url, back_label = INVOICE_TYPE_REDIRECTS.get(
+        invoice_type,
     )
+
 
     return {
         "invoice": invoice,
         "header_form": header_form,
         "formset": formset,
         "quant": quants,
-        "items": page_obj,
+        "items": items_page,
+        "journal_lines": journal_page,
+        "journal_totals": journal_totals,
         "payment_form": PaymentForm(user=request.user, company=request.company),
         "is_new": invoice is None or invoice_id is None,
-        "outstanding_payments": outstanding_payments,
         "credit_notes": credit_notes,
         "partner_type": partner_type,
         "credit_lines": credit_lines,
+        "flags": move_state.get_flags(invoice),
+        "outstanding_payments": outstanding_payments,
+        "outstanding_credits": outstanding_credits,
+        "back_url": reverse(back_url),
+        "back_label" : back_label,
+        "target": "#accounting-display"
+
     }
+
 
 @login_required
 def invoice_create_or_detail(request, invoice_id=None):
@@ -135,7 +184,7 @@ def invoice_create_or_detail(request, invoice_id=None):
 
         # Fallback redirect target if creation fails or type is invalid
         fallback_url = INVOICE_TYPE_REDIRECTS.get(
-            invoice_type, "accounting:customer_invoices"
+            invoice_type,
         )
 
         if not invoice_type or invoice_type not in INVOICE_TYPE_REDIRECTS:

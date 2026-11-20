@@ -58,6 +58,7 @@ class PurchaseOrdersStateService:
 
         SENT: [
             TO_APPROVE,
+            PURCHASE,      # was missing: Confirm from SENT always failed
             CANCELLED,
             DRAFT,
         ],
@@ -75,9 +76,10 @@ class PurchaseOrdersStateService:
         ],
 
         DONE: [],
-
         CANCELLED: [],
     }
+
+
 
     # =========================================================
     # STATE CHECKS
@@ -138,58 +140,38 @@ class PurchaseOrdersStateService:
 
         return ok()
 
-    # =========================================================
-    # TO_APPROVE VALIDATION
-    # =========================================================
-
-    def can_confirm(self, order):
-        """
-        Validation before moving an RFQ into the approval stage.
-
-        SENT -> TO_APPROVE
-        """
-        errors = {}
-
-        if not order.partner_id:
-            errors["partner"] = [
-                "Purchase Order requires a vendor."
-            ]
-
-        if not order.lines.exists():
-            errors["lines"] = [
-                "Purchase Order requires at least one line item."
-            ]
-
-        if errors:
-            return fail(errors=errors)
-
-        return ok()
 
     # =========================================================
     # PURCHASE VALIDATION
     # =========================================================
 
-    def can_approve(self, order):
-        """
-        Validation before confirming the purchase order.
-
-        TO_APPROVE -> PURCHASE
-        """
+    def can_request_approval(self, order):
+        """Validate SENT/DRAFT -> TO_APPROVE."""
         errors = {}
 
         if not order.partner_id:
-            errors["partner"] = [
-                "Purchase Order requires a vendor."
-            ]
+            errors["partner"] = ["Purchase Order requires a vendor."]
 
         if not order.lines.exists():
-            errors["lines"] = [
-                "Purchase Order requires at least one line item."
-            ]
+            errors["lines"] = ["Purchase Order requires at least one line item."]
 
         if errors:
             return fail(errors=errors)
+        return ok()
 
+
+    def can_confirm(self, order):
+        """Validate SENT/TO_APPROVE/DRAFT -> PURCHASE."""
+        errors = {}
+
+        if not order.partner_id:
+            errors["partner"] = ["Purchase Order requires a vendor."]
+
+        if not order.lines.exists():
+            errors["lines"] = ["Purchase Order requires at least one line item."]
+
+        if errors:
+            return fail(errors=errors)
         return ok()
 
     # =========================================================
@@ -393,35 +375,23 @@ class PurchaseOrdersStateService:
         validation = ok()
 
         if new_state == self.SENT:
-
             validation = self.can_send(order)
 
         elif new_state == self.TO_APPROVE:
-
-            validation = self.can_confirm(order)
+            validation = self.can_request_approval(order)
 
         elif new_state == self.PURCHASE:
-
-            validation = self.can_approve(order)
+            validation = self.can_confirm(order)
 
         elif new_state == self.DONE:
-
             validation = self.can_mark_done(order)
 
         elif new_state == self.CANCELLED:
-
             validation = self.can_cancel(order)
 
-        elif (
-            new_state == self.DRAFT
-            and current_state in (
-                self.SENT,
-                self.TO_APPROVE,
-                self.PURCHASE,
-            )
-        ):
-
+        elif new_state == self.DRAFT:
             validation = self.can_reset_to_draft(order)
+
 
         # -----------------------------------------------------
         # Validation failed
@@ -455,32 +425,21 @@ class PurchaseOrdersStateService:
     # =========================================================
 
     def get_flags(self, order):
-        """
-        Return workflow flags for UI/business logic.
-        """
+        """Return workflow flags for UI logic."""
+        s = order.status
 
         return {
-            "editable": order.status == self.DRAFT,
-
-            "can_delete": order.status == self.DRAFT,
-
-            "can_send": order.status == self.DRAFT,
-
-            "can_confirm": order.status == self.SENT,
-
-            "can_approve": order.status == self.TO_APPROVE,
-
-            "can_done": order.status == self.PURCHASE,
-
-            "can_cancel": order.status in (
-                self.DRAFT,
-                self.SENT,
-                self.TO_APPROVE,
-                self.PURCHASE,
+            "editable": s == self.DRAFT,
+            "can_delete": s == self.DRAFT,
+            "can_send": s == self.DRAFT,
+            "can_request_approval": s == self.SENT,
+            "can_confirm": s in (self.SENT, self.TO_APPROVE),
+            "can_mark_done": s == self.PURCHASE,
+            "can_cancel": s in (
+                self.DRAFT, self.SENT, self.TO_APPROVE, self.PURCHASE,
             ),
-
-            "locked": order.status in (
-                self.DONE,
-                self.CANCELLED,
+            "can_reset": s in (
+                self.SENT, self.TO_APPROVE, self.PURCHASE,
             ),
+            "locked": s in (self.DONE, self.CANCELLED),
         }

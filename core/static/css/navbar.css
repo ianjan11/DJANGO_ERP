@@ -1,171 +1,190 @@
-/* ── Navbar Container ── */
+/* ═══════════════════════════════════════════════════════
+   NAVBAR
+   Requires these tokens in base.css :root:
+     --color-danger, --color-danger-bg, --color-danger-border
+     --shadow-nav, --shadow-dropdown, --shadow-inset, --shadow-hover
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Container ── */
 .app-navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--surface-card);
-  border-bottom: 1px solid var(--color-mist);
-  position: sticky;
-  top: 0;                              /* no margin — sticky with margin creates a gap */
-  z-index: 1000;
   height: 52px;
   padding: 0 var(--spacing-16);
-  box-shadow: rgba(17, 26, 74, 0.04) 0px 1px 3px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: var(--font-suisseintl);
+  background: var(--surface-card);
+  border-bottom: 1px solid var(--color-mist);
+  box-shadow: var(--shadow-nav);
 }
 
-/* ── Grouping ── */
 .nav-group {
   display: flex;
-  align-items: center;
-  gap: 2px;
+  align-items: stretch;      /* links fill the bar height so the underline sits on its bottom edge */
+  gap: var(--spacing-4);
+  height: 100%;
 }
 
-/* ── Nav Links & Toggle ── */
-.app-nav-link, .app-nav-toggle {
+.nav-divider {
+  align-self: center;
+  width: 1px;
+  height: 18px;
+  margin: 0 var(--spacing-4);
+  flex-shrink: 0;
+  background: var(--color-mist);
+}
+
+/* ═══════════════════ NAV LINKS & BUTTONS ═══════════════════ */
+
+.app-nav-link,
+.app-nav-toggle,
+.app-nav-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  color: var(--color-slate);           /* fixed: was ---color-deep-indigo (three dashes) */
+  gap: var(--spacing-8);
+  padding: 0 var(--spacing-12);
+  font-family: var(--font-suisseintl);
   font-size: var(--text-body-sm);
+  line-height: var(--leading-body-sm);
   font-weight: var(--font-weight-medium);
-  border: 1px solid transparent;
-  background: none;
-  cursor: pointer;
-  border-radius: 7px;
-  white-space: nowrap;
+  color: var(--color-slate);
   text-decoration: none;
-  /* removed font-size from transition — it causes layout shift on hover */
-  transition: background 0.12s ease,
-              color 0.12s ease,
-              border-color 0.12s ease;
+  white-space: nowrap;
+  position: relative;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease;
+}
+
+/* Active marker: rounded bar pinned to the bottom edge of the navbar */
+.app-nav-link::after,
+.app-nav-toggle::after,
+.app-nav-btn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 0;
+  background: transparent;
+  transition: background .12s ease;
 }
 
 .app-nav-link i,
 .app-nav-toggle i {
-  font-size: 15px;
+  font-size: var(--text-body-sm);
   color: var(--color-fog);
-  transition: color 0.12s ease;
+  transition: color .12s ease;
 }
 
 .app-nav-link:hover,
-.app-nav-toggle:hover {
+.app-nav-toggle:hover,
+.app-nav-btn:hover,
+.app-nav-btn.open {
   color: var(--color-deep-indigo);
   background: var(--surface-canvas);
-  border-color: var(--color-mist);
 }
+
+.app-nav-link:hover::after,
+.app-nav-toggle:hover::after,
+.app-nav-btn:hover::after,
+.app-nav-btn.open::after { background: var(--color-mist); }   /* subtle preview */
 
 .app-nav-link:hover i,
-.app-nav-toggle:hover i {
-  color: var(--color-deep-indigo);
-}
+.app-nav-toggle:hover i { color: var(--color-deep-indigo); }
 
-/* removed: .app-nav-toggle:hover { font-size } — causes layout shift */
-
+/* ── Selected: rounded bottom marker (keep after the hover rules) ── */
 .app-nav-link.selected,
 .app-nav-toggle.selected {
   color: var(--color-deep-indigo);
   font-weight: var(--font-weight-semibold);
-  background: var(--color-paper-white);
-  border-color: var(--color-mist);
-  box-shadow: rgba(17, 26, 74, 0.06) 0px 1px 3px inset;
+  background: none;
+  box-shadow: none;
 }
+
+.app-nav-link.selected::after,
+.app-nav-toggle.selected::after { background: var(--color-deep-indigo); }
 
 .app-nav-link.selected i,
-.app-nav-toggle.selected i {
-  color: var(--color-deep-indigo);
+.app-nav-toggle.selected i { color: var(--color-deep-indigo); }
+
+.app-nav-link:focus-visible,
+.app-nav-toggle:focus-visible,
+.app-nav-btn:focus-visible,
+.app-account-btn:focus-visible {
+  outline: 2px solid var(--color-sky-blue);
+  outline-offset: -2px;
 }
 
-/* ── Divider between nav groups ── */
-.nav-divider {
-  width: 1px;
-  height: 20px;
-  background: var(--color-mist);
-  margin: 0 6px;
-  flex-shrink: 0;
-}
+/* ═══════════════════ DROPDOWN (shared) ═══════════════════ */
 
-
-/* ── Dropdown wrapper ── */
 .nav-dropdown-wrap {
   position: relative;
-}
-
-/* ── Dropdown trigger button ── */
-.app-nav-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  color: var(--color-slate);
-  font-size: var(--text-body-sm);
-  font-weight: var(--font-weight-medium);
-  font-family: var(--font-suisseintl);
-  border: 1px solid transparent;
-  background: none;
-  cursor: pointer;
-  border-radius: 7px;
-  white-space: nowrap;
-  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
-}
-
-.app-nav-btn:hover,
-.app-nav-btn.open {
-  color: var(--color-deep-indigo);
-  background: var(--color-paper-white);
-  border-color: var(--color-mist);
+  display: flex;             /* lets the trigger stretch to full bar height */
+  align-items: stretch;
 }
 
 .nav-chevron {
-  font-size: 10px;
-  transition: transform 0.15s ease;
+  font-size: var(--text-caption);
+  transition: transform .15s ease;
 }
 
-.app-nav-btn.open .nav-chevron {
-  transform: rotate(180deg);
-}
+.app-nav-btn.open .nav-chevron,
+.app-account-btn.open .nav-chevron { transform: rotate(180deg); }
 
-/* ── Dropdown panel ── */
-.nav-dropdown {
+.nav-dropdown  {
   display: none;
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + var(--spacing-4));
   left: 0;
   min-width: 210px;
+  overflow: hidden;
+  z-index: 1100;
   background: var(--surface-card);
   border: 1px solid var(--color-mist);
   border-radius: var(--radius-cards);
-  box-shadow: rgba(0,0,0,0.08) 0px 8px 24px,
-              rgba(0,0,0,0.04) 0px 2px 6px;
-  overflow: hidden;
-  z-index: 1100;
+  box-shadow: var(--shadow-dropdown);
 }
 
-.nav-dropdown.open {
-  display: block;
-}
+.nav-dropdown.open { display: block; }
 
-/* ── Dropdown section ── */
+.nav-dropdown--right { left: auto; right: 0; }
+
 .nav-dd-section {
   padding: var(--spacing-4) 0;
   border-bottom: 1px solid var(--color-mist);
 }
 
-.nav-dd-section:last-child {
-  border-bottom: none;
+.nav-dd-section:last-child { border-bottom: none; }
+
+.nav-dropdown-header {
+  display: block;
+  margin: 0;
+  padding: var(--spacing-12) var(--spacing-12) var(--spacing-4) var(--spacing-16) !important;
+  font-family: var(--font-suisseintl);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-ink);
+  text-transform: none;
 }
 
 .nav-dd-label {
   display: block;
-  font-size: 10px;
+  padding: var(--spacing-8) var(--spacing-12) var(--spacing-16);
+  font-size: var(--text-caption);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-fog);
-  text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: var(--spacing-8) var(--spacing-12) var(--spacing-4);
+  text-transform: uppercase;
+  color: var(--color-fog);
 }
 
-/* ── Dropdown link ── */
 .nav-dd-link {
   display: flex;
   align-items: center;
@@ -174,113 +193,220 @@
   font-size: var(--text-body-sm);
   font-weight: var(--font-weight-regular);
   color: var(--color-slate);
+  text-decoration: none;
   cursor: pointer;
-  transition: background 0.1s ease, color 0.1s ease;
+  transition: background .1s ease, color .1s ease;
 }
 
 .nav-dd-link:hover {
-  background: var(--color-paper-white);
+  background: var(--surface-canvas);
   color: var(--color-deep-indigo);
+}
+
+.nav-dd-link:focus-visible {
+  outline: 2px solid var(--color-sky-blue);
+  outline-offset: -2px;
 }
 
 .nav-dd-link i {
-  font-size: 14px;
-  width: 16px;
+  flex-shrink: 0;
+  width: var(--spacing-16);
+  font-size: var(--text-body-sm);
   color: var(--color-fog);
-  flex-shrink: 0;
 }
 
-.nav-dd-link:hover i {
-  color: var(--color-slate);
+.nav-dd-link:hover i { color: var(--color-slate); }
+
+/* Items rendered as <button> (form submits) */
+.nav-dd-btn {
+  width: 100%;
+  font-family: var(--font-suisseintl);
+  text-align: left;
+  background: none;
+  border: 0;
 }
 
-/* ── Divider between home and nav items ── */
-.nav-divider {
-  width: 1px;
-  height: 18px;
-  background: var(--color-mist);
-  margin: 0 4px;
-  flex-shrink: 0;
+.nav-dd-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+.nav-dd-link--danger:hover {
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+}
 
+.nav-dd-link--danger:hover i { color: var(--color-danger); }
 
+/* ═══════════════════ ACCOUNT MENU ═══════════════════ */
 
-
-
-/* ── User Pill ── */
-.app-user-pill {
+/* ── Trigger ── */
+.app-account-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 10px 4px 4px;
-  background: var(--surface-canvas);
-  border-radius: 8px;                  /* reduced from 30px — more professional */
+  align-self: center;        /* don't stretch with .nav-dropdown-wrap */
+  gap: var(--spacing-8);
+  min-height: 34px;
+  padding: var(--spacing-4) var(--spacing-12) var(--spacing-4) var(--spacing-4);
+  font-family: var(--font-suisseintl);
   font-size: var(--text-body-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-deep-indigo);
+  background: var(--surface-canvas);
   border: 1px solid var(--color-mist);
+  border-radius: var(--radius-buttons);
   cursor: pointer;
-  transition: background 0.12s ease,
-              box-shadow 0.12s ease,
-              border-color 0.12s ease;
+  transition: background .12s ease, border-color .12s ease, box-shadow .12s ease;
 }
 
-.app-user-pill:hover {
+.app-account-btn:hover,
+.app-account-btn.open {
   background: var(--surface-card);
   border-color: var(--color-fog);
-  box-shadow: rgba(17, 26, 74, 0.06) 0px 2px 6px;
+  box-shadow: var(--shadow-hover);
 }
 
+.app-account-btn .nav-chevron { color: var(--color-fog); }
+
+.app-pill-text {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-logout-form { margin: 0; }
+
 /* ── Avatar ── */
+.app-avatar-wrap { position: relative; display: flex; }
+
 .app-user-avatar {
-  width: 26px;
-  height: 26px;
-  background: var(--color-deep-indigo); /* was pale-cyan — too light for initials */
-  color: #ffffff;
-  border-radius: 6px;                   /* square-ish — more professional than circle */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  font-weight: var(--font-weight-semibold);
   flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-card-white);
+  background: var(--color-deep-indigo);
+  border-radius: var(--radius-lg);
 }
 
-/* ── Logout ── */
-.app-logout-btn {
+.app-user-avatar--lg {
+  width: 36px;
+  height: 36px;
+  font-size: var(--text-body-sm);
+}
+
+/* ── Status dot ── */
+.app-status-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-badges);
+}
+
+.app-status-dot.is-active {
+  background: var(--color-mint);
+  box-shadow: 0 0 0 3px rgba(68, 180, 139, 0.2);
+}
+
+.app-status-dot.is-inactive {
+  background: var(--color-danger);
+  box-shadow: 0 0 0 3px rgba(155, 38, 38, 0.15);
+}
+
+/* Badge variant: sits on the avatar corner, ring replaced by a border */
+.app-status-dot--badge {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--surface-canvas);
+}
+
+.app-status-dot--badge.is-active,
+.app-status-dot--badge.is-inactive { box-shadow: none; }
+
+.app-account-btn:hover .app-status-dot--badge,
+.app-account-btn.open .app-status-dot--badge { border-color: var(--surface-card); }
+
+/* ── Panel ── */
+.nav-dropdown--account { min-width: 270px; }
+
+.nav-dd-head {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: none;
-  color: var(--color-slate);
-  padding: 6px 12px;
+  gap: var(--spacing-12);
+  padding: var(--spacing-12);
+  background: var(--surface-canvas);
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.nav-dd-head-text { min-width: 0; }
+
+.nav-dd-head-name,
+.nav-dd-head-sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-dd-head-name {
   font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-indigo);
+}
+
+.nav-dd-head-sub {
+  font-size: var(--text-caption);
+  color: var(--color-slate);
+}
+
+/* Active company row (not clickable) */
+.nav-dd-company {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-12);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-indigo);
+}
+
+.nav-dd-company > i {
+  flex-shrink: 0;
+  width: var(--spacing-16);
+  font-size: var(--text-body-sm);
+  color: var(--color-fog);
+}
+
+.nav-dd-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  flex-shrink: 0;
+  font-size: var(--text-caption);
   font-weight: var(--font-weight-medium);
-  font-family: var(--font-suisseintl);
-  cursor: pointer;
-  border: 1px solid transparent;
-  border-radius: 7px;
-  /* removed font-size from transition */
-  transition: background 0.12s ease,
-              color 0.12s ease,
-              border-color 0.12s ease;
 }
 
-.app-logout-btn:hover {
-  color: #9b2626;
-  background: #fef5f5;
-  border-color: #f7c1c1;
-}
+.nav-dd-status.is-active   { color: var(--color-forest-teal); }
+.nav-dd-status.is-inactive { color: var(--color-danger); }
 
-.app-logout-btn i { font-size: 14px; }
+/* ═══════════════════ MOBILE ═══════════════════ */
 
-/* ── Mobile ── */
 @media (max-width: 992px) {
   .app-nav-link span,
-  .app-nav-toggle span,
-  .app-logout-btn span {
-    display: none;
-  }
-  .app-user-pill { padding: 4px; }
+  .app-nav-toggle span { display: none; }
+
+  /* Account trigger collapses to avatar + badge */
+  .app-account-btn { padding: var(--spacing-4); }
+  .app-account-btn .app-pill-text,
+  .app-account-btn .nav-chevron { display: none; }
 }

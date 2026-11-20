@@ -1,13 +1,9 @@
-from collections import defaultdict
 from decimal import Decimal, ROUND_HALF_UP
-
-from django.core.exceptions import ValidationError
-from django.db import transaction
-
+from accounting.services.account_resolver import resolve_account, Role
 from accounting.models import AccountMove, AccountMoveLine, Journal
 from accounting.services.Period_validators import PeriodValidator
 from accounting.services.account_move_services.shared.account_utils import (
-    assert_same_company, get_company_account)
+    assert_same_company)
 from accounting.services.account_move_services.shared.invoice.clearing import source_ref
 from core.services.currency_exchange_service import _get_rate
 from inventory.models import StockPicking, StockMove
@@ -235,23 +231,12 @@ def create_valuation_for_incoming_picking(picking, user):
     return move
 
 
+
 def _get_inventory_account(product):
-    if product.category:
-        account = product.category.get_valuation_account()
-        if account:
-            return account
-    return get_company_account(product.company, key="default_inventory_valuation_account")
-
-
-def _get_inventory_adjustment_account(product):
-    # Direct receipt / opening stock: Dr Inventory, Cr Adjustment Gain. Must NOT be the valuation account (Dr/Cr Inventory nets to zero).
-    return get_company_account(product.company, key="default_inventory_adjustment_gain")
-
-
+    return resolve_account(Role.INVENTORY, company=product.company, product=product)
 
 def _get_stock_input_account(product):
-    if product.category:
-        account = product.category.get_stock_input_account()
-        if account:
-            return account
-    return get_company_account(product.company, key="default_stock_input_account")
+    return resolve_account(Role.STOCK_INPUT, company=product.company, product=product)
+
+def _get_inventory_adjustment_account(product):
+    return resolve_account(Role.ADJUSTMENT_GAIN, company=product.company)

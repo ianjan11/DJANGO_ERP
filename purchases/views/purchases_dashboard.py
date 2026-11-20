@@ -9,28 +9,9 @@ from purchases.models import PurchaseOrder
 @login_required
 def purchases_dashboard(request):
 
-    is_accountant = request.user.groups.filter(name="accountants").exists()
-
-    if is_accountant:
-        purchases = PurchaseOrder.objects.all()
-        draft_purchases = PurchaseOrder.objects.filter(status="Draft").count()
-    else:
-        purchases = PurchaseOrder.objects.filter(created_by=request.user)
-        draft_purchases = PurchaseOrder.objects.filter(
-            status="Draft",
-            created_by=request.user
-        ).count()
-
-
-    context = {
-        "purchases": purchases,
-    }
-
     if request.headers.get("HX-Request"):
-        return render(request, "purchases/partials/dashboard_content.html", context)
+        return render(request, "purchases/partials/dashboard_content.html")
 
     # normal page
-    return render(request, 'purchases/purchases_dashboard.html', {
-        **context,
-    })
+    return render(request, 'purchases/purchases_dashboard.html', )
 

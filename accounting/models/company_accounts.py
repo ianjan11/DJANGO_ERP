@@ -31,6 +31,7 @@ class CompanyAccountSetting(models.Model):
         ('default_inventory_valuation_account', 'Default Inventory Valuation Account'),
         ('default_stock_input_account', 'Default Stock Input / GRNI Account'),
         ('default_stock_output_account', 'Default Stock Output Account'),
+        ('default_expense_account', 'Default Expense Account'),
     ]
 
     company = models.ForeignKey('core.Company', on_delete=models.CASCADE, related_name='account_settings')

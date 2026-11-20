@@ -92,6 +92,8 @@ def tenant_details(request, membership_id):
         "membership_form": membership_form,
         "form_context": "settings",
         "back_url": reverse("core:tenant_user_list"),
+        "back_label": "Staff Members",
+        "target": "#settings-display",
     }
 
     if request.headers.get("HX-Request"):

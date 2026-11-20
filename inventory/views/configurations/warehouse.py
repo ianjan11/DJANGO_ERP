@@ -9,11 +9,14 @@ from django.urls import reverse
 from django.views.decorators.http import require_GET, require_POST
 from core.utils import htmx_error, htmx_success
 from core.utils.format_errors import _format_form_errors
+from core.utils.module import _render
 from inventory.forms.warehouse_form import WarehouseForm
 from inventory.models import Warehouse
 
 
 logger = logging.getLogger(__name__)
+
+MODULE = "inventory"
 
 
 def warehouse_list(request):
@@ -35,7 +38,8 @@ def warehouse_list(request):
         else "inventory/warehouse/warehouse_list.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
+
 
 @require_GET
 def get_empty_warehouse_form(request):
@@ -44,6 +48,8 @@ def get_empty_warehouse_form(request):
 
     context = {
         "form": form,
+        "back_url": reverse("inventory:warehouse_list"),
+        "back_label": " Warehouses ",
     }
 
     template = (
@@ -52,7 +58,7 @@ def get_empty_warehouse_form(request):
         else "inventory/warehouse/warehouse_form.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
 
 @login_required
 def warehouse_detail(request, warehouse_id):
@@ -69,6 +75,9 @@ def warehouse_detail(request, warehouse_id):
     context = {
         "warehouse": warehouse,
         "form": form,
+        "back_url": reverse("inventory:warehouse_list"),
+        "back_label": " Warehouses ",
+
     }
 
     template = (
@@ -77,7 +86,7 @@ def warehouse_detail(request, warehouse_id):
         else "inventory/warehouse/warehouse_form.html"
     )
 
-    return render(request, template, context)
+    return _render(request, template, context, default_module=MODULE)
 
 @login_required
 @require_POST
@@ -134,7 +143,6 @@ def edit_warehouse(request, warehouse_id):
     return htmx_success(
         request,
         "Warehouse updated successfully.",
-        target="#inventory-display",
     )
 
 @login_required
@@ -183,7 +191,6 @@ def create_warehouse(request):
     return htmx_success(
         request,
         "Warehouse created successfully.",
-        target="#inventory-display",
 
     )
 

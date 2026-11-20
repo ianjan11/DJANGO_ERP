@@ -19,10 +19,10 @@ class AccountForm(forms.ModelForm):
             'account_type': forms.Select(attrs={'class': 'form-select select2-widget '}),
             'currency': forms.Select(attrs={'class': 'form-select select2-widget '}),
             'parent': forms.Select(attrs={'class': 'form-select select2-widget '}),
-            'internal_type': forms.Select(attrs={'class': 'form-select'}),
-            'is_control_account': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'allow_reconciliation': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'internal_type': forms.Select(attrs={'class': 'form-select select2-widget '}),
+            'is_control_account': forms.CheckboxInput(attrs={'class': 'form-check-input', 'role':'switch'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input','role': 'switch' }),
+            'allow_reconciliation': forms.CheckboxInput(attrs={'class': 'form-check-input','role': 'switch' }),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }
 

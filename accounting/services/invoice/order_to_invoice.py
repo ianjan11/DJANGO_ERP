@@ -9,8 +9,6 @@ from accounting.events.types import AccountingEventType
 from accounting.services.invoice.to_invoice_service import to_invoice
 from core.events import dispatch
 from core.utils import htmx_success, htmx_error
-from purchases.services.purchase_order_loader import load_purchase_order
-from sales.services import load_sales_order
 logger = logging.getLogger('sales.invoice')
 
 def order_to_invoice(request, *, order, origin_type, detail_url, target):
@@ -59,12 +57,11 @@ def order_to_invoice(request, *, order, origin_type, detail_url, target):
             detail_url,
         )
 
-    success_url = reverse("accounting:invoice_create_or_detail", kwargs={"invoice_id": invoice_id})
 
     return htmx_success(
         request,
         message="Invoice created successfully.",
-        redirect_url=success_url,
+        redirect_url= detail_url,
         target=target,
     )
 

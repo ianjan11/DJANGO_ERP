@@ -1,204 +1,216 @@
 (function () {
+  'use strict';
 
-  // ── Design tokens ─────────────────────────────────────────
-  const COLORS = {
-    accent:  "#1f2a67",
-    success: "#c4cacbd0",
-    warning: "#212122ab",
-    danger:  "#ef4444",
-    info:    "#06b6d4",
-    purple:  "#481e91",
-    text:    "#101828",
-    muted:   "#667085",
-    surface: "#c2c2c3",
-    light:   "#d5ecf9",
-    border:  "#f0f0f4",
-  };
+  if (!window.ChartCore) {
+    console.error('[charts] chart_core.js must load before dashboard_charts.js');
+    return;
+  }
 
-  const PALETTE = [
-    COLORS.accent, COLORS.success, COLORS.warning, COLORS.surface,
-    COLORS.light,  COLORS.purple,  COLORS.info,    COLORS.danger,
-  ];
+  // ── Status donut: big light number in the middle, click a slice to inspect ──
 
-  const BASE = {
-    fontFamily: "'DM Sans', sans-serif",
-    foreColor:  COLORS.muted,
-    toolbar:    { show: false },
-    animations: {
-      enabled: true, speed: 600,
-      animateGradually: { enabled: true, delay: 100 },
-      dynamicAnimation: { enabled: true, speed: 300 },
-    },
-  };
+    function renderStatusDonut(selector, data, noun, h) {
+    const C = h.theme, fmt = h.fmt;
+    const series = data.series || [];
+    const total = series.reduce((a, b) => a + b, 0);
+    let selected = null;
 
-  const GRID = {
-    borderColor: COLORS.border,
-    strokeDashArray: 4,
-    xaxis: { lines: { show: false } },
-    yaxis: { lines: { show: true  } },
-    padding: { top: 0, right: 16, bottom: 0, left: 8 },
-  };
+    const labelText = () => (selected === null ? noun : data.labels[selected]);
+    const valueText = () => fmt(selected === null ? total : series[selected]);
 
-  const TOOLTIP_STYLE = {
-    style: { fontSize: "13px", fontFamily: "'DM Sans', sans-serif" },
-    x: { show: true },
-  };
-
-  // ── Track rendered instances so we can destroy before re-render ──
-  const _instances = {};
-
-  function destroyChart(id) {
-    if (_instances[id]) {
-      try { _instances[id].destroy(); } catch (_) {}
-      delete _instances[id];
+    // Paint the centre directly: no redraw, so the slice keeps its selected/expanded state.
+    function paintCenter(chartContext) {
+      const total_cfg = chartContext.w.config.plotOptions.pie.donut.labels.total;
+      total_cfg.label = labelText();               // Apex re-reads this when the mouse leaves a slice
+      const root = chartContext.el;
+      const lbl = root.querySelector('.apexcharts-datalabel-label');
+      const val = root.querySelector('.apexcharts-datalabel-value');
+      if (lbl) lbl.textContent = labelText();
+      if (val) val.textContent = valueText();
     }
-  }
 
-  function mountChart(id, options) {
-    destroyChart(id);
-    const el = document.querySelector(id);
-    if (!el) return;
-    el.innerHTML = ''; // clear any previous canvas
-    const chart = new ApexCharts(el, options);
-    chart.render();
-    _instances[id] = chart;
-  }
-
-  // ── Data fetch ────────────────────────────────────────────
-  async function fetchData(url) {
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('Network response was not ok');
-      return await res.json();
-    } catch (err) {
-      console.error('Chart fetch error:', err);
-      return null;
-    }
-  }
-
-  // ── Donut — Delivery status ───────────────────────────────
-  function renderDeliveryStatusChart(labels, series) {
-    mountChart('#D-Chart', {
-      chart: { ...BASE, type: 'donut', height: 260 },
-      labels,
-      series,
-      colors: PALETTE,
+    h.mount(selector, {
+      chart: {
+        ...h.base('donut', 230),
+        events: {
+          dataPointSelection: function (event, chartContext, config) {
+            const i = config.dataPointIndex;
+            selected = selected === i ? null : i;  // Apex toggles the slice itself
+            setTimeout(() => paintCenter(chartContext), 0);   // run after Apex finishes its own update
+          },
+          // Apex resets the centre on mouse leave; re-apply our state afterwards
+          dataPointMouseLeave: function (event, chartContext) {
+            setTimeout(() => paintCenter(chartContext), 0);
+          },
+        },
+      },
+      labels: data.labels,
+      series: total ? series : [],
+      colors: [C.purpleSoft, C.slate, C.purple, C.rose],   // Pending, Ready, Completed, Cancelled
+      stroke: { width: 4, colors: [C.card] },
+      dataLabels: { enabled: false },
       plotOptions: {
         pie: {
+          expandOnClick: true,                 // slice moves out again
           donut: {
-            size: '72%',
+            size: '80%',
             labels: {
               show: true,
-              name:  { show: true, fontSize: '13px', fontFamily: BASE.fontFamily, color: COLORS.muted, offsetY: -6 },
-              value: { show: true, fontSize: '22px', fontWeight: 700, fontFamily: "'DM Mono', monospace", color: COLORS.text, offsetY: 6 },
-              total: {
-                show: true, label: 'Total', fontSize: '12px',
-                fontFamily: BASE.fontFamily, color: COLORS.muted,
-                formatter: w => w.globals.seriesTotals.reduce((a, b) => a + b, 0),
-              },
+              name:  { show: true, fontSize: '11px', fontWeight: 400, color: C.purple, offsetY: 20 },
+              value: { show: true, fontSize: '34px', fontWeight: 300, color: C.purple, offsetY: -12,
+                       formatter: v => fmt(v) },
+              total: { show: true, showAlways: true, label: noun, fontSize: '11px', fontWeight: 400,
+                       color: C.purpleSoft,
+                       formatter: () => (selected === null ? total : series[selected]) },
             },
           },
         },
       },
-      dataLabels: { enabled: false },
       legend: {
-        position: 'bottom', fontFamily: BASE.fontFamily, fontSize: '12px',
-        fontWeight: 500, markers: { width: 8, height: 8, radius: 8 },
-        itemMargin: { horizontal: 10, vertical: 4 },
+        position: 'bottom', fontSize: '10px', fontWeight: 500,
+        labels: { colors: C.muted },
+        markers: { width: 7, height: 7, radius: 7, offsetX: -2 },
+        itemMargin: { horizontal: 6, vertical: 2 },
       },
-      stroke: { width: 0 },
-      tooltip: { ...TOOLTIP_STYLE, y: { formatter: val => `${val} deliveries` } },
+      states: { hover: { filter: { type: 'lighten', value: 0.05 } }, active: { filter: { type: 'none' } } },
+      noData: h.noDataOpts(),
+      tooltip: h.tip(noun, { fillSeriesColor: false }),
     });
   }
 
-  // ── Area — Sales trend ────────────────────────────────────
-  function renderSalesTrendChart(labels, data) {
-    mountChart('#stockMovementChartDashboard', {
-      chart: { ...BASE, type: 'area', height: 305 },
-      series: [{ name: 'Sales', data }],
-      colors: [COLORS.accent],
-      xaxis: {
-        categories: labels,
-        axisBorder: { show: false }, axisTicks: { show: false },
-        labels: { rotate: -35, style: { fontSize: '11px', fontFamily: BASE.fontFamily, colors: COLORS.muted } },
-      },
-      yaxis: {
-        min: 0,
-        labels: { style: { fontSize: '11px', fontFamily: BASE.fontFamily, colors: COLORS.muted }, formatter: val => Math.round(val) },
-      },
-      grid: GRID,
-      stroke: { curve: 'smooth', width: 3 },
+  // ── Sales trend: thin smooth line, faint fill, bubble on the peak ──
+  function renderSalesTrend(labels, data, h) {
+    const C = h.theme, fmt = h.fmt;
+    const peak = Math.max(...data, 0);
+    const idx = data.indexOf(peak);
+    const short = labels.map(l => String(l).split(' ')[0]);
+
+    h.mount('#stockMovementChartDashboard', {
+      chart: h.base('area', 320),
+      series: [{ name: 'Net sales', data }],
+      colors: [C.indigo],
+      stroke: { curve: 'smooth', width: 1.6, lineCap: 'round' },
       fill: {
         type: 'gradient',
-        gradient: { shadeIntensity: 0.6, opacityFrom: 0.45, opacityTo: 0.05, stops: [0, 90, 100] },
+        gradient: { shade: 'light', type: 'vertical', shadeIntensity: 0,
+                    gradientToColors: [C.card], opacityFrom: 0.16, opacityTo: 0.0, stops: [0, 100] },
       },
       markers: {
-        shape: 'square', size: 4, hover: { size: 6, sizeOffset: 2 },
-        strokeWidth: 2, strokeColors: '#fff', colors: [COLORS.accent],
+        size: 0,
+        hover: { size: 5, sizeOffset: 0 },
+        colors: [C.card], strokeColors: C.indigo, strokeWidth: 2,
+        discrete: peak > 0 ? [{ seriesIndex: 0, dataPointIndex: idx, size: 6, shape: 'circle',
+                                fillColor: C.card, strokeColor: C.indigo }] : [],
       },
-      tooltip: { ...TOOLTIP_STYLE, y: { formatter: val => `${val} units` } },
+      dataLabels: { enabled: false },
+      xaxis: {
+        categories: short,
+        axisBorder: { show: false }, axisTicks: { show: false },
+        tooltip: { enabled: false },
+        labels: h.axisLabel({ rotate: 0, hideOverlappingLabels: true }),
+        crosshairs: { stroke: { color: C.periwinkle, width: 1, dashArray: 4 } },
+      },
+      yaxis: { labels: h.axisLabel({ formatter: v => fmt(Math.round(v)) }) },
+      grid: h.grid(),
+      annotations: peak > 0 ? { points: [{
+        x: short[idx], y: peak, marker: { size: 0 },
+        label: {
+          text: `${labels[idx]}  ·  ${fmt(peak)}`, offsetY: -10, borderColor: C.mist, borderRadius: 8,
+          style: { background: C.card, color: C.ink, fontSize: '10px', fontWeight: 600,
+                   padding: { left: 10, right: 10, top: 5, bottom: 5 } },
+        },
+      }] } : {},
       legend: { show: false },
+      noData: h.noDataOpts(),
+      tooltip: h.tip('units', {
+        x: { show: true, formatter: (v, o) => labels[(o && o.dataPointIndex) ?? idx] || v },
+      }),
     });
   }
 
-  // ── Bar — Top products ────────────────────────────────────
-  function renderTopProductsChart(months, series) {
-    const coloredSeries = series.map((s, i) => ({ ...s, color: PALETTE[i % PALETTE.length] }));
-    mountChart('#myChart', {
-      chart: { ...BASE, type: 'bar', height: 310, stacked: false },
-      series: coloredSeries,
-      colors: PALETTE,
+  // ── Top 5 per month: soft stacked columns, rounded tops ──
+  function renderTopProducts(months, series, h) {
+    const C = h.theme, fmt = h.fmt;
+    h.mount('#topProductsColumnChart', {
+      chart: { ...h.base('bar', 320), stacked: false },
+      series,
+      colors: ['#1f2a67', '#4a5aa8', '#7f8fd0', '#aebbe8', '#d4dbf3'],
+      plotOptions: {
+        bar: {
+          columnWidth: '55%',
+          borderRadius: 6,
+          borderRadiusApplication: 'end',
+        },
+      },
+      stroke: { width: 2, colors: [C.card] },
+      dataLabels: { enabled: false },
       xaxis: {
         categories: months,
         axisBorder: { show: false }, axisTicks: { show: false },
-        labels: { rotate: -35, style: { fontSize: '11px', fontFamily: BASE.fontFamily, colors: COLORS.muted } },
+        labels: h.axisLabel({ rotate: 0, hideOverlappingLabels: true,
+                              formatter: v => (typeof v === 'string' ? v.split(' ')[0] : v) }),
       },
-      yaxis: {
-        min: 0,
-        labels: { style: { fontSize: '11px', fontFamily: BASE.fontFamily, colors: COLORS.muted }, formatter: val => Math.round(val) },
-      },
-      grid: GRID,
-      plotOptions: { bar: { columnWidth: '55%', borderRadius: 4, borderRadiusApplication: 'end' } },
-      dataLabels: { enabled: false },
+      yaxis: { min: 0, labels: h.axisLabel({ formatter: v => fmt(Math.round(v)) }) },
+      grid: h.grid(),
       legend: {
-        position: 'top', horizontalAlign: 'left', fontFamily: BASE.fontFamily,
-        fontSize: '12px', fontWeight: 500,
-        markers: { width: 8, height: 8, radius: 4 },
-        itemMargin: { horizontal: 10 },
+        position: 'top', horizontalAlign: 'left', fontSize: '11px', fontWeight: 500,
+        labels: { colors: C.muted },
+        markers: { width: 7, height: 7, radius: 7, offsetX: -2 },
+        itemMargin: { horizontal: 10, vertical: 4 },
       },
-      tooltip: { ...TOOLTIP_STYLE, shared: true, intersect: false, y: { formatter: val => `${val} units` } },
+      states: { hover: { filter: { type: 'lighten', value: 0.05 } } },
+      noData: h.noDataOpts(),
+      tooltip: h.tip('units', { shared: false, intersect: true }),
     });
   }
 
-  // ── Init ──────────────────────────────────────────────────
-  async function initCharts(url) {
-    const result = await fetchData(url);
-    if (!result) return;
+  // ── Best / least selling: slim pill bars, value at the end ──
+  function renderRanking(selector, data, color, h) {
+    const C = h.theme, fmt = h.fmt;
+    const height = Math.max(180, data.labels.length * 54 + 30);
 
-    if (result.line_chart)       renderSalesTrendChart(result.line_chart.labels, result.line_chart.data);
-    if (result.apex_top_products) renderTopProductsChart(result.apex_top_products.months, result.apex_top_products.series);
-    if (result.pie_chart_series)  renderDeliveryStatusChart(result.pie_chart_series.labels, result.pie_chart_series.series);
+    h.mount(selector, {
+      chart: h.base('bar', height),
+      series: [{ name: 'Units sold', data: data.data }],
+      colors: [color],
+      plotOptions: { bar: { horizontal: true, barHeight: '26%', borderRadius: 10,
+                            borderRadiusApplication: 'around', dataLabels: { position: 'top' } } },
+      dataLabels: {
+        enabled: true, textAnchor: 'start', offsetX: 8,
+        formatter: v => fmt(v),
+        style: { fontSize: '11px', fontWeight: 600, colors: [C.ink] },
+        background: { enabled: false },
+      },
+      xaxis: { categories: data.labels, axisBorder: { show: false }, axisTicks: { show: false },
+               labels: { show: false } },
+      yaxis: { labels: { style: { fontSize: '11px', fontFamily: h.font, colors: C.ink, fontWeight: 500 },
+                         maxWidth: 180 } },
+      grid: { ...h.grid({ y: false }), padding: { top: 0, right: 40, bottom: 0, left: 8 } },
+      legend: { show: false },
+      states: { hover: { filter: { type: 'lighten', value: 0.05 } } },
+      noData: h.noDataOpts(),
+      tooltip: h.tip('units'),
+    });
   }
 
-  // ── Event delegation ─────────────────────────────────────
-  // fires on nav click (user navigates to dashboard)
-  document.addEventListener('click', function (e) {
-    const btn = e.target.closest('.dashboard-page');
-    if (!btn) return;
-    // wait for HTMX to finish swapping before rendering charts
-    document.addEventListener('htmx:afterSwap', function handler(ev) {
-      if (ev.detail.target.id === 'inventory-display') {
-        document.removeEventListener('htmx:afterSwap', handler);
-        const url = btn.dataset.chartsUrl || window.CHARTS_URL;
-        if (url) initCharts(url);
-      }
-    });
-  });
+  ChartCore.register('inventory-dashboard', {
+    urlSelector: '[data-inventory-charts-url]',
+    urlAttribute: 'data-inventory-charts-url',
+    selectors: [
+      '#deliveryPieChart', '#receiptPieChart', '#transferPieChart', '#returnPieChart',
+      '#stockMovementChartDashboard', '#topProductsColumnChart',
+      '#bestSellingChart', '#leastSellingChart',
+    ],
 
-  // fires if dashboard is the default page on load
-  document.addEventListener('DOMContentLoaded', function () {
-    const el = document.querySelector('#myChart, #D-Chart, #stockMovementChartDashboard');
-    if (el && window.CHARTS_URL) initCharts(window.CHARTS_URL);
-  });
+    render(r, h) {
+      if (r.line_chart)        renderSalesTrend(r.line_chart.labels, r.line_chart.data, h);
+      if (r.apex_top_products) renderTopProducts(r.apex_top_products.months, r.apex_top_products.series, h);
+      if (r.best_selling)      renderRanking('#bestSellingChart',  r.best_selling,  h.theme.purple, h);
+      if (r.least_selling)     renderRanking('#leastSellingChart', r.least_selling, h.theme.slate, h);
 
+      if (r.pie_delivery)  renderStatusDonut('#deliveryPieChart', r.pie_delivery,  'deliveries', h);
+      if (r.pie_receipts)  renderStatusDonut('#receiptPieChart',  r.pie_receipts,  'receipts',   h);
+      if (r.pie_transfers) renderStatusDonut('#transferPieChart', r.pie_transfers, 'transfers',   h);
+      if (r.pie_returns)   renderStatusDonut('#returnPieChart',   r.pie_returns,   'returns',    h);
+    },
+  });
 })();

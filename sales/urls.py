@@ -18,12 +18,10 @@ urlpatterns = [
    path('sales/order/<int:order_id>/delete/', views.delete_order_view, name='order_delete'),
 
    path('sales/order/<int:order_id>/',views.sales_order_create_or_detail,name='sales_order_create_or_detail'),
-
    path('sales/order/<int:order_id>/confirm/', views.confirm_order_view, name='confirm_sales_order'),
    path('sales/order/<int:order_id>/send/', views.send_order_view, name='send_sales_order'),
-
    path("sales/<int:order_id>/to-invoice/", views.sales_to_invoice_view,name="sales_to_invoice", ),
-
+   path('sales/charts', views.sales_view_charts, name='sales_charts'),
 
 ]
 

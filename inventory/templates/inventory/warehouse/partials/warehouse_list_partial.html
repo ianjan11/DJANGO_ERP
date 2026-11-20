@@ -1,38 +1,66 @@
+{% load humanize %}
+
 <div class="main-wrapper">
-  
-  <!-- Action Bar / Header -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="mb-0">Warehouses</h4>
-    <button class="btn btn-primary btn-sm"
-            hx-get="{% url 'inventory:warehouse_create_form' %}"
-            hx-target="#inventory-display"
-            hx-push-url="true">
-      <i class="bi bi-plus-lg"></i> New Warehouse
-    </button>
+  <div class="inv-card">
+
+    {# ── Toolbar ── #}
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        Warehouses
+        <span class="badge badge--count">
+          {{ warehouses|length }} Warehouse{{ warehouses|length|pluralize }}
+        </span>
+      </h5>
+
+      <button type="button"
+              class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm"
+              hx-get="{% url 'inventory:warehouse_create_form' %}?module={{ module }}"
+              hx-target="closest .module-display"
+              hx-push-url="true">
+        <i class="bi bi-plus-lg"></i>
+        <span>New</span>
+      </button>
+    </div>
+
+    {# ── Cards ── #}
+    {% if warehouses %}
+    <div class="wh-grid">
+      {% for warehouse in warehouses %}
+      <article class="wh-card"
+               role="button"
+               tabindex="0"
+               hx-get="{% url 'inventory:warehouse_detail' warehouse.id %}?module={{ module }}"
+               hx-swap="innerHTML"
+               hx-push-url="true"
+               hx-target="closest .module-display"
+               hx-trigger="click, keyup[key=='Enter']">
+
+        <div class="wh-card-top">
+          <div class="wh-icon"><i class="bi bi-building"></i></div>
+          <div class="wh-title">
+            <h6 class="wh-name" title="{{ warehouse.name }}">{{ warehouse.name }}</h6>
+            <span class="wh-code">{{ warehouse.code }}</span>
+          </div>
+        </div>
+
+        <div class="wh-card-meta">
+          <span class="wh-meta-item">
+            <i class="bi bi-geo-alt"></i>
+            <span><strong>{{ warehouse.locations_count }}</strong> active location{{ warehouse.locations_count|pluralize }}</span>
+          </span>
+          <i class="bi bi-chevron-right wh-chevron"></i>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="table-empty" style="padding: var(--spacing-48) var(--spacing-16);">
+      <div class="table-empty-icon"><i class="bi bi-building"></i></div>
+      <div class="table-empty-title">No warehouses yet</div>
+      <div class="table-empty-desc">Create your first warehouse to start managing stock locations.</div>
+    </div>
+    {% endif %}
+
   </div>
-
-  <!-- Warehouse Cards Container -->
- <div class="inv-card">
-  {% for warehouse in warehouses %}
-    <div
-      class="invoice-card mb-3 cursor-pointer"
-      hx-get="{% url 'inventory:warehouse_detail' warehouse.id %}"
-      hx-push-url="true"
-      hx-target="#inventory-display"
-      hx-swap="innerHTML"
-      role="button"
-    >
-      <div class="card-body">
-        <h5>{{ warehouse.name }}</h5>
-        <p class="text-muted mb-2">Code: {{ warehouse.code }}</p>
-        <span class="badge bg-primary">{{ warehouse.locations_count }} Active Locations</span>
-      </div>
-    </div>
-  {% empty %}
-    <div class="empty-state text-center p-4">
-      <p class="text-muted mb-0">No active warehouses found.</p>
-    </div>
-  {% endfor %}
-</div>
-
 </div>

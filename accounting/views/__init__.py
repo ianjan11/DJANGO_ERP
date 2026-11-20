@@ -27,11 +27,8 @@ from .journal_entries.journal_entries import (journal_entries, journal_create_or
                                               journal_update, journal_totals, post_journal_view,
                                               cancel_journal_view,delete_journal_view)
 
-from .partners.partners import get_vendors_view, get_customers_view, create_partner_view
-from .partners.partners_details import partners_details_view, edit_partner_view
-
 from .recocniliation.recocniliation import reconciliation_page_view
-from .recocniliation.reconcile_journal import reconcile_journal, auto_reconcile_journal
+from .recocniliation.reconcile_journal import reconcile_journal, auto_reconcile_journal, reconcile_from_invoice
 
 
 from .configurations.accounts import (accounts_list_view, account_detail, edit_account,
@@ -47,3 +44,5 @@ from .configurations.journals import  (journals_list_view, journal_detail, edit_
 
 from .configurations.taxes import (taxes_view,toggle_tax_view,tax_detail,create_tax, delete_tax,
                                    get_empty_tax_form, edit_tax)
+
+from .charts import accounting_view_charts

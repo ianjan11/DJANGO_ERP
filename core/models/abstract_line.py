@@ -2,6 +2,9 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal
+from django.db import models
+
 
 
 
@@ -48,13 +51,11 @@ class PricedLineMixin(models.Model):
             subtotal=subtotal, quantity=quantity, taxes=taxes, tax_use=tax_use)
 
 
+
+
 class FulfillmentTrackingMixin(models.Model):
-    """Order-lifecycle tracking: how much of this ORDER line has been
-    physically fulfilled, returned, and invoiced so far. Belongs on
-    SalesOrderLine / PurchaseOrderLine / ReturnLine -- lines that live for
-    the life of an order and get progressively actioned. Does NOT belong on
-    AccountMoveLine: an invoice line is the record of "this much was
-    invoiced", not a thing that itself has a qty_invoiced."""
+    """Order-lifecycle tracking: dynamically computes fulfillment from completed
+    StockMove records, falling back to stored fields if necessary."""
     qty_fulfilled = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     qty_returned = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     qty_invoiced = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
@@ -64,7 +65,33 @@ class FulfillmentTrackingMixin(models.Model):
 
     @property
     def fulfilled_quantity(self):
-        return max(self.qty_fulfilled - self.qty_returned, Decimal('0.00'))
+        """Dynamically calculates net fulfilled quantity from completed StockMoves."""
+        try:
+            from inventory.models import StockMove, StockLocation
+            U = StockLocation.Usage
+            is_sale = hasattr(self, "sales_order") or self.__class__.__name__ == "SalesOrderLine"
+            fk = "sale_line" if is_sale else "purchase_line"
+            out_pair = (U.INTERNAL, U.CUSTOMER) if is_sale else (U.SUPPLIER, U.INTERNAL)
+            ret_pair = (U.CUSTOMER, U.INTERNAL) if is_sale else (U.INTERNAL, U.SUPPLIER)
+
+            line_uom = getattr(self, "product_uom", None) or self.product.uom
+            total = Decimal("0")
+            moves = (StockMove.objects
+                     .filter(**{fk: self}, status=StockMove.Status.COMPLETED)
+                     .select_related("source_location", "dest_location", "product_uom", "product__uom"))
+
+            for m in moves:
+                qty = (m.product_uom or m.product.uom).convert_to(m.quantity, line_uom)
+                pair = (m.source_location.usage, m.dest_location.usage)
+                if pair == out_pair:
+                    total += qty
+                elif pair == ret_pair:
+                    total -= qty
+
+            return max(total, Decimal("0"))
+        except Exception:
+            # Fallback to stored database fields if query context fails
+            return max(self.qty_fulfilled - self.qty_returned, Decimal('0.00'))
 
     @property
     def remaining_quantity(self):
@@ -84,9 +111,8 @@ class FulfillmentTrackingMixin(models.Model):
 
     @property
     def invoice_target_quantity(self):
-        if self.invoice_policy in ('delivery', 'receive'):
-            return self.fulfilled_quantity
-        return self.quantity
+        base_target = self.fulfilled_quantity if self.invoice_policy in ('delivery', 'receive') else self.quantity
+        return max(base_target, self.qty_invoiced)
 
     @property
     def qty_to_invoice(self):
@@ -95,14 +121,15 @@ class FulfillmentTrackingMixin(models.Model):
     @property
     def invoice_state(self):
         target = self.invoice_target_quantity
-        if target <= Decimal('0.00'):
+        if target <= Decimal('0.00') and self.qty_invoiced <= Decimal('0.00'):
             return 'no'
+        if self.qty_invoiced >= self.fulfilled_quantity and self.qty_returned > Decimal('0.00'):
+            return 'refund_needed'
         if self.qty_invoiced >= target:
             return 'invoiced'
         if self.qty_to_invoice > Decimal('0.00'):
             return 'to_invoice'
         return 'no'
-
 
 class AbstractOrderLine(PricedLineMixin, FulfillmentTrackingMixin):
     """Base for SalesOrderLine / PurchaseOrderLine: a line that is placed,

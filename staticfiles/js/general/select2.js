@@ -60,9 +60,3 @@ $(function () {
     initSelect2();
 });
 
-const paymentModal = document.getElementById('paymentModal');
-if (paymentModal) {
-    paymentModal.addEventListener('shown.bs.modal', function () {
-        initSelect2(paymentModal);
-    });
-}

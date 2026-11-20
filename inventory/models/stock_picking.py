@@ -338,3 +338,5 @@ class StockPicking(models.Model):
                 .exclude(status=self.Status.CANCELLED)
                 .distinct()
                 .order_by('id'))
+
+

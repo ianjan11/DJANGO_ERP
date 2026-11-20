@@ -5,9 +5,12 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 
 from accounting.models import AccountMove, AccountMoveLine, Journal
+from accounting.services.account_resolver import resolve_account, invoice_line_role
 from inventory.models import StockPicking
 from purchases.models import PurchaseOrder
 from sales.models import SalesOrder
+from inventory.models import StockLocation, StockMove
+
 
 MT = AccountMove.MoveType
 
@@ -43,36 +46,48 @@ def _drafted_quantity(line):
     )
 
 
+
+def _fulfilled_from_moves(line):
+    """Net quantity actually moved for this order line, in the line's UoM."""
+    U = StockLocation.Usage
+    is_sale = hasattr(line, "sales_order") or line.__class__.__name__ == "SalesOrderLine"
+    fk = "sale_line" if is_sale else "purchase_line"
+    out_pair = (U.INTERNAL, U.CUSTOMER) if is_sale else (U.SUPPLIER, U.INTERNAL)
+    ret_pair = (U.CUSTOMER, U.INTERNAL) if is_sale else (U.INTERNAL, U.SUPPLIER)
+
+    line_uom = line.product_uom or line.product.uom
+    total = Decimal("0")
+    moves = (StockMove.objects
+             .filter(**{fk: line}, status=StockMove.Status.COMPLETED)
+             .select_related("source_location", "dest_location", "product_uom", "product__uom"))
+    for m in moves:
+        qty = (m.product_uom or m.product.uom).convert_to(m.quantity, line_uom)
+        pair = (m.source_location.usage, m.dest_location.usage)
+        if pair == out_pair:
+            total += qty
+        elif pair == ret_pair:
+            total -= qty
+    return max(total, Decimal("0"))
+
+
 def get_usable_lines(lines):
     usable_lines = []
     for line in lines:
-        if line.qty_invoiced > line.invoice_target_quantity:
-            raise ValidationError(
-                f"Line {line.id}: invoiced quantity ({line.qty_invoiced}) exceeds "
-                f"invoiceable target ({line.invoice_target_quantity}) under "
-                f"'{line.invoice_policy}' policy."
-            )
+        if line.invoice_policy in ("delivery", "receive"):
+            target = _fulfilled_from_moves(line)
+        else:
+            target = line.quantity
 
-        remaining = max(line.qty_to_invoice - _drafted_quantity(line), Decimal("0"))
+        # Over-invoiced (e.g. after a return): needs a credit note, not an error.
+        if line.qty_invoiced > target:
+            continue
+
+        remaining = max(target - line.qty_invoiced - _drafted_quantity(line), Decimal("0"))
         if remaining <= 0:
             continue
         usable_lines.append({"line": line, "quantity": remaining})
     return usable_lines
 
-
-def _resolve_line_account(product, move_type, company, settings_map):
-    """Income account for sales, expense account for purchases."""
-    is_sale = move_type in SALE_TYPES
-    attr = "revenue_account" if is_sale else "expense_account"           # ADJUST to your Product fields
-    category = getattr(product, "category", None)
-    account = getattr(product, attr, None) or getattr(category, attr, None)
-    if account is None:
-        account = settings_map.get(
-            "default_income_account" if is_sale else "default_expense_account"  # ADJUST to your settings keys
-        )
-    if account is None:
-        raise ValidationError(f"No {'income' if is_sale else 'expense'} account for '{product}'.")
-    return account
 
 
 @transaction.atomic
@@ -84,15 +99,17 @@ def to_invoice(origin_type, source, user):
             f"'{origin_type}', got {type(source).__name__}."
         )
 
-    move_type = config["move_type"]
-
     if getattr(source, "payment_term", None) is None:
         raise ValidationError(f"Cannot create invoice: {source} has no payment term set.")
 
     company = source.company
-    journal = Journal.objects.filter(company=company, type=config["journal_type"]).order_by("pk").first()
+    journal = (Journal.objects
+               .filter(company=company, type=config["journal_type"])
+               .order_by("pk").first())
     if not journal:
-        raise ValidationError(f"No {config['journal_type']} journal configured for company '{company}'.")
+        raise ValidationError(
+            f"No {config['journal_type']} journal configured for company '{company}'."
+        )
 
     invoice = AccountMove.objects.create(
         state=AccountMove.State.DRAFT,
@@ -104,7 +121,7 @@ def to_invoice(origin_type, source, user):
         journal=journal,
         fulfillment_location=getattr(source, "fulfillment_location", None),
         payment_term=source.payment_term,
-        move_type=move_type,
+        move_type=config["move_type"],
         origin_reference=getattr(source, "reference", None) or str(source),
         origin_type=origin_type,
         origin_id=source.pk,
@@ -124,24 +141,30 @@ def _copy_lines(source, invoice, company):
             f"Cannot create invoice: source {source} has no remaining quantity to invoice."
         )
 
-    settings_map = company.get_settings_dict()
+    settings_map = company.get_settings_dict()   # fetched once, shared by every line
 
     for seq, entry in enumerate(usable_lines, start=1):
         src = entry["line"]
-        new_line = AccountMoveLine.objects.create(     # create() runs save() -> clean(), and gives us a pk for taxes
+        account = resolve_account(
+            invoice_line_role(src.product, invoice.move_type),
+            company=company,
+            product=src.product,
+            settings_map=settings_map,
+        )
+        new_line = AccountMoveLine.objects.create(
             move=invoice,
             line_type=AccountMoveLine.LineType.PRODUCT,
             sequence=seq * 10,
-            account=_resolve_line_account(src.product, invoice.move_type, company, settings_map),
+            account=account,
             partner=invoice.partner,
             product=src.product,
-            product_uom=getattr(src, "product_uom", None),   # save() falls back to product.uom
+            product_uom=getattr(src, "product_uom", None),
             quant=getattr(src, "quant", None),
             description=src.description,
             quantity=entry["quantity"],
             price_unit=src.price_unit,
             discount_percent=src.discount_percent,
-            debit=Decimal("0"),                             # memo line; GL is built at posting
+            debit=Decimal("0"),          # memo line; GL is built at posting
             credit=Decimal("0"),
             source_line_type=ContentType.objects.get_for_model(src),
             source_line_id=src.pk,

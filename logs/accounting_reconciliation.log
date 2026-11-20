@@ -1,0 +1,15 @@
+[ERROR] 2026-11-10 17:21:45,339 accounting.reconciliation reconcile_from_invoice: Failed to reconcile invoice 14
+Traceback (most recent call last):
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/accounting/views/recocniliation/reconcile_journal.py", line 190, in reconcile_from_invoice
+    service = ReconciliationService(
+        company=request.company,
+        user=request.user,
+        line_ids=[credit_move_id, invoice_lines],
+    )
+  File "/home/kali11/PycharmProjects/DJANGO_ERP/accounting/services/reconciliation_service/reconciliation_service.py", line 90, in __init__
+    {int(line_id) for line_id in line_ids}
+     ~~~^^^^^^^^^
+TypeError: int() argument must be a string, a bytes-like object or a real number, not 'QuerySet'
+[WARNING] 2026-11-13 17:30:39,747 accounting.reconciliation reconcile_from_invoice: Reconcile from invoice 22 failed: ['Account 13 / partner 1 has no lines on one side. Nothing can be matched.']
+[WARNING] 2026-11-13 17:30:47,676 accounting.reconciliation reconcile_from_invoice: Reconcile from invoice 22 failed: ['Account 13 / partner 1 has no lines on one side. Nothing can be matched.']
+[WARNING] 2026-11-13 17:30:50,399 accounting.reconciliation reconcile_from_invoice: Reconcile from invoice 22 failed: ['Account 13 / partner 1 has no lines on one side. Nothing can be matched.']

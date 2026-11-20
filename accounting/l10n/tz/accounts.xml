@@ -87,6 +87,7 @@
     <account code="500100" account_type="account_type_direct_costs" internal_type="other">Inventory Adjustment Expense (Scrap / Shrinkage)</account>
     <account code="500200" account_type="account_type_direct_costs" internal_type="other">Inventory Revaluation Expense</account>
     <account code="500300" account_type="account_type_direct_costs" internal_type="other">Purchase Price Difference</account>
+    <account code="500400" account_type="account_type_expenses" internal_type="other">Purchases - General Expense</account>
     <account code="510000" account_type="account_type_expenses" internal_type="other">Salaries &amp; Wages</account>
     <account code="510100" account_type="account_type_expenses" internal_type="other" parent="510000">SDL Expense</account>
     <account code="510200" account_type="account_type_expenses" internal_type="other" parent="510000">NSSF Employer Contribution</account>

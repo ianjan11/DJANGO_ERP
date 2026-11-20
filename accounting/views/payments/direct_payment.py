@@ -1,6 +1,7 @@
 import logging
 from decimal import Decimal
 
+from django.urls.base import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
@@ -11,7 +12,6 @@ from accounting.services.account_move_services.account_move_loader import load_a
 from accounting.services.payment_line import create_payment_line
 from accounting.services.payments_service.payment_state_service import PaymentStateService
 from core.utils import htmx_success, htmx_error
-
 logger = logging.getLogger(__name__)
 
 
@@ -61,7 +61,6 @@ def save_payments(request):
 
             invoice_move = load_account_move(invoice_id, request, for_update=True)
 
-
             if not invoice_move:
                 return htmx_error(
                     request,
@@ -93,6 +92,9 @@ def save_payments(request):
 
             payment.confirm(request)
 
+            redirect_url = reverse("accounting:invoice_create_or_detail", kwargs={"invoice_id": invoice_id})
+
+
     except ValidationError as e:
         errors = (
             e.message_dict if hasattr(e, "message_dict") else {"__all__": e.messages}
@@ -119,4 +121,6 @@ def save_payments(request):
         request,
         "Payment saved successfully.",
         trigger={"paymentSuccess": {"message": "Payment saved successfully."}},
+        redirect_url= redirect_url,
+        target="#accounting-display",
     )

@@ -4,7 +4,7 @@
 
 
 <!-- Column 1: Operation & Commercial Details -->
-<div class="form-header-content">
+    <div class="detail-col">
     <div class="form-group">
         <label class="form-label mb-0">Reference</label>
         <input type="text" class="form-control" value="{{ picking.name }}" readonly disabled>
@@ -34,7 +34,7 @@
 </div>
 
 <!-- Column 2: Locations & Scheduling -->
-<div class="form-header-content">
+    <div class="detail-col">
     <div class="form-group">
         <label for="{{ header_form.source_location.id_for_label }}" class="form-label mb-0">Source Location</label>
         {{ header_form.source_location }}

@@ -424,6 +424,10 @@ class InvoiceStateService:
                 and move.state == self.POSTED
             ),
 
+          "can_register_payment": move.state == self.POSTED and move.amount_residual > 0,
+
+        "can_issue_credit_note": move.state == self.POSTED,
+
             "locked": (
                 move.state in (
                     self.POSTED,

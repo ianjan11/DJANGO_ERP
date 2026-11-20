@@ -1,93 +1,98 @@
-<div class="main-wrapper">
-    
-    <div class="inv-card">
-    
-    <div class="container-fluid p-4">
-        
-        <!-- Header & Action Toolbar -->
-        <div class="d-flex align-items-center justify-content-between pb-3 mb-4 border-bottom">
-            <div>
-                <h3 class="fw-bold mb-1">Company Settings</h3>
-                <p class="text-muted small mb-0">Manage your business profile, fiscal period, and organization preferences.</p>
-            </div>
-            <div>
-                <button type="button"
-                        class="btn btn-ghost d-inline-flex align-items-center gap-2 shadow-sm"
-                        hx-get="{% url 'core:company_list' %}"
-                        hx-target="#settings-display"
-                        hx-push-url="true"
-                >
-                    <i class="bi bi-plus-circle-fill"></i>
-                    <span>Company</span>
-                </button>
-            </div>
-        </div>
+{% load settings_tags %}
+{% settings_sections as sections %}
 
-        <div class="row g-4">
-            
-         
+<div class="main-wrapper st-page">
 
-            <!-- Fiscal Year & Lock Dates Card -->
-            <div class="col-12 col-lg-6">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-header bg-white py-3 border-bottom">
-                        <h5 class="card-title fw-bold mb-0 text-dark">
-                            <i class="bi bi-calendar-range me-2 text-primary"></i>Fiscal Year & Period
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-sm-6">
-                                <label class="form-label text-muted small text-uppercase fw-semibold mb-1">Fiscal Start Month</label>
-                                <p class="fs-6 fw-semibold text-dark mb-0">
-                                    Month {{ company.fiscal_year_start_month }} (Day {{ company.fiscal_year_start_day }})
-                                </p>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="form-label text-muted small text-uppercase fw-semibold mb-1">Accounting Lock Date</label>
-                                <p class="mb-0 fw-medium text-danger">
-                                    {% if company.lock_date %}
-                                        <i class="bi bi-lock-fill me-1"></i>{{ company.lock_date|date:"Y-m-d" }}
-                                    {% else %}
-                                        <span class="text-muted fw-normal">No lock date set</span>
-                                    {% endif %}
-                                </p>
-                            </div>
-                            <div class="col-12">
-                                <hr class="my-2 text-muted opacity-25">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label text-muted small text-uppercase fw-semibold mb-1">Tax Lock Date</label>
-                                <p class="mb-0 fw-medium text-danger">
-                                    {% if company.tax_lock_date %}
-                                        <i class="bi bi-shield-lock-fill me-1"></i>{{ company.tax_lock_date|date:"Y-m-d" }}
-                                    {% else %}
-                                        <span class="text-muted fw-normal">No tax lock date set</span>
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            
-            <div class="col-12 col-lg-6">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-header bg-white py-3 border-bottom">
-                        <h5 class="card-title fw-bold mb-0 text-dark">
-                            <i class="bi bi-calendar-range me-2 text-primary"></i>Tenants
-                        </h5>
-                        <div class="d-flex align-items-center justify-content-between mt-3">
-                            <a href="{% url 'core:tenant_user_list' %}"> list </a>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-
-        </div>
+  {# ── Page header ── #}
+  <header class="st-head">
+    <div>
+      <h1 class="st-title">Settings</h1>
+      <p class="st-sub">
+        {% if active_company %}Configure how {{ active_company.name }} runs.{% else %}Configure how your workspace runs.{% endif %}
+      </p>
     </div>
 
+    <label class="st-search">
+      <i class="bi bi-search" aria-hidden="true"></i>
+      <input type="search" id="st-search-input" placeholder="Find a setting"
+             autocomplete="off" oninput="stFilter(this.value)" aria-label="Find a setting">
+    </label>
+  </header>
+
+  <div class="st-layout">
+
+    {# ── Section rail ── #}
+    <nav class="st-rail" aria-label="Settings sections">
+      {% for section in sections %}
+        <button type="button" class="st-rail-btn{% if forloop.first %} is-active{% endif %}"
+                data-target="st-{{ section.key }}" onclick="stJump(this)"
+                style="--accent: {{ section.accent }}">
+          <i class="bi bi-{{ section.icon }}" aria-hidden="true"></i>
+          <span>{{ section.label }}</span>
+          <span class="st-rail-count">{{ section.items|length }}</span>
+        </button>
+      {% endfor %}
+    </nav>
+
+    {# ── Sections ── #}
+    <div class="st-main">
+      {% for section in sections %}
+        <section class="st-section" id="st-{{ section.key }}" style="--accent: {{ section.accent }}">
+          <div class="st-section-head">
+            <h2>{{ section.label }}</h2>
+            <p>{{ section.description }}</p>
+          </div>
+
+          <div class="st-list">
+            {% for item in section.items %}
+              <a class="st-row"
+                 href="{{ item.href }}"
+                 hx-get="{{ item.href }}"
+                 hx-target="closest .module-display"
+                 hx-push-url="true"
+                 data-search="{{ item.label|lower }} {{ item.description|lower }} {{ section.label|lower }}">
+                <span class="st-tile"><i class="bi bi-{{ item.icon }}" aria-hidden="true"></i></span>
+                <span class="st-row-text">
+                  <span class="st-row-title">{{ item.label }}</span>
+                  <span class="st-row-desc">{{ item.description }}</span>
+                </span>
+                <i class="bi bi-chevron-right st-chevron" aria-hidden="true"></i>
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endfor %}
+
+      <div class="st-empty" id="st-empty" hidden>
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <div class="st-empty-title">No matching settings</div>
+        <div class="st-empty-desc">Try a different word, like “tax” or “warehouse”.</div>
+      </div>
     </div>
+  </div>
 </div>
+
+<script>
+  window.stFilter = function (value) {
+    var q = value.trim().toLowerCase();
+    var any = false;
+    document.querySelectorAll('.st-section').forEach(function (sec) {
+      var shown = 0;
+      sec.querySelectorAll('.st-row').forEach(function (row) {
+        var match = !q || row.dataset.search.indexOf(q) !== -1;
+        row.hidden = !match;
+        if (match) shown++;
+      });
+      sec.hidden = shown === 0;
+      if (shown) any = true;
+    });
+    document.getElementById('st-empty').hidden = any;
+  };
+
+  window.stJump = function (btn) {
+    document.querySelectorAll('.st-rail-btn').forEach(function (b) { b.classList.remove('is-active'); });
+    btn.classList.add('is-active');
+    var el = document.getElementById(btn.dataset.target);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+</script>

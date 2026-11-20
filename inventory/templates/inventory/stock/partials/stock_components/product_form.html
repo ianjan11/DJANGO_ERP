@@ -9,14 +9,14 @@
       <h5 class="table-toolbar-title">
         {% if product and product.pk %}Edit Product: {{ product.name }}{% else %}New Product{% endif %}
       </h5>
+                       {% include "core/bread_crumbs.html" %}
     </div>
 
     <form id="productForm"
-          method="post"
           hx-post="{% if product and product.pk %}{% url 'inventory:edit_product' product.id %}{% else %}{% url 'inventory:create_product' %}{% endif %}"
           hx-target="#inventory-display"
           hx-swap="innerHTML"
-          hx-push-url="true">
+          >
 
       {% csrf_token %}
       <input type="hidden" id="product-id-input" name="product_id" value="{{ product.id|default:'' }}">

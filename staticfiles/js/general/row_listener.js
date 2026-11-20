@@ -10,7 +10,7 @@
 (function () {
     const LINE_CONFIG = {
         changeFields: ['product', 'quantity', 'price_unit', 'discount_percent',
-                       'taxes', 'account', 'product_uom', 'description'],
+                       'taxes', 'account', 'product_uom', 'description', 'memo','narration','note', 'notes','ref',],
         typingFields: ['quantity', 'price_unit', 'discount_percent', 'description'],
         required: ['product', 'quantity'],          // let the server fill the rest
         requiredTyping: [],
@@ -23,16 +23,16 @@
         purchase: LINE_CONFIG,
 
         journal: {
-            changeFields: ['account', 'partner', 'memo', 'debit', 'credit'],
-            typingFields: ['memo', 'debit', 'credit'],
+            changeFields: ['account', 'partner', 'memo', 'debit', 'credit', "narration", "ref",],
+            typingFields: ['memo', 'debit', 'credit','narration', 'ref'],
             required: ['account'],
             requiredTyping: [],
             anyOf: [['debit', 'credit']],   // need a debit or a credit
         },
 
         stock_move: {
-            changeFields: ['product', 'quantity', 'product_uom', 'source_location', 'dest_location'],
-            typingFields: ['quantity'],
+            changeFields: ['product', 'quantity', 'product_uom', 'source_location', 'dest_location', 'note','origin,'],
+            typingFields: ['quantity', 'note','origin'],
             required: ['product', 'quantity'],      // locations fall back to header if blank
             requiredTyping: [],
             anyOf: [],

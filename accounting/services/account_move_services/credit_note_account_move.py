@@ -17,6 +17,7 @@ from accounting.services.account_move_services.shared.invoice.clearing import (
 from accounting.services.account_move_services.vendor.purchase_grni_account_move import (
     _get_stock_input_account,
 )
+from accounting.services.account_resolver import resolve_account, invoice_line_role, Role
 from core.services.currency_exchange_service import _get_rate
 from purchases.models import PurchaseOrderLine
 from sales.models import SalesOrderLine
@@ -27,6 +28,8 @@ ZERO = Decimal("0.00")
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
+
+NEEDS_RECONCILE = {Role.RECEIVABLE, Role.PAYABLE, Role.STOCK_INPUT, Role.STOCK_OUTPUT}
 
 CREDIT_TYPE_MAP = {
     AccountMove.MoveType.IN_REFUND: {
@@ -76,48 +79,13 @@ def _to_decimal(value) -> Decimal:
     return Decimal(str(value))
 
 
-def _resolve_account(value, company, label):
-    """Company settings may hold an Account instance or just its pk."""
-    if value is None:
-        return None
-    if not hasattr(value, "pk"):
-        from accounting.models import Account
-        try:
-            value = Account.objects.get(pk=value)
-        except Account.DoesNotExist:
-            raise ValidationError(f"{label} (id={value}) does not exist.")
-    assert_same_company(value, company, label)
-    return value
 
 
-def _item_account(item, invoice, is_customer, fallback):
-    """
-    Account for one credit-note line, resolved the same way the invoice
-    builder does: the line's own account, then the product/category account.
-    The company-wide credit note account is only a last resort, so zero-rated,
-    exempt and export sales keep their own revenue accounts.
-    """
-    if item.account_id:
-        return item.account
-
-    if item.product_id:
-        product = item.product
-        if is_customer:
-            kind = "revenue"
-        else:
-            kind = "inventory" if product.product_type == "storable" else "expense"
-        try:
-            return resolve_line_account(item, invoice, kind)
-        except ValidationError:
-            pass
-
-    if fallback is None:
-        raise ValidationError(
-            f"No account could be resolved for credit note line {item.pk}, and no "
-            "default credit note account is configured."
-        )
-    return fallback
-
+def _item_account(item, invoice, is_customer, fallback=None):
+    return resolve_account(
+        invoice_line_role(item.product, invoice.move_type),
+        company=invoice.company, line=item, product=item.product,
+        fallback=Role.CUSTOMER_CREDIT_NOTE if is_customer else Role.VENDOR_CREDIT_NOTE)
 
 # ---------------------------------------------------------------------------
 # Returned-stock reversal (customer credit note for returned goods)
@@ -359,10 +327,8 @@ def build_account_move_credit_notes(invoice: AccountMove, user) -> AccountMove:
     # 5. Resolve AR / AP control account
     # ------------------------------------------------------------------
     partner_override_field = credit_type["partner_account"]
-    control_account = (
-        getattr(partner, partner_override_field, None)
-        or get_company_account(company, key=credit_type["company_default"])
-    )
+    control_account = resolve_account(
+    Role.RECEIVABLE if is_customer else Role.PAYABLE, company=company, partner=partner)
 
     if not control_account:
         raise ValidationError(
@@ -414,11 +380,7 @@ def build_account_move_credit_notes(invoice: AccountMove, user) -> AccountMove:
     # 8. Aggregate revenue/expense and tax buckets (per-item accounts)
     # ------------------------------------------------------------------
     settings_map = company.get_settings_dict()
-    fallback_account = _resolve_account(
-        settings_map.get(credit_type["credit_account"]),
-        company,
-        "Credit note account",
-    )
+
 
     account_totals_orig: dict = defaultdict(Decimal)
     tax_totals_orig: dict = defaultdict(Decimal)
@@ -430,7 +392,7 @@ def build_account_move_credit_notes(invoice: AccountMove, user) -> AccountMove:
         tax_data = item.compute_taxes()  # fail loudly if missing; never default to zero
 
         base_orig = round2(_to_decimal(tax_data["base"]))
-        account = _item_account(item, invoice, is_customer, fallback_account)
+        account = _item_account(item, invoice, is_customer)
         assert_same_company(account, company, "Credit note account")
         account_totals_orig[account] += base_orig
 
@@ -460,7 +422,7 @@ def build_account_move_credit_notes(invoice: AccountMove, user) -> AccountMove:
     grni_lines_spec = []
     for grni_account, clear_ccy, allocs, purchase_line, item in vendor_clears:
         clear_orig = round2(clear_ccy / rate) if is_foreign else clear_ccy
-        normal_acc = _item_account(item, invoice, is_customer, fallback_account)
+        normal_acc = _item_account(item, invoice, is_customer)
         account_totals_orig[normal_acc] -= clear_orig
         if account_totals_orig[normal_acc] <= ZERO:
             del account_totals_orig[normal_acc]

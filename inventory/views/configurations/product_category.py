@@ -6,14 +6,18 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.urls.base import reverse
 from django.views.decorators.http import require_POST
 from core.utils import htmx_error, htmx_success
+from core.utils.module import _render, _module
 from inventory.models import ProductsCategory
 from inventory.services.stock.category_accounts import populate_category_accounts
 logger = logging.getLogger(__name__)
 from core.utils.format_errors import _format_form_errors
 from inventory.forms.product_form import  ProductsCategoryForm
 
+
+MODULE = "inventory"
 
 
 def _validation_errors(e):
@@ -35,13 +39,17 @@ def get_empty_category_form(request):
     context = {
         "form": form,
         "category": None,
+        "back_url": reverse("inventory:view_categories"),
+        "back_label": " Categories ",
     }
 
-    if request.headers.get('HX-Request'):
-        return render(request, 'inventory/categories/partials/category_details_partial.html', context)
+    template = ('inventory/categories/partials/category_details_partial.html'
+                if request.headers.get('HX-Request')
+                else 'inventory/categories/category_details.html')
 
 
-    return render(request, 'inventory/categories/category_details.html', context)
+    return  _render(request, template, context, default_module=MODULE)
+
 
 
 
@@ -52,6 +60,8 @@ def create_category_view(request):
     company = getattr(request, "company", None)
     if not company:
         return htmx_error(request, "User has no company assigned.")
+
+
 
     form = ProductsCategoryForm(request.POST, company=company)
 
@@ -65,6 +75,9 @@ def create_category_view(request):
             populate_category_accounts(category)   # fill blanks, once, on creation
             category.save()
 
+            redirect_url = reverse("inventory:category_detail", args=[category.id])
+            redirect_url += f"?module={_module(request)}"
+
     except ValidationError as e:
         return htmx_error(request, _validation_errors(e))
 
@@ -75,6 +88,7 @@ def create_category_view(request):
     return htmx_success(
         request,
         message="Successfully created category.",
+        redirect_url=redirect_url
     )
 
 # ---------------- edit ----------------
@@ -115,7 +129,6 @@ def edit_category_view(request, category_id):
     return htmx_success(
         request,
         "Category updated successfully.",
-        target="#invetory-display",
     )
 
 
@@ -141,12 +154,11 @@ def categories_view(request):
         'categories': page_obj,
     }
 
-    if request.headers.get('HX-Request'):
-        return render(request, 'inventory/categories/partials/categories_partial.html', context)
+    template = ('inventory/categories/partials/categories_partial.html'
+                if request.headers.get('HX-Request')
+                else 'inventory/categories/categories.html')
 
-
-    return render(request, 'inventory/categories/categories.html', context)
-
+    return _render(request, template, context, default_module=MODULE)
 
 
 @login_required
@@ -160,11 +172,13 @@ def category_detail_view(request,category_id):
     context = {
                'category':category,
                'form': form,
-
+        "back_url": reverse("inventory:view_categories"),
+        "back_label": " Categories ",
     }
-    if request.headers.get('HX-Request'):
-        return render(request, 'inventory/categories/partials/category_details_partial.html', context)
 
+    template = ('inventory/categories/partials/category_details_partial.html'
+                if request.headers.get('HX-Request')
+                else 'inventory/categories/category_details.html')
 
-    return render(request, 'inventory/categories/category_details.html', context)
+    return _render(request, template, context, default_module=MODULE)
 

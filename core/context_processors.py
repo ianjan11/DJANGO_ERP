@@ -73,36 +73,45 @@ def _resolve_item(item, target, current_names):
     }
 
 
+def _find_config(request, match):
+    # 1. Explicit ?module= wins. "settings" is not in NAVIGATION -> None -> no menu,
+    #    which is what the partner pages already do.
+    module = request.GET.get("module")
+    if module:
+        return NAVIGATION.get(module)
+
+    # 2. URL namespace (sales:..., inventory:..., accounting:...)
+    current_app = match.app_name or (match.namespaces[0] if match.namespaces else None)
+    if current_app in NAVIGATION:
+        return NAVIGATION[current_app]
+    for app_config in NAVIGATION.values():
+        if current_app in app_config.get("namespaces", []):
+            return app_config
+
+    # 3. HX-Target container id
+    target = request.headers.get("HX-Target", "").removesuffix("-display")
+    return NAVIGATION.get(target)
+
+
 def app_navigation(request):
     match = getattr(request, "resolver_match", None)
     if not match:
         return {"nav_items": [], "nav_target": "body"}
 
-    current_app = match.app_name or (match.namespaces[0] if match.namespaces else None)
-
-    # 1. Match navigation config by main app key or alternative namespaces
-    config = None
-    if current_app in NAVIGATION:
-        config = NAVIGATION[current_app]
-    else:
-        for app_key, app_config in NAVIGATION.items():
-            if current_app in app_config.get("namespaces", []):
-                config = app_config
-                break
-
+    config = _find_config(request, match)
     if not config:
         return {"nav_items": [], "nav_target": "body"}
 
     target = config.get("target", "body")
 
-    # 2. Build set of matching identifiers (view_name, app:url_name)
+    # Build set of matching identifiers (view_name, app:url_name)
     current_names = set()
     if match.view_name:
         current_names.add(match.view_name)
     if match.app_name and match.url_name:
         current_names.add(f"{match.app_name}:{match.url_name}")
 
-    # 3. Resolve navigation items
+    # Resolve navigation items
     nav_items = [
         resolved
         for resolved in (_resolve_item(item, target, current_names) for item in config.get("items", []))

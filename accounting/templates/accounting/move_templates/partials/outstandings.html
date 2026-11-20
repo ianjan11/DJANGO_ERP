@@ -1,0 +1,51 @@
+{% load humanize %}
+
+{% if flags.can_register_payment %}
+{% if outstanding_payments or outstanding_credits %}
+<div class="related-docs">
+
+  {% if outstanding_credits %}
+  <div class="related-docs-section">
+    <span class="chart-eyebrow"><i class="bi bi-wallet2"></i> Outstanding Credit Notes</span>
+    <ul class="related-docs-list">
+      {% for note in outstanding_credits %}
+      <li>
+        <a hx-get="{% url 'accounting:invoice_create_or_detail' note.id %}"
+           hx-target="closest .module-display" hx-push-url="true"
+           style="cursor:pointer;">{{ note.name }}</a>
+        <span class="text-muted">{{ invoice.currency.symbol }} {{ note.amount_residual|floatformat:2|intcomma }}</span>
+        <button type="button" class="btn btn-primary btn-sm"
+                hx-post="{% url 'accounting:reconcile_from_invoice' %}"
+                hx-vals='{"invoice_id": "{{ invoice.id }}", "credit_move_id": "{{ note.id }}"}'
+                hx-target="#accounting-display" hx-swap="innerHTML"
+                hx-confirm="Reconcile {{ note.name }} against this invoice?"
+                hx-disabled-elt="this">Reconcile</button>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if outstanding_payments %}
+  <div class="related-docs-section">
+    <span class="chart-eyebrow"><i class="bi bi-cash-stack"></i> Outstanding Payments</span>
+    <ul class="related-docs-list">
+      {% for pay in outstanding_payments %}
+      <li>
+        <span>{{ pay.name }}</span>
+        <span class="text-muted">{{ invoice.currency.symbol }} {{ pay.amount_residual|floatformat:2|intcomma }}</span>
+        <button type="button" class="btn btn-primary btn-sm"
+                hx-post="{% url 'accounting:reconcile_from_invoice' %}"
+                hx-vals='{"invoice_id": "{{ invoice.id }}", "credit_move_id": "{{ pay.id }}"}'
+                hx-target="#accounting-display" hx-swap="innerHTML"
+                hx-confirm="Apply {{ pay.name }} to this invoice?"
+                hx-disabled-elt="this">Apply</button>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+</div>
+{% endif %}
+{% endif %}

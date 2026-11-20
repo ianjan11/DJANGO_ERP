@@ -1,77 +1,170 @@
-<form id="purchase-header-form"
-          hx-post="{% url 'purchases:purchase_update' %}"
-          hx-trigger="change from:.purchase-header-field delay:300ms"
-          hx-swap="none">
+{% load group_tags %}
+{% load humanize %}
 
-      {% csrf_token %}
+<div class="main-wrapper">
+  <div class="detail-card">
 
+    {# ── Card title ── #}
+    <div class="table-toolbar">
+      <h5 class="table-toolbar-title">
+        {% if purchase and purchase.reference %} {{ purchase.reference}}{% else %}New Purchase Order{% endif %}
+      </h5>
+                       {% include "core/bread_crumbs.html" %}
 
-      <input type="hidden" name="purchase_id" value="{{ purchase.id }}">
-      <input type="hidden" name="status"      value="{{ purchase.status }}">
-    
-    <div id="header-form-wrapper" class="form-header">
-        {% include "purchases/partials/purchase_header_form_inner.html" %}
     </div>
 
-      {# Formset management form #}
-    <div id="items-management-form">
-        {{ formset.management_form }}
+    {# ── Action buttons & Status Badge ── #}
+    <div class="action-card">
+      {% include "purchases/partials/action_buttons.html" %}
+
+      <div class="action-card-status">
+        {% if purchase.status == "DRAFT" %}
+          <span class="badge badge--draft"><i class="bi bi-pencil-square"></i> RFQ</span>
+        {% elif purchase.status == "SENT" %}
+          <span class="badge badge-posted"><i class="bi bi-send-fill"></i> RFQ Sent</span>
+        {% elif purchase.status == "TO_APPROVE" %}
+          <span class="badge badge--completed"><i class="bi bi-x-check-fill"></i> To approve</span>
+        {% elif purchase.status == "CANCELLED" %}
+          <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
+        {% elif purchase.status == "PURCHASE" %}
+          <span class="badge badge--partial"><i class="bi bi-circle-half"></i> Purchase</span>
+        {% elif purchase.status == "DONE" %}
+          <span class="badge badge--partial"><i class="bi bi-circle-half"></i> Locked/Done</span>
+        {% else %}
+          <span class="badge">{{ purchase.status }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <form id="purchase-header-form"
+          hx-post="{% url 'purchases:purchase_update' %}"
+          hx-trigger="change from:.purchase-header-field delay:300ms"
+          hx-swap="none"
+          hx-sync="this:queue last">
+
+      {% csrf_token %}
+      <input type="hidden" name="purchase_id" value="{{ purchase.id }}">
+      <input type="hidden" name="status" value="{{ purchase.status }}">
+
+      {# ══════════ HEADER: IMPORTANT INFO ══════════ #}
+      <div class="detail-header">
+        <div class="detail-cols ">
+            {% include "purchases/partials/purchase_header_form_inner.html" %}
+        </div>
       </div>
 
-      {# ── Line items table ── #}
-      <div class="inv-table-wrap">
-        <table class="inv-table">
+      {# ══════════ TABS: OPERATIONS & SECONDARY DETAILS ══════════ #}
+      <div class="tabs" data-tabs>
 
-          <thead>
-            <tr>
-              <th style="display:none"></th>
-              <th style="width:200px; min-width:200px">Product</th>
-              <th style="width:200px; min-width:200px">Description</th>
-              <th style="width:100px; min-width:100px">Quantity</th>
-                <th style="width:100px; min-width:100px">Uom</th>
-              <th style="width:140px; min-width:140px">Unit Price</th>
-              <th style="width:130px; min-width:130px">Discount %</th>
-              <th style="width:140px; min-width:140px" class="col-left">Amount</th>
-              <th style="width:240px; min-width:240px" class="col-left">Taxes</th>
-              <th style="width:48px;  min-width:48px"  class="col-center"></th>
-            </tr>
-          </thead>
-          <tbody id="purchase-items">
-            {% for form in formset %}
-              {% include "purchases/partials/purchase_item_row.html" with form=form %}
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+        <div class="tabs-bar" role="tablist">
+          <button type="button" class="tabs-btn active" data-tab="operations" role="tab"
+                  {% if formset.non_form_errors %}data-error="1"{% endif %}>
+            <i class="bi bi-list-check"></i> Purchase Lines &amp; Items
+            {% if formset.non_form_errors %}<span class="tabs-dot"></span>{% endif %}
+          </button>
 
-      {# Add row button #}
-    <button
-    id="row-btn"
-    style="display:none"
-    class="btn btn-secondary m-1 btn-sm"
-    type="button"
-    hx-get="{% url 'purchases:purchase_item_row' purchase.id %}"
-    hx-target="#purchase-items"
-    hx-swap="beforeend"
-    hx-vals='js:{
-    total_forms: document.querySelector("[name=items-TOTAL_FORMS]").value,
-    partner_id: document.querySelector("#partner-select")?.value ?? ""
-}'
-     hx-on::after:swap="
-    let total = document.querySelector('[name=items-TOTAL_FORMS]');
-    total.value = parseInt(total.value) + 1;">
-    <i class="bi bi-plus"> </i>  Add Row
-</button>
+          <button type="button" class="tabs-btn" data-tab="notes" role="tab">
+            <i class="bi bi-journal-text"></i> Additional Info &amp; Notes
+          </button>
+        </div>
 
+        {# ── Tab 1: Purchase Lines & Items ── #}
+        <div class="tabs-panel active" data-tab-panel="operations" role="tabpanel">
 
-      {# Totals #}
-          <div id="invoice-total-container" class="totals-container">
-      <div>
+          <div id="items-management-form">
+            {{ formset.management_form }}
+          </div>
+
+          {% if formset.non_form_errors %}
+            <div style="margin-bottom: var(--spacing-12);
+                        padding: var(--spacing-12);
+                        background: #fce8e8;
+                        border: 1px solid #f7c1c1;
+                        border-radius: var(--radius-cards);
+                        font-size: var(--text-body-sm);
+                        color: #9b2626;">
+              {{ formset.non_form_errors }}
+            </div>
+          {% endif %}
+
+          <div class="inv-table-wrap">
+            <table class="inv-table">
+              <thead>
+                <tr>
+                  <th style="display:none"></th>
+                  <th style="width:200px; min-width:200px">Product</th>
+                  <th style="width:200px; min-width:200px">Description</th>
+                  <th style="width:100px; min-width:100px">Quantity</th>
+                  <th style="width:100px; min-width:100px">Uom</th>
+                  <th style="width:140px; min-width:140px">Unit Price</th>
+                  <th style="width:130px; min-width:130px">Discount %</th>
+                  <th style="width:140px; min-width:140px" class="col-left">Amount</th>
+                  <th style="width:240px; min-width:240px" class="col-left">Taxes</th>
+                  <th style="width:48px;  min-width:48px" class="col-center"></th>
+                </tr>
+              </thead>
+              <tbody id="purchase-items">
+                {% for form in formset %}
+                  {% include "purchases/partials/purchase_item_row.html" with form=form %}
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <button
+                id="row-btn"
+                style="display:none"
+                class="btn btn-secondary m-1 btn-sm mt-3"
+                type="button"
+                hx-get="{% url 'purchases:purchase_item_row' purchase.id %}"
+                hx-target="#purchase-items"
+                hx-swap="beforeend"
+                hx-vals='js:{
+                    total_forms: document.querySelector("[name=items-TOTAL_FORMS]").value,
+                    partner_id: document.querySelector("#partner-select")?.value ?? ""
+                }'
+                hx-on::after:swap="
+                    let total = document.querySelector('[name=items-TOTAL_FORMS]');
+                    total.value = parseInt(total.value) + 1;
+                ">
+                <i class="bi bi-plus me-1"></i> Add Row
+            </button>
+          </div>
+
+          <div id="invoice-total-container" class="totals-container mt-4">
+            <div>
               {% include "purchases/partials/purchase_totals.html" %}
-      </div>
+            </div>
+          </div>
 
-      </div>
+        </div>
 
+        {# ── Tab 2: Additional Info & Notes ── #}
+        <div class="tabs-panel" data-tab-panel="notes" role="tabpanel">
+          <div class="tabs-grid">
+            <div>
+              <div class="form-group">
+                <label for="{{ header_form.notes.id_for_label }}" class="form-label mb-0">Note</label>
+                {{ header_form.notes }}
+                {% for error in header_form.notes.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
 
+                <div class="form-group">
+    <label for="{{ header_form.currency.id_for_label }}" class="form-label mb-0">Currency</label>
+    {{ header_form.currency }}
+    {% for error in header_form.currency.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>{# /tabs #}
 
     </form>
+  </div>
+</div>

@@ -8,21 +8,21 @@
       <h5 class="table-toolbar-title">
         {% if company_form.instance.pk %}Edit Company{% else %}New Company{% endif %}
       </h5>
+                       {% include "core/bread_crumbs.html" %}
+
     </div>
 
     <form id="companyForm"
           method="post"
-          hx-post="{% if company_form.instance.pk %}{% url 'core:company_edit' company_form.instance.pk %}{% else %}{% url 'core:company_create' %}{% endif %}"
-          {% if form_context == "settings" %}hx-target="#settings-display"{% else %}hx-target="#company-display"{% endif %}
-          hx-push-url="true">
+          hx-post="{% if company_form.instance.pk %}{% url 'core:company_edit' company_form.instance.pk %}?module={{ module }}{% else %}{% url 'core:company_create' %}?module={{ module }}{% endif %}"
+          hx-target="closest .module-display"
+          >
 
       {% csrf_token %}
 
       {# ══════════ HEADER ══════════ #}
       <div class="detail-header">
-        <div class="detail-avatar">
-          {% if company_form.instance.pk and company_form.instance.name %}{{ company_form.instance.name|slice:":1"|upper }}{% else %}<i class="bi bi-building"></i>{% endif %}
-        </div>
+
 
         <div class="detail-cols">
 
@@ -73,6 +73,8 @@
 
             {% if company_form.instance.pk %}
             <div class="form-group">
+
+                <div class="form-check form-switch">
               <label for="{{ company_form.is_active.id_for_label }}" class="form-label mb-0">Active</label>
               {{ company_form.is_active }}
               {% if company_form.is_active.help_text %}
@@ -81,6 +83,7 @@
               {% for error in company_form.is_active.errors %}
                 <div class="invalid-feedback d-block">{{ error }}</div>
               {% endfor %}
+            </div>
             </div>
             {% endif %}
           </div>
@@ -259,8 +262,8 @@
       <div class="detail-card-footer">
         <button type="button"
                 class="btn btn-secondary"
-                hx-get="{{ back_url }}"
-                {% if form_context == "settings" %}hx-target="#settings-display"{% else %}hx-target="#company-display"{% endif %}
+                hx-get="{{ back_url }}?module={{ module }}"
+                hx-target="closest .module-display"
                 hx-swap="innerHTML"
                 hx-push-url="true">
           <i class="bi bi-arrow-left me-1"></i> Cancel

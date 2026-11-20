@@ -6,14 +6,16 @@
     {# ── Card title ── #}
     <div class="table-toolbar">
       <h5 class="table-toolbar-title">
-        {% if form.instance.pk %}Edit Location: {{ form.instance.complete_name }}{% else %}New Location{% endif %}
+        {% if form.instance.pk %} {{ form.instance.complete_name }}{% else %}New Location{% endif %}
       </h5>
+                       {% include "core/bread_crumbs.html" %}
+
     </div>
 
     <form id="locationForm"
           method="post"
-          hx-post="{% if form.instance.pk %}{% url 'inventory:edit_location' form.instance.pk %}{% else %}{% url 'inventory:create_location' %}{% endif %}"
-          hx-target="#inventory-display"
+          hx-post="{% if form.instance.pk %}{% url 'inventory:edit_location' form.instance.pk %}?module={{ module }}{% else %}{% url 'inventory:create_location' %}?module={{ module }}{% endif %}"
+          hx-target="closest .module-display"
           hx-swap="innerHTML"
           hx-push-url="true">
 
@@ -73,7 +75,9 @@
             </div>
 
             <div class="form-group">
-              <label for="{{ form.active.id_for_label }}" class="form-label mb-0">Active</label>
+                              <div class="form-check form-switch">
+
+              <label for="{{ form.active.id_for_label }}" class="form-label mx-2">Active</label>
               {{ form.active }}
               {% if form.active.help_text %}
                 <small class="text-muted d-block mt-1">{{ form.active.help_text }}</small>
@@ -81,6 +85,7 @@
               {% for error in form.active.errors %}
                 <div class="invalid-feedback d-block">{{ error }}</div>
               {% endfor %}
+                              </div>
             </div>
           </div>
 
@@ -242,8 +247,7 @@
                   <label class="form-label mb-0">Complete Path</label>
                   <div><code>{{ form.instance.complete_name }}</code></div>
                 </div>
-              </div>
-              <div>
+
                 <div class="form-group">
                   <label class="form-label mb-0">Linked Warehouse</label>
                   <div><strong>{{ form.instance.warehouse.name|default:"Shared / Virtual (None)" }}</strong></div>
@@ -275,8 +279,8 @@
       <div class="detail-card-footer">
         <button type="button"
                 class="btn btn-secondary"
-                hx-get="{% url 'inventory:locations_list' %}"
-                hx-target="#inventory-display"
+                hx-get="{% url 'inventory:locations_list' %}?module={{ module }}"
+                hx-target="closest .module-display"
                 hx-swap="innerHTML"
                 hx-push-url="true">
           <i class="bi bi-arrow-left me-1"></i> Cancel

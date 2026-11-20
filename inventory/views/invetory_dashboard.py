@@ -8,18 +8,9 @@ from inventory.models import StockPicking
 def inventory_dashboard(request):
 
 
-    deliveries = StockPicking.objects.filter(company=request.company)
-
-
-
-    context = {
-        "deliveries": deliveries,
-    }
 
     if request.headers.get("HX-Request"):
-        return render(request, "inventory/partials/dashboard_contents.html", {**context})
+        return render(request, "inventory/partials/dashboard_contents.html", )
 
     # normal page
-    return render(request, 'inventory/inventory_dashboard.html', {
-        **context,
-    })
+    return render(request, 'inventory/inventory_dashboard.html', )

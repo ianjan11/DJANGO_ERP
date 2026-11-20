@@ -11,8 +11,6 @@ from core.utils import htmx_error, htmx_success
 
 logger = logging.getLogger('sales.invoice')
 
-
-
 def get_empty_payment_form(request):
     partner_type = request.GET.get("partner_type", "").lower()
 
@@ -110,7 +108,7 @@ def save_pre_payments(request):
 
 @require_POST
 def edit_payments(request, payment_id):
-    company = getattr(request.user, "company", None)
+    company = getattr(request, "company", None)
     if not company:
         return htmx_error(
             request,
@@ -137,7 +135,7 @@ def edit_payments(request, payment_id):
                     trigger={"paymentFailed": {"message": "Cannot edit payments attached to invoices."}},
                 )
 
-            form = PaymentForm(request.POST, user=request.user, instance=payment)
+            form = PaymentForm(request.POST, company=request.company, instance=payment)
             if not form.is_valid():
                 errors = {
                     field: [str(e) for e in error_list]

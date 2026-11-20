@@ -16,8 +16,17 @@ from accounting.services.payments_service.payment_updates import cancel_posted_p
     cancel_draft_payment_service
 from core.events import dispatch
 from core.utils import htmx_error, htmx_success
+from django.db.models import Sum
 
 logger = logging.getLogger(__name__)
+
+payment_state = PaymentStateService()
+
+
+PAYMENT_TYPE_REDIRECTS = {
+    'customer' : ("accounting:customer_payments","Customer Payments" ),
+    'supplier' : ("accounting:vendor_payments", "Vendor Payments" ),
+}
 
 def payment_details(request, payment_id):
 
@@ -287,13 +296,33 @@ def apply_pre_payment_view(request, payment_id):
 
 def _build_context(request, payment):
 
-    payment_form = PaymentForm(user=request.user, instance=payment)
+    payment_form = PaymentForm(user=request.user, instance=payment, company=request.company)
+
+    if payment and payment.account_move_id:
+        move_lines = (
+            payment.account_move.lines
+            .select_related("account", "partner")
+            .order_by("sequence", "id")
+        )
+        journal_totals = move_lines.aggregate(debit=Sum("debit"), credit=Sum("credit"))
+    else:
+        move_lines = []
+        journal_totals = {"debit": 0, "credit": 0}
+
+    back_url, label = PAYMENT_TYPE_REDIRECTS.get(payment.partner_type)
 
 
     context = {
         "payment": payment,
         "payment_form": payment_form,
         "partner_type": payment.partner_type,
+        "flags" : payment_state.get_flags(payment),
+        "move_lines": move_lines,
+        "journal_totals": journal_totals,
+        "back_url": reverse(back_url),
+        "back_label" : label,
+        "target": "#accounting-display"
+
     }
 
     return context

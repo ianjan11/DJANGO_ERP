@@ -25,7 +25,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     # Third-party apps
-    "bootstrap5",
     "corsheaders",
     "debug_toolbar",
     # Local apps

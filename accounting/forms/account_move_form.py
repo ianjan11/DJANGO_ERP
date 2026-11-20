@@ -59,10 +59,11 @@ class MoveForm(forms.ModelForm):
             'journal': forms.Select(attrs={
                 'class': 'form-select form-select-sm select2-widget move-header-field',
             }),
-            'narration': forms.Textarea(attrs={
+            'narration': forms.TextInput(attrs={
                 'class': 'form-control move-header-field',
                 'rows': 3,
             }),
+
         }
 
     def __init__(self, *args, company=None, **kwargs):
@@ -108,7 +109,7 @@ class MoveLineForm(forms.ModelForm):
             }),
 
             'partner': forms.Select(attrs={
-                'id': 'partner-select',
+                'id': 'partner-select2',
                 'class': 'form-select form-select-sm select2-widget'
             }),
 

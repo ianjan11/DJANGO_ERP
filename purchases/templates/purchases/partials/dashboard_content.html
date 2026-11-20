@@ -1,0 +1,154 @@
+{% load static %}
+{% load humanize %}
+
+
+<div class="main-wrapper dashboard-page" data-purchases-charts-url="{% url 'purchases:purchases_charts' %}">
+  <div class="dashboard">
+
+    {# ── Row 1: 4 Purchase Status / Pipeline Donut Charts ── #}
+    <div class="row g-3 mb-4">
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Pipeline</span>
+              <span class="chart-title">Requests for Quotation</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="rfqPieChart" style="width:100%; height:220px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Active Orders</span>
+              <span class="chart-title">Purchase Orders</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="purchasesOrderPieChart" style="width:100%; height:220px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Fulfillment</span>
+              <span class="chart-title">Receipts Status</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="receiptPieChart" style="width:100%; height:220px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Financials</span>
+              <span class="chart-title">Billing Status</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="invoicePieChart" style="width:100%; height:220px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    {# ── Row 2: Purchase Spend Trend & Top 5 Monthly Incoming Products ── #}
+    <div class="row g-3 mb-4">
+
+      <div class="col-12 col-lg-5">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">12-Month Financial Overview</span>
+              <span class="chart-title">Purchase Spend Trend</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="stockMovementChartDashboard" style="width:100%; height:320px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-7">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">12-Month Breakdown</span>
+              <span class="chart-title">Top 5 Purchased Products per Month</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="topProductsColumnChart" style="width:100%; height:320px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    {# ── Row 3: Best Purchased, Least Purchased & Top Vendors ── #}
+    <div class="row g-3 mb-4">
+
+      <div class="col-12 col-lg-4">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Current Month</span>
+              <span class="chart-title">Top Purchased Products</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="bestSellingChart" style="width:100%; height:300px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Current Month</span>
+              <span class="chart-title">Least Purchased Products</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="leastSellingChart" style="width:100%; height:300px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="chart-card h-100">
+          <div class="chart-card-header">
+            <div class="chart-card-meta">
+              <span class="chart-eyebrow">Key Suppliers</span>
+              <span class="chart-title">Top Vendors by Spend</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div id="topVendorsChart" style="width:100%; height:300px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+
+

@@ -14,11 +14,23 @@ DOCUMENT_CONFIG = {
     "sales_invoice": {
         "doc_label":   "AccountMove",
         "party_label": "Customer",
+        "extra_fields": {
+            "narration": "narration",
+            "ref": "ref",
+            "state": "state",
+
+        },
     },
 
     "supplier_invoice": {
         "doc_label":   "AccountMove",
         "party_label": "Vendor",
+        "extra_fields": {
+            "narration": "narration",
+            "ref": "ref",
+            "state": "state",
+
+        },
     },
 
    "entry": {
@@ -26,18 +38,30 @@ DOCUMENT_CONFIG = {
         "party_label": "Entry",
         "extra_fields": {
             "journal_id": "journal",
+            "narration": "narration",
+            "ref": "ref",
+            "state": "state",
+
         },
     },
 
     "sales_order": {
         "doc_label":   "Sales Order",
         "party_label": "Customer",
+        "extra_fields": {
+            "notes": "notes",
+            "status": "status",
+
+        },
+
     },
     "purchase_order": {
         "doc_label":   "Purchase Order",
         "party_label": "Vendor",
         "extra_fields": {
             "expected_date": "expected_date",
+            "notes": "notes",
+            "status": "status",
         },
     },
 }
@@ -68,14 +92,12 @@ def build_payload(post, doc_type):
     # =========================================================
 
     header = {
-        "status": post.get("status"),
         "payment_term": post.get("payment_term"),
         "partner": post.get("partner"),
         "fulfillment_location": post.get("fulfillment_location"),
         "issue_date": post.get("issue_date"),
-        "narration": post.get("narration"),
-        "ref": post.get("ref"),
         "currency": post.get("currency"),
+
     }
 
     # Merge any remaining doc-type-specific fields (currently: PO's expected_date)
@@ -93,6 +115,7 @@ def build_payload(post, doc_type):
         "issue_date": "date",
         "expected_date": "date",
         "status": str,
+        "state":str,
         "notes": str,
         "journal_id": Journal,
         "narration": str,

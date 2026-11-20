@@ -6,8 +6,10 @@
     {# ── Card title ── #}
     <div class="table-toolbar">
       <h5 class="table-toolbar-title">
-        Edit User Profile: {{ membership.user.email }}
+       {{ membership.user.email }}
       </h5>
+                       {% include "core/bread_crumbs.html" %}
+
     </div>
 
     <form id="userProfileForm"
@@ -15,68 +17,31 @@
           hx-post="{% url 'core:user_profile_update' membership.id %}"
           hx-target="#settings-display"
           hx-swap="innerHTML"
-          hx-push-url="true"
           novalidate>
 
       {% csrf_token %}
 
       {# ══════════ HEADER ══════════ #}
       <div class="detail-header">
-        <div class="detail-avatar">
-          {% if membership.user.email %}{{ membership.user.email|slice:":1"|upper }}{% else %}<i class="bi bi-person-gear"></i>{% endif %}
-        </div>
 
         <div class="detail-cols">
 
           {# Column 1 — Preferences & Defaults #}
           <div class="detail-col">
-            <div class="form-group form-group--primary">
-              <label for="{{ profile_form.default_location.id_for_label }}" class="form-label mb-0">Default Location</label>
-              {{ profile_form.default_location }}
-              {% if profile_form.default_location.help_text %}
-                <small class="text-muted d-block mt-1">{{ profile_form.default_location.help_text|safe }}</small>
-              {% endif %}
-              {% for error in profile_form.default_location.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-              {% endfor %}
+
+              <div class="form-group">
+                <label class="form-label mb-0"> First Name </label>
+              {{ profile_form.instance.user.first_name }}
             </div>
 
-            <div class="form-group">
-              <label for="{{ profile_form.default_currency.id_for_label }}" class="form-label mb-0">Default Currency</label>
-              {{ profile_form.default_currency }}
-              {% if profile_form.default_currency.help_text %}
-                <small class="text-muted d-block mt-1">{{ profile_form.default_currency.help_text|safe }}</small>
-              {% endif %}
-              {% for error in profile_form.default_currency.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-              {% endfor %}
+              <div class="form-group ">
+                <label class="form-label mb-0"> Last Name </label>
+              {{ profile_form.instance.user.last_name }}
             </div>
+
+
           </div>
 
-          {# Column 2 — Membership & Payment Terms #}
-          <div class="detail-col">
-            <div class="form-group">
-              <label for="{{ profile_form.default_payment_term.id_for_label }}" class="form-label mb-0">Default Payment Term</label>
-              {{ profile_form.default_payment_term }}
-              {% if profile_form.default_payment_term.help_text %}
-                <small class="text-muted d-block mt-1">{{ profile_form.default_payment_term.help_text|safe }}</small>
-              {% endif %}
-              {% for error in profile_form.default_payment_term.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-              {% endfor %}
-            </div>
-
-            <div class="form-group">
-              <label for="{{ membership_form.company.id_for_label }}" class="form-label mb-0">Company</label>
-              {{ membership_form.company }}
-              {% if membership_form.company.help_text %}
-                <small class="text-muted d-block mt-1">{{ membership_form.company.help_text|safe }}</small>
-              {% endif %}
-              {% for error in membership_form.company.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-              {% endfor %}
-            </div>
-          </div>
 
         </div>
       </div>

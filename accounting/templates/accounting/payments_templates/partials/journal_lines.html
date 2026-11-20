@@ -1,0 +1,56 @@
+{% load humanize %}
+
+<table class="inv-table" id="journal-lines-table">
+  <thead>
+    <tr>
+      <th style="width:25%; min-width:200px">Account</th>
+      <th style="width:25%; min-width:200px">Partner</th>
+      <th style="width:25%; min-width:180px">Memo / Label</th>
+      <th style="width:15%; min-width:120px" class="col-right">Debit</th>
+      <th style="width:15%; min-width:120px" class="col-right">Credit</th>
+    </tr>
+  </thead>
+
+  <tbody id="journal-items">
+    {% for line in move_lines %}
+      <tr>
+        <td>{{ line.account }}</td>
+        <td>
+          {% if line.partner %}{{ line.partner.name }}{% else %}<span style="color:var(--color-fog);">—</span>{% endif %}
+        </td>
+        <td>
+          {% if line.memo %}{{ line.memo }}{% else %}<span style="color:var(--color-fog);">—</span>{% endif %}
+        </td>
+        <td class="col-right">
+          {% if line.debit %}{{ line.debit|floatformat:2|intcomma }}{% endif %}
+        </td>
+        <td class="col-right">
+          {% if line.credit %}{{ line.credit|floatformat:2|intcomma }}{% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="5" class="table-empty">
+          <div class="table-empty-title">
+            {% if not payment.account_move_id %}
+              No journal items yet. They are created when the payment is confirmed.
+            {% else %}
+              No journal items
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+
+  {% if move_lines %}
+  <tfoot>
+    <tr>
+      <td colspan="3" class="col-right"><strong>Total</strong></td>
+      <td class="col-right"><strong>{{ journal_totals.debit|default:0|floatformat:2|intcomma }}</strong></td>
+      <td class="col-right"><strong>{{ journal_totals.credit|default:0|floatformat:2|intcomma }} </strong></td>
+
+    </tr>
+  </tfoot>
+  {% endif %}
+</table>

@@ -204,7 +204,7 @@ class ProductForm(forms.ModelForm):
             "uom_po": "Defaults to the storage unit if blank. Must be the same dimension.",
             "revenue_account": "Leave empty to use the category's revenue account.",
             "cogs_account": "Leave empty to use the category's COGS account.",
-            "expense_account": "Leave empty to use the category's expense account.",
+            "expense_account": "Leave empty to use the company's default expense account.",
         }
 
     def __init__(self, *args, company=None, **kwargs):

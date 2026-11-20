@@ -4,7 +4,7 @@ NAVIGATION = {
         "items": [
             {"label": "Dashboard",    "icon": "speedometer2", "url": "sales:sales_dashboard"},
             {"label": "Sales Orders", "icon": "receipt",      "url": "sales:sales_orders_list"},
-            {"label": "Customers",    "icon": "people",       "url": "accounting:customers"},
+            {"label": "Customers",    "icon": "people",       "url": "core:customers", "module": "sales" },
         ],
     },
     "purchases": {
@@ -12,7 +12,7 @@ NAVIGATION = {
         "items": [
             {"label": "Dashboard",       "icon": "speedometer2", "url": "purchases:purchases_dashboard"},
             {"label": "Purchase Orders", "icon": "receipt",      "url": "purchases:purchases_list"},
-            {"label": "Suppliers",       "icon": "people",       "url": "accounting:suppliers"},
+            {"label": "Suppliers",       "icon": "people",       "url": "core:vendors", "module": "purchases" },
         ],
     },
 
@@ -110,7 +110,7 @@ NAVIGATION = {
                     {
                         "label": "Customers",
                         "items": [
-                            {"label": "Customer List", "icon": "person-lines-fill", "url": "accounting:customers"},
+                            {"label": "Customer List", "icon": "person-lines-fill", "url": "core:customers", "module": "accounting" },
                         ],
                     },
                 ],
@@ -131,7 +131,7 @@ NAVIGATION = {
                     {
                         "label": "Suppliers",
                         "items": [
-                            {"label": "Supplier List", "icon": "person-lines-fill", "url": "accounting:vendors"},
+                            {"label": "Supplier List", "icon": "person-lines-fill", "url": "core:vendors", "module": "accounting" },
                         ],
                     },
                 ],
@@ -163,15 +163,17 @@ NAVIGATION = {
                     {
                         "label": "Chart of accounts",
                         "items": [
-                            {"label": "Accounts", "icon": "diagram-3", "url": "accounting:accounts_list"},
+{"label": "Accounts",   "icon": "diagram-3", "url": "accounting:accounts_list", "module": "accounting"},
+
                         ],
                     },
                     {
                         "label": "Setup",
                         "items": [
-                            {"label": "Journals",   "icon": "journals",          "url": "accounting:journals_list"},
-                            {"label": "Currencies", "icon": "currency-exchange", "url": "accounting:currency_view"},
-                            {"label": "Tax",        "icon": "percent",           "url": "accounting:taxes_list"},
+
+{"label": "Journals",   "icon": "journals",          "url": "accounting:journals_list",  "module": "accounting"},
+{"label": "Currencies", "icon": "currency-exchange", "url": "accounting:currency_view",  "module": "accounting"},
+{"label": "Tax",        "icon": "percent",           "url": "accounting:taxes_list",     "module": "accounting"},
                         ],
                     },
                 ],

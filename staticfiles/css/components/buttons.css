@@ -46,7 +46,7 @@
 .btn-primary:hover {
   background: #213481;
   border-color: #213481;
-  transform: translateY(-1px);
+  transform: translateX(-1px);
 }
 
 /* ── Secondary ── */
@@ -61,7 +61,7 @@
   color: var(--color-deep-indigo);
   box-shadow: rgba(0, 0, 0, 0.06) 0px 4px 8px,
               rgba(0, 0, 0, 0.04) 0px 1px 3px;
-  transform: translateY(-1px);
+  transform: translateX(-1px);
 }
 
 /* ── Danger ── */
@@ -74,7 +74,7 @@
   background: #fef5f5;
   border-color: #e24b4a;
   box-shadow: rgba(226, 75, 74, 0.15) 0px 4px 8px;
-  transform: translateY(-1px);
+  transform: translateX(-1px);
 }
 
 /* ── Success ── */
@@ -87,7 +87,7 @@
   background: #f0fbf7;
   border-color: var(--color-mint);
   box-shadow: rgba(68, 180, 139, 0.15) 0px 4px 8px;
-  transform: translateY(-1px);
+  transform: translateX(-1px);
 }
 
 /* ── Ghost — no border, no bg ── */
@@ -101,6 +101,25 @@
   color: var(--color-deep-indigo);
   border-color: var(--color-mist);
 }
+
+
+.btn-link {
+  background: transparent;
+  color: var(--color-ember-orange);
+  border-color: transparent;
+}
+.btn-link:hover {
+  background: var(--color-paper-white);
+    color: var(--color-ember-orange);
+      transform: translateX(-1px);
+
+
+}
+
+
+
+
+
 
 /* ── Sizes ── */
 .btn-sm {

@@ -1,27 +1,18 @@
 from django.views.decorators.http import require_POST
-from pygments.lexers import data
-from django.db import transaction
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import ValidationError
 from core.utils.format_errors import _format_form_errors
 from inventory.services.stock.product_accounts import populate_product_accounts
 from core.utils import htmx_error, htmx_success
-from inventory.forms import ProductForm
 import logging
 from inventory.services.stock.load_product import load_product
-from pygments.lexers import data
 from django.db import transaction
-from django.shortcuts import   get_object_or_404
-from django.contrib.auth.decorators import  permission_required
-
-from inventory.models import Product, StockLocation, Warehouse
-
+from inventory.models import  StockLocation, Warehouse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from inventory.forms.product_form import ProductForm
 
-logger = logging.getLogger('django.request')
+logger = logging.getLogger('sales_invoice')
 
 @login_required
 @transaction.atomic
@@ -39,6 +30,10 @@ def product_detail_view(request,product_id):
                'warehouses': warehouses,
                'all_locations': all_locations,
                'form': form,
+        "back_url": reverse("inventory:view_stock"),
+        "back_label": " Products ",
+        "target": "#inventory-display"
+
 
     }
     if request.headers.get('HX-Request'):
@@ -55,6 +50,9 @@ def get_empty_product_form(request):
     context = {
         "form": form,
         "product": None,
+        "back_url": reverse("inventory:view_stock"),
+        "back_label": " Products ",
+        "target": "#inventory-display"
     }
 
     if request.headers.get('HX-Request'):
@@ -108,7 +106,9 @@ def create_product_view(request):
         message= "Successfully created product.",
         redirect_url= reverse(
             "inventory:stock_detail", args=[product.pk]
-        )
+        ),
+      target = "#inventory-display"
+
     )
 
 
@@ -142,6 +142,9 @@ def edit_product_view(request, product_id):
                 )
 
             form.save()
+            populate_product_accounts(product)
+            product.save()
+
 
     except ValidationError as e:
         errors = e.message_dict if hasattr(e, "message_dict") else {"__all__": e.messages}

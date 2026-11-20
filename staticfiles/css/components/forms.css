@@ -303,7 +303,7 @@ input.is-invalid,
 /* ═══════════════════════════════════════════
    RESPONSIVE — label moves above the field
    ═══════════════════════════════════════════ */
-@media (max-width: 576px) {
+@media (max-width: 768px) {
   .form-group {
     --form-label-width: 100%;
     --form-gap: 0px;
@@ -312,4 +312,15 @@ input.is-invalid,
 
   .form-group > small,
   .form-group > .invalid-feedback { margin-left: 0; }
+
+   .form-header {
+    flex-direction: column;
+    min-height: 0;
+  }
+  .form-header-content {
+    margin: 0;
+    width: 100%;
+  }
 }
+
+
