@@ -16,7 +16,7 @@ class PurchaseOrder(models.Model):
     """
     Mirrors Odoo's purchase.order state machine:
     draft -> sent -> (to_approve) -> purchase -> done
-                                   \-> cancel
+                                   \\-> cancel
     """
 
     STATUS_CHOICES = (
