@@ -15,7 +15,7 @@
     <setting key="default_exchange_loss_account" account_code="590000"/>
     <setting key="default_customer_credit_note_account" account_code="400000"/>
     <setting key="default_vendor_credit_note_account" account_code="500000"/>
-    <setting key="default_expense_account" account_code="504000"/>
+    <setting key="default_expense_account" account_code="500400"/>
 
 
     <!-- ═══ Inventory / stock (needed by delivery, receipt and invoice valuation) ═══ -->
