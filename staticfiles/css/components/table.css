@@ -1,32 +1,43 @@
 /* ============================================================
-   TABLE — Data table, status badges, pagination
+   TABLE — Data table, badges' host, pagination, invoice table
    table.css
-   Depends on: invoice.css (design tokens)
+   Depends on: base.css (design tokens), forms.css (select2 dropdown)
    ============================================================ */
 
 
 /* ── Table wrapper ────────────────────────────────────────── */
-/*
-  Handles overflow scrolling on narrow viewports.
-  Wraps the <table> and .table-footer.
-*/
+/* Scrolls horizontally on narrow screens. Toolbar/footer inside it
+   stay pinned to the left edge so they don't scroll away. */
 .table-wrap {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   background: var(--surface-card);
   border: 1px solid var(--color-mist);
   border-radius: var(--radius-cards);
 }
 
+.table-wrap > .table-toolbar,
+.table-wrap > .table-footer {
+  position: sticky;
+  left: 0;
+}
+
 
 /* ── Table base ───────────────────────────────────────────── */
+/* Auto layout + min-width: columns size to content and the wrapper
+   scrolls, instead of fixed layout crushing wide tables (12 columns). */
 .data-table {
   width: 100%;
+  min-width: 640px;
   border-collapse: collapse;
   font-size: var(--text-body-sm);
   font-family: var(--font-suisseintl);
-  table-layout: fixed;           /* predictable column widths */
+  table-layout: auto;
 }
+
+/* Opt-in for predictable equal-ish columns on short tables */
+.data-table--fixed { table-layout: fixed; }
 
 
 /* ── Column alignment helpers ─────────────────────────────── */
@@ -38,9 +49,7 @@
 
 
 /* ── Header ───────────────────────────────────────────────── */
-.data-table thead tr {
-  border-bottom: 1px solid var(--color-mist);
-}
+.data-table thead tr { border-bottom: 1px solid var(--color-mist); }
 
 .data-table th {
   padding: 10px var(--spacing-16);
@@ -55,17 +64,9 @@
   user-select: none;
 }
 
-/* Sortable column header */
-.data-table th.col-sortable {
-  cursor: pointer;
-  transition: color 0.12s ease;
-}
+.data-table th.col-sortable { cursor: pointer; transition: color 0.12s ease; }
+.data-table th.col-sortable:hover { color: var(--color-deep-indigo); }
 
-.data-table th.col-sortable:hover {
-  color: var(--color-deep-indigo);
-}
-
-/* Sort chevron icon — place inside <th> as <i class="sort-icon"> */
 .data-table .sort-icon {
   margin-left: var(--spacing-4);
   font-size: 12px;
@@ -73,37 +74,25 @@
   vertical-align: -1px;
   transition: color 0.12s ease;
 }
-
-.data-table th.col-sortable:hover .sort-icon {
-  color: var(--color-slate);
-}
-
-/* Active sort column */
+.data-table th.col-sortable:hover .sort-icon { color: var(--color-slate); }
 .data-table th.col-sort-asc .sort-icon,
-.data-table th.col-sort-desc .sort-icon {
-  color: var(--color-deep-indigo);
-}
+.data-table th.col-sort-desc .sort-icon { color: var(--color-deep-indigo); }
 
 
 /* ── Body rows ────────────────────────────────────────────── */
 .data-table tbody tr {
   border-bottom: 1px solid var(--color-mist);
-  cursor: pointer;
   transition: background 0.1s ease;
 }
 
-.data-table tbody tr:last-child {
-  border-bottom: none;
-}
+/* Pointer only where the row really is a link (htmx rows etc.) */
+.data-table tbody tr[hx-get],
+.data-table tbody tr[data-href],
+.data-table tbody tr.is-clickable { cursor: pointer; }
 
-.data-table tbody tr:hover {
-  background: #f3f4f8;
-}
-
-/* Selected row state */
-.data-table tbody tr.is-selected {
-  background: #eef1fb;
-}
+.data-table tbody tr:last-child { border-bottom: none; }
+.data-table tbody tr:hover { background: #f3f4f8; }
+.data-table tbody tr.is-selected { background: #eef1fb; }
 
 
 /* ── Cells ────────────────────────────────────────────────── */
@@ -113,14 +102,17 @@
   font-weight: var(--font-weight-regular);
   line-height: var(--leading-body-sm);
   white-space: nowrap;
+  max-width: 320px;               /* lets text-overflow work with auto layout */
   overflow: hidden;
   text-overflow: ellipsis;
+  vertical-align: middle;
 }
+
+/* Cells holding switches/buttons/checkboxes must not be clipped */
+.data-table td:has(.form-check, .btn, input[type="checkbox"]) { overflow: visible; }
 
 
 /* ── Cell content variants ────────────────────────────────── */
-
-/* Primary text — bold, indigo */
 .td-primary {
   font-weight: var(--font-weight-medium);
   color: var(--color-deep-indigo);
@@ -128,7 +120,6 @@
   text-overflow: ellipsis;
 }
 
-/* Secondary/muted line — sits below .td-primary inside a cell */
 .td-muted {
   font-size: var(--text-caption);
   color: var(--color-slate);
@@ -137,7 +128,6 @@
   text-overflow: ellipsis;
 }
 
-/* Monospaced cell — for IDs, invoice numbers, codes */
 .td-mono {
   font-family: var(--font-suisseintlmono);
   font-size: var(--text-body-sm);
@@ -145,25 +135,38 @@
   font-weight: var(--font-weight-semibold);
 }
 
-/* Amount — semibold, right-aligned by parent .col-right */
 .td-amount {
   font-size: var(--text-body-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--color-deep-indigo);
 }
+.td-amount--overdue { color: var(--color-ember-orange); }
 
-/* Amount modifier — overdue / negative */
-.td-amount--overdue {
-  color: var(--color-ember-orange);
+
+/* ── Table toolbar ────────────────────────────────────────── */
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;                /* toolbar + filters wrap instead of overflowing */
+  gap: var(--spacing-12);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-bottom: 1px solid var(--color-mist);
+  background: var(--surface-card);
+}
+
+.table-toolbar-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-indigo);
 }
 
 
-
-
 /* ── Table footer ─────────────────────────────────────────── */
-/*
-  Row count label on the left, pagination controls on the right.
-*/
 .table-footer {
   display: flex;
   align-items: center;
@@ -183,11 +186,7 @@
 
 
 /* ── Pagination ───────────────────────────────────────────── */
-.table-pagination {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-4);
-}
+.table-pagination { display: flex; align-items: center; gap: var(--spacing-4); }
 
 .table-pagination-ellipsis {
   font-size: var(--text-caption);
@@ -202,28 +201,25 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   font-family: var(--font-suisseintl);
   font-size: var(--text-caption);
   font-weight: var(--font-weight-medium);
   color: var(--color-slate);
-
+  text-decoration: none;
   background: transparent;
   border: 1px solid var(--color-mist);
   border-radius: 6px;
   cursor: pointer;
   user-select: none;
-
   transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease;
 }
 
-.page-btn:hover:not(:disabled):not(.active) {
+.page-btn:hover:not(:disabled):not(.active):not([aria-disabled="true"]) {
   background: #f3f4f8;
   color: var(--color-deep-indigo);
   border-color: var(--color-fog);
 }
 
-/* Active / current page */
 .page-btn.active {
   background: var(--color-deep-indigo);
   color: var(--surface-card);
@@ -231,132 +227,61 @@
   cursor: default;
 }
 
-/* Disabled prev / next */
-.page-btn:disabled {
-  opacity: 0.35;
-  pointer-events: none;
-}
-
-/* Prev / next arrow buttons — slightly wider than number buttons */
-.page-btn--arrow {
-  font-size: 13px;
-}
-
-
-/* ── Empty state ──────────────────────────────────────────── */
-/*
-  Drop inside <tbody> as a single full-width row when no data.
-*/
-.table-empty {
-  padding: var(--spacing-64) var(--spacing-24);
-  text-align: center;
-  color: var(--color-slate);
-}
-
-.table-empty-icon {
-  font-size: 32px;
-  color: var(--color-mist);
-  margin-bottom: var(--spacing-12);
-}
-
-.table-empty-title {
-  font-size: var(--text-body);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-graphite);
-  margin-bottom: var(--spacing-4);
-}
-
-.table-empty-desc {
-  font-size: var(--text-body-sm);
-  color: var(--color-fog);
-}
-
-
-/* ── Responsive ───────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .data-table th,
-  .data-table td {
-    padding: var(--spacing-8) var(--spacing-12);
-  }
-
-  .table-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-12);
-  }
-
-  .table-pagination {
-    width: 100%;
-    justify-content: flex-end;
-  }
-}
-
-
-/* ── Table toolbar ────────────────────────────────────────── */
-/* Title bar above the table — label left, count badge right  */
-.table-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-12);
-  padding: var(--spacing-12) var(--spacing-16);
-  border-bottom: 1px solid var(--color-mist);
-  background: var(--surface-card);
-}
-
-.table-toolbar-title {
-  margin: 0;
-  font-size: var(--text-body);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-deep-indigo);
-}
-
-/* Disabled arrow — aria-disabled instead of inline opacity */
+.page-btn:disabled,
 .page-btn[aria-disabled="true"] {
   opacity: 0.35;
   pointer-events: none;
   cursor: not-allowed;
 }
 
+.page-btn--arrow { font-size: 13px; }
 
 
-/* ═══════════════════════════════════════════
-   TABLE WRAP
-   ═══════════════════════════════════════════ */
+/* ── Empty state ──────────────────────────────────────────── */
+.table-empty {
+  padding: var(--spacing-64) var(--spacing-24);
+  text-align: center;
+  color: var(--color-slate);
+  white-space: normal;
+  max-width: none;
+}
+.table-empty-icon { font-size: 32px; color: var(--color-mist); margin-bottom: var(--spacing-12); }
+.table-empty-title {
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-graphite);
+  margin-bottom: var(--spacing-4);
+}
+.table-empty-desc { font-size: var(--text-body-sm); color: var(--color-fog); }
+
+
+/* ============================================================
+   INVOICE / EDITABLE TABLE  (.inv-table)
+   ============================================================ */
 .inv-table-wrap {
   width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   background: var(--surface-card);
-  /* border and border-radius removed — .invoice-card owns those */
 }
 
-/* ═══════════════════════════════════════════
-   TABLE BASE
-   ═══════════════════════════════════════════ */
 .inv-table {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
   font-size: var(--text-body-sm);
   font-family: var(--font-suisseintl);
 }
 
-/* ═══════════════════════════════════════════
-   COLUMN ALIGNMENT
-   ═══════════════════════════════════════════ */
 .inv-table th.col-right,
 .inv-table td.col-right  { text-align: right; }
-
 .inv-table th.col-center,
 .inv-table td.col-center { text-align: center; }
-
 .inv-table th.col-left,
-.inv-table td.col-left  { text-align: left; }
+.inv-table td.col-left   { text-align: left; }
 
-/* ═══════════════════════════════════════════
-   THEAD
-   ═══════════════════════════════════════════ */
-.inv-table thead tr {
-  border-bottom: 1px solid var(--color-mist);
-}
+/* head */
+.inv-table thead tr { border-bottom: 1px solid var(--color-mist); }
 
 .inv-table th {
   padding: 10px var(--spacing-16);
@@ -372,34 +297,20 @@
 }
 
 .inv-table thead th:last-child,
-.inv-table thead td:last-child {
-  border-right: none;
-}
+.inv-table thead td:last-child { border-right: none; }
 
 .inv-table thead th:hover,
-.inv-table thead td:hover {
-  color: var(--color-deep-indigo);   /* was --color-accent which is undefined */
-  cursor: pointer;
-}
+.inv-table thead td:hover { color: var(--color-deep-indigo); cursor: pointer; }
 
-/* ═══════════════════════════════════════════
-   TBODY ROWS
-   ═══════════════════════════════════════════ */
+/* body */
 .inv-table tbody tr {
   border-bottom: 1px solid var(--color-mist);
-  cursor: pointer;
   transition: background 0.15s;
-
 }
+.inv-table tbody tr[hx-get],
+.inv-table tbody tr.is-clickable { cursor: pointer; }
+.inv-table tbody tr:hover { background: #f3f4f8; }
 
-
-.inv-table tbody tr:hover {
-  background: #f3f4f8;
-}
-
-/* ═══════════════════════════════════════════
-   TBODY CELLS
-   ═══════════════════════════════════════════ */
 .inv-table tbody td {
   padding: var(--spacing-12) var(--spacing-16);
   font-weight: var(--font-weight-regular);
@@ -408,44 +319,27 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   line-height: var(--leading-body-sm);
-  /* transition: all removed — animating layout props like padding causes reflows */
 }
+.inv-table tbody td:last-child { border-right: none; }
 
-.inv-table tbody td:last-child {
-  border-right: none;
-}
-/* ═══════════════════════════════════════════
-   TFOOT
-   ═══════════════════════════════════════════ */
-.inv-table tfoot tr {
-  border-top: 2px solid var(--color-mist);
-  background: var(--surface-canvas);
-}
-
+/* foot  (was --color-deep-carbon, which is not defined) */
+.inv-table tfoot tr { border-top: 2px solid var(--color-mist); background: var(--surface-canvas); }
 .inv-table tfoot td {
   padding: 13px 16px;
   font-weight: var(--font-weight-semibold);
-  color: var(--color-deep-carbon);
+  color: var(--color-carbon);
   text-align: right;
 }
 
-/* ═══════════════════════════════════════════
-   EDITABLE CELL
-   ═══════════════════════════════════════════ */
-.inv-table tbody td.td-editable {
-  padding: 0 16px;
-  vertical-align: middle;
-}
-
+/* editable cell */
+.inv-table tbody td.td-editable { padding: 0 16px; vertical-align: middle; }
 .inv-table tbody td.td-editable:focus-within {
   background: var(--surface-2, #f9fafb);
   box-shadow: inset 0 -2px 0 #86b7fe;
 }
 
-/* ═══════════════════════════════════════════
-   NATIVE INPUTS — bottom border only
-   (.td-input, .td-select, .form-control, .form-select)
-   ═══════════════════════════════════════════ */
+/* native inputs: bottom-border only.
+   A transparent bottom border is declared so the hover colour works. */
 .inv-table tbody td .td-input,
 .inv-table tbody td .td-select,
 .inv-table tbody td .form-control,
@@ -453,14 +347,14 @@
   width: 100%;
   min-width: 0;
   border: none;
+  border-bottom: 1px solid transparent;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
   outline: none;
   padding: 2px 0;
-  padding-left: 0;
   font-size: 13.5px;
-  color: var(--color-deep-carbon);
+  color: var(--color-carbon);
   appearance: auto;
   cursor: pointer;
   transition: border-bottom-color 0.15s ease;
@@ -469,10 +363,7 @@
 .inv-table tbody td .td-input:hover,
 .inv-table tbody td .td-select:hover,
 .inv-table tbody td .form-control:hover,
-.inv-table tbody td .form-select:hover {
-  border-bottom-color: #86b7fe;
-  cursor: pointer;
-}
+.inv-table tbody td .form-select:hover { border-bottom-color: #86b7fe; }
 
 .inv-table tbody td .td-input:focus,
 .inv-table tbody td .td-select:focus,
@@ -492,19 +383,10 @@
   background: transparent;
 }
 
-/* Bootstrap form-select arrow alignment */
-.inv-table tbody td .form-select {
-  padding-right: 1.75rem;
-  background-position: right 0 center;
-}
+.inv-table tbody td .form-select { padding-right: 1.75rem; background-position: right 0 center; }
 
-/* ═══════════════════════════════════════════
-   SELECT2 INSIDE TD
-   ═══════════════════════════════════════════ */
-.inv-table tbody td .select2-container {
-  width: 100% !important;
-  min-width: 0 !important;
-}
+/* select2 inside td */
+.inv-table tbody td .select2-container { width: 100% !important; min-width: 0 !important; }
 
 .inv-table tbody td .select2-container--default .select2-selection--single,
 .inv-table tbody td .select2-container--odoo-line .select2-selection--single {
@@ -554,93 +436,16 @@
   outline: none !important;
 }
 
-/* ═══════════════════════════════════════════
-   SELECT2 DROPDOWN — global (body-appended)
-   ═══════════════════════════════════════════ */
-.select2-dropdown {
-  border: 1px solid #e0e0e0 !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
-  background: #fff !important;
-  overflow: hidden !important;
-}
+/* NOTE: the global .select2-dropdown / search / option rules were
+   duplicated here and in forms.css with different values. They now
+   live only in forms.css. */
 
-.select2-search--dropdown {
-  padding: 8px !important;
-  background: #fafafa !important;
-  border-bottom: 1px solid #e0e0e0 !important;
-}
 
-.select2-search--dropdown .select2-search__field {
-  border: 1px solid #e0e0e0 !important;
-  border-radius: 6px !important;
-  padding: 5px 10px !important;
-  outline: none !important;
-  font-size: 0.875rem !important;
-  background: #fff !important;
-  color: #495057 !important;
-}
+/* ── Tax dropdown ─────────────────────────────────────────── */
+.tax-toggle { display: none; }
 
-.select2-search--dropdown .select2-search__field:focus {
-  border-color: #86b7fe !important;
-  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1) !important;
-}
+.tax-dropdown-wrapper { position: relative; width: 100%; }
 
-.select2-results__options {
-  padding: 4px 0 !important;
-}
-
-.select2-results__option {
-  padding: 7px 14px !important;
-  font-size: 0.875rem !important;
-  color: #495057 !important;
-  border-radius: 4px !important;
-  margin: 0 4px !important;
-  transition: background 0.15s ease !important;
-  cursor: pointer !important;
-}
-
-.select2-results__option--highlighted {
-  background-color: #e8f0fe !important;
-  color: #0d6efd !important;
-}
-
-/* ═══════════════════════════════════════════
-   INVOICE HEADER
-   ═══════════════════════════════════════════ */
-.invoice-header-card {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 2px;
-  margin: 20px 0 10px 10px;
-}
-
-.invoice-header-title {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 2px;
-}
-
-.invoice-header-title label,
-.invoice-number {
-  font-size: var(--text-heading-lg);
-  font-weight: var(--font-weight-semibold, 600);
-  color: var(--color-deep-indigo);
-}
-
-/* ═══════════════════════════════════════════
-   TAX DROPDOWN
-   ═══════════════════════════════════════════ */
-
-/* hidden checkbox toggle */
-.tax-toggle {
-  display: none;
-}
-
-/* trigger — label acting as the visible control */
 .tax-dropdown-trigger {
   display: flex;
   align-items: center;
@@ -651,7 +456,6 @@
   gap: 6px;
 }
 
-/* selected badges row */
 .tax-selected-label {
   display: flex;
   align-items: center;
@@ -662,12 +466,8 @@
   overflow: hidden;
 }
 
-.tax-placeholder {
-  color: #adb5bd;
-  font-size: 13.5px;
-}
+.tax-placeholder { color: #adb5bd; font-size: 13.5px; }
 
-/* badge */
 .tax-badge {
   display: inline-flex;
   align-items: center;
@@ -680,19 +480,9 @@
   white-space: nowrap;
 }
 
-/* chevron */
-.tax-chevron {
-  font-size: 11px;
-  color: #6c757d;
-  flex-shrink: 0;
-  transition: transform 0.15s ease;
-}
+.tax-chevron { font-size: 11px; color: #6c757d; flex-shrink: 0; transition: transform 0.15s ease; }
+.tax-toggle:checked ~ .tax-dropdown-trigger .tax-chevron { transform: rotate(180deg); }
 
-.tax-toggle:checked ~ .tax-dropdown-trigger .tax-chevron {
-  transform: rotate(180deg);
-}
-
-/* dropdown panel */
 .tax-dropdown-menu {
   display: none;
   position: absolute;
@@ -706,12 +496,8 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   padding: 4px 0;
 }
+.tax-toggle:checked ~ .tax-dropdown-menu { display: block; }
 
-.tax-toggle:checked ~ .tax-dropdown-menu {
-  display: block;
-}
-
-/* option rows */
 .tax-option {
   display: flex;
   align-items: center;
@@ -725,28 +511,38 @@
   transition: background 0.15s ease;
   user-select: none;
 }
+.tax-option:hover { background: #e8f0fe; color: #0d6efd; }
+.tax-option input[type="checkbox"] { margin: 0; cursor: pointer; accent-color: #0d6efd; }
 
-.tax-option:hover {
-  background: #e8f0fe;
-  color: #0d6efd;
+
+/* ── Invoice header ───────────────────────────────────────── */
+.invoice-header-card {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2px;
+  margin: 20px 0 10px 10px;
+}
+.invoice-header-card > div { align-self: flex-start; }
+
+.invoice-header-title { display: flex; flex-direction: column; justify-content: flex-start; gap: 2px; }
+
+.invoice-header-title > div label {
+  font-size: var(--text-subheading);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-slate);
 }
 
-.tax-option input[type="checkbox"] {
-  margin: 0;
-  cursor: pointer;
-  accent-color: #0d6efd;
-}
-
-/* wrapper needs relative for dropdown positioning */
-.tax-dropdown-wrapper {
-  position: relative;
-  width: 100%;
+.invoice-number {
+  font-size: var(--text-heading-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-indigo);
 }
 
 
-/* ═══════════════════════════════════════════
-   INVOICE HEADER SECTION
-   ═══════════════════════════════════════════ */
+/* ── Invoice header section ───────────────────────────────── */
 .inv-header-section {
   display: flex;
   flex-wrap: nowrap;
@@ -755,14 +551,8 @@
   margin-bottom: 10px;
 }
 
-.inv-header-col {
-  flex: 1;
-  padding: var(--spacing-16) var(--spacing-24);
-}
-
-.inv-header-col + .inv-header-col {
-  border-left: 1px solid var(--color-mist);
-}
+.inv-header-col { flex: 1; min-width: 0; padding: var(--spacing-16) var(--spacing-24); }
+.inv-header-col + .inv-header-col { border-left: 1px solid var(--color-mist); }
 
 .inv-field {
   display: grid;
@@ -771,7 +561,6 @@
   align-items: baseline;
   padding: 6px 0;
 }
-
 .inv-field:last-child { padding-bottom: 0; }
 
 .inv-field-label {
@@ -788,6 +577,8 @@
   font-weight: var(--font-weight-medium);
   color: var(--color-deep-indigo);
   line-height: 1.45;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .inv-field-sub {
@@ -797,4 +588,74 @@
   display: block;
   line-height: 1.5;
   margin-top: 1px;
+}
+
+
+/* ── Totals ───────────────────────────────────────────────── */
+.totals-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 8px;
+  margin: 40px;
+}
+
+.totals-container > div > div > span {
+  font-size: var(--text-subheading);
+  font-weight: var(--font-weight-semibold);
+}
+
+.totals-container > div > div > label {
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-slate);
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* ── Tablet ───────────────────────────────────────────────── */
+@media (max-width: 992px) {
+  .inv-header-section { flex-wrap: wrap; }
+  .inv-header-col { flex: 1 1 320px; padding: var(--spacing-12) var(--spacing-16); }
+  .inv-header-col + .inv-header-col { border-left: none; }
+  .totals-container { margin: var(--spacing-24); }
+}
+
+/* ── Mobile ───────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .data-table th,
+  .data-table td { padding: var(--spacing-8) var(--spacing-12); }
+
+  .data-table td { max-width: 220px; }
+
+  /* toolbar: title + button on row 1, filters full width below */
+  .table-toolbar { padding: var(--spacing-12); }
+  .table-toolbar > form,
+  .table-toolbar > .toolbar { flex: 1 1 100%; width: 100%; }
+
+  .table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-12);
+    padding: var(--spacing-12);
+  }
+  .table-pagination { width: 100%; justify-content: flex-end; flex-wrap: wrap; }
+
+  /* invoice header stacks */
+  .invoice-header-card { flex-direction: column; margin: var(--spacing-16) var(--spacing-12) var(--spacing-8); gap: var(--spacing-8); }
+  .invoice-number { font-size: var(--text-heading); }
+
+  .inv-header-section { flex-direction: column; }
+  .inv-header-col { flex: 0 0 auto; padding: var(--spacing-8) var(--spacing-12); }
+  .inv-field { grid-template-columns: 1fr; gap: 2px; }
+
+  .inv-table th,
+  .inv-table tbody td { padding: var(--spacing-8) var(--spacing-12); }
+
+  .totals-container { margin: var(--spacing-16) var(--spacing-12); align-items: stretch; }
 }

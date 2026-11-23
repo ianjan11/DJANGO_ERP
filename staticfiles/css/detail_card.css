@@ -1,14 +1,15 @@
 /* ============================================================
-   DETAIL CARD — one card that holds a whole record view/form
-   detail_card.css
-   Depends on: base.css (design tokens)
+   DETAIL CARD: one card for a whole record view/form
+   detail_card.css   (same visual language as table.css)
+   Depends on: base.css tokens
 
-   Structure:
+   Structure
      .detail-card
-       .table-toolbar              (existing title bar)
-       .detail-header              (avatar + .detail-cols > .detail-col)
-       .tabs                       (see tabs.css)
-       .detail-card-footer         (actions)
+       .detail-head              back/crumbs + title + status | actions
+       .detail-header            optional avatar + .detail-cols > .detail-col
+       .tabs                     (see tabs.css)
+       .detail-card-errors
+       .detail-card-footer       Cancel / Save
    ============================================================ */
 
 
@@ -16,150 +17,288 @@
 .detail-card {
   background: var(--surface-card);
   border: 1px solid var(--color-mist);
-  border-radius: var(--radius-cards);
-  box-shadow: rgba(17, 26, 74, 0.04) 0px 1px 3px,
-              rgba(17, 26, 74, 0.02) 0px 1px 0px;
-  margin: 0 10px 10px 10px;
+  border-radius: var(--radius-xl);
+  box-shadow: rgba(17, 26, 74, 0.04) 0px 1px 3px, rgba(17, 26, 74, 0.02) 0px 1px 0px;
+  margin: 0 var(--spacing-12) var(--spacing-12);
   overflow: hidden;
 }
 
-.detail-card form {
+.detail-card form { display: flex; flex-direction: column; margin: 0; }
+
+
+/* ── Head: where am I, what is it, what state is it in ────── */
+.detail-head,
+.detail-card > .table-toolbar {
   display: flex;
-  flex-direction: column;
-  margin: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-16);
+  padding: var(--spacing-24) var(--spacing-24) var(--spacing-16);
+  background: transparent;
+  border-bottom: 1px solid var(--color-mist);
 }
 
+.detail-head__main { min-width: 0; display: flex; flex-direction: column; gap: var(--spacing-4); }
 
-/* ── Header ───────────────────────────────────────────────── */
-/*
-  Avatar on the left, then 1–3 columns of .inv-field rows.
-  Columns are separated by a thin divider (same pattern as
-  .inv-header-section / .inv-header-col).
-*/
+.detail-head__back,
+.detail-head__crumbs {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-slate);
+  text-decoration: none;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+  transition: color .12s ease;
+}
+.detail-head__back:hover { color: var(--color-deep-indigo); }
+
+.detail-head__title,
+.detail-card > .table-toolbar .table-toolbar-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-8);
+  min-width: 0;
+  margin: 0;
+  font-size: var(--text-heading);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-deep-ink);
+  overflow-wrap: anywhere;
+}
+
+.detail-head__title .badge { font-size: 11px; padding: 2px 8px; border-radius: 6px; letter-spacing: 0; }
+
+.detail-head__sub { margin: 0; font-size: var(--text-body-sm); color: var(--color-slate); }
+
+.detail-head__actions { display: flex; align-items: center; gap: var(--spacing-8); flex-shrink: 0; }
+.detail-head__actions .btn { height: 34px; display: inline-flex; align-items: center; gap: 6px; }
+
+
+/* ── Header block: avatar + columns of fields ─────────────── */
 .detail-header {
   display: flex;
   align-items: flex-start;
-  gap: var(--spacing-16);
-  padding: var(--spacing-16);
+  gap: var(--spacing-20);
+  padding: var(--spacing-24);
   border-bottom: 1px solid var(--color-mist);
 }
 
 .detail-avatar {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-xl);
-  background: var(--color-deep-indigo);
-  color: #ffffff;
-  font-size: var(--text-heading-sm);
+  background: #e8ebf7;
+  color: var(--color-deep-indigo);
+  font-size: var(--text-subheading);
   font-weight: var(--font-weight-semibold);
 }
 
-.detail-cols {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-}
+.detail-cols { flex: 1; min-width: 0; display: flex; flex-direction: row; flex-wrap: nowrap; }
 
-.detail-col {
-  flex: 1;
-  min-width: 0;
-  padding: 0 var(--spacing-24);
-}
-
+.detail-col { flex: 1; min-width: 0; padding: 0 var(--spacing-32); }
 .detail-col:first-child { padding-left: 0; }
 .detail-col:last-child  { padding-right: 0; }
+.detail-col + .detail-col { border-left: 1px solid #eef0f4; }
 
-.detail-col + .detail-col {
-  border-left: 1px solid var(--color-mist);
+.detail-section-title {
+  display: block;
+  margin: 0 0 var(--spacing-8);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-fog);
 }
 
-/* Emphasised row (name / title): add .form-group--primary */
 .detail-col .form-group--primary .form-control {
   font-size: var(--text-body-lg);
   font-weight: var(--font-weight-semibold);
   color: var(--color-deep-indigo);
 }
 
-/* Inline checkbox / toggle value */
-.detail-inline {
+.detail-inline { display: flex; align-items: center; gap: var(--spacing-8); height: 32px; }
+
+.detail-card .form-group { padding: 7px 0; }
+
+
+/* ── Locked state ─────────────────────────────────────────── */
+.detail-lock-banner {
   display: flex;
   align-items: center;
-  gap: var(--spacing-8);
-  height: 32px;
+  gap: var(--spacing-12);
+  padding: var(--spacing-8) var(--spacing-16);
+  background: #fff8f3;
+  border-bottom: 1px solid #f6d5c0;
+  font-size: var(--text-body-sm);
+  color: var(--color-graphite);
 }
 
+.detail-lock-banner > i { color: var(--color-ember-orange); font-size: var(--text-body); }
+.detail-lock-banner-text { flex: 1; min-width: 0; }
+.detail-lock-banner-title { font-weight: var(--font-weight-semibold); color: var(--color-deep-ink); }
+.detail-lock-banner-reason { color: var(--color-slate); }
 
-/* ── .form-group inside the card ──────────────────────────── */
-/* Label width, gap and field look come from forms.css variables.
-   Override here to tune this card only, e.g.:
-   .detail-card { --form-label-width: 120px; }                */
-.detail-card .form-group { padding: 6px 0; }
+.detail-card--locked fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+
+.detail-card--locked .form-group .form-control,
+.detail-card--locked .form-group .form-select {
+  background-color: transparent;
+  color: var(--color-deep-ink);
+  padding-left: 0;
+  cursor: default;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.detail-card--locked .form-group .form-control:hover,
+.detail-card--locked .form-group .form-select:hover { background-color: transparent; }
+
+.detail-card--locked .form-group textarea.form-control { resize: none; }
+
+.detail-card--locked .form-group .select2-container .select2-selection--single {
+  background: transparent !important;
+  padding-left: 0 !important;
+  cursor: default !important;
+}
+.detail-card--locked .select2-selection__arrow,
+.detail-card--locked .select2-selection__clear { display: none !important; }
+
+.detail-card--locked .form-check-input:disabled { opacity: 0.6; cursor: default; }
+.detail-card--locked .form-group .form-label { color: var(--color-slate); }
 
 
-/* ── Footer / actions ─────────────────────────────────────── */
+/* ── Errors + footer ──────────────────────────────────────── */
+.detail-card-errors {
+  padding: var(--spacing-8) var(--spacing-24);
+  color: #9b2626;
+  background: var(--color-danger-bg);
+  border-top: 1px solid var(--color-danger-border);
+}
+
 .detail-card-footer {
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-8);
-  padding: var(--spacing-12) var(--spacing-16);
+  padding: var(--spacing-16) var(--spacing-24);
   border-top: 1px solid var(--color-mist);
-  background: var(--surface-card);
-}
-
-.detail-card-errors {
-  padding: 0 var(--spacing-16) var(--spacing-8);
-  color: #9b2626;
+  background: var(--surface-canvas);
 }
 
 
-
-/* ── Action bar: three equal sections ─────────────────────── */
+/* ── Action bar: three equal sections (orders etc.) ───────── */
 .action-card {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));  /* minmax(0,…) keeps them equal even with long content */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: center;
   border-bottom: 1px solid var(--color-mist);
 }
-
 .action-card > * {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--spacing-8);
   min-height: 56px;
-  padding: var(--spacing-12) var(--spacing-16);
+  padding: var(--spacing-12) var(--spacing-24);
+}
+.action-card > * + * { border-left: 1px solid #eef0f4; }
+.action-card > :nth-child(2) { justify-content: center; }
+.action-card-status { justify-content: flex-end; }
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* ── Tablet: columns wrap into a 2-up grid, no dividers ───── */
+@media (max-width: 992px) {
+  .detail-head,
+  .detail-card > .table-toolbar,
+  .detail-header,
+  .detail-card-footer,
+  .detail-card-errors {
+    padding-left: var(--spacing-16);
+    padding-right: var(--spacing-16);
+  }
+
+  .detail-cols {
+    flex-wrap: wrap;
+    gap: var(--spacing-16) var(--spacing-32);
+  }
+
+  .detail-col,
+  .detail-col:first-child,
+  .detail-col:last-child {
+    flex: 1 1 280px;
+    padding: 0;
+  }
+
+  .detail-col + .detail-col { border-left: none; }
+
+  .action-card > * { padding: var(--spacing-8) var(--spacing-12); }
 }
 
-/* divider between sections */
-.action-card > * + * {
-  border-left: 1px solid var(--color-mist);
-}
-
-/* section 1: workflow actions, left aligned (default) */
-
-/* section 2: navigation */
-.action-card > :nth-child(2) {
-  justify-content: center;
-}
-
-/* section 3: status badge */
-.action-card-status {
-  justify-content: flex-end;
-}
-
-
-
-/* ── Responsive ───────────────────────────────────────────── */
+/* ── Mobile ───────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .detail-header { flex-direction: column; }
-  .detail-cols   { flex-direction: column; width: 100%; }
-  .detail-col    { padding: 0; }
+  .detail-card {
+    margin: 0 var(--spacing-8) var(--spacing-8);
+    border-radius: var(--radius-lg);
+  }
+
+  /* head: title + back link / actions wrap */
+  .detail-head,
+  .detail-card > .table-toolbar {
+    flex-wrap: wrap;
+    gap: var(--spacing-8);
+    padding-top: var(--spacing-16);
+    padding-bottom: var(--spacing-12);
+  }
+
+  .detail-head__title,
+  .detail-card > .table-toolbar .table-toolbar-title {
+    font-size: var(--text-heading-sm);
+    line-height: var(--leading-heading-sm);
+    letter-spacing: var(--tracking-heading-sm);
+  }
+
+  .detail-head__actions { width: 100%; flex-wrap: wrap; }
+
+  /* header block */
+  .detail-header {
+    flex-direction: column;
+    gap: var(--spacing-12);
+    padding: var(--spacing-16) var(--spacing-12);
+  }
+
+  .detail-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: var(--text-subheading);
+    border-radius: var(--radius-lg);
+  }
+
+  .detail-cols {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 100%;
+    gap: 0;
+  }
+
+  .detail-col,
+  .detail-col:first-child,
+  .detail-col:last-child {
+    flex: 0 0 auto;
+    padding: 0;
+  }
+
   .detail-col + .detail-col {
     border-left: none;
     border-top: 1px solid var(--color-mist);
@@ -167,23 +306,31 @@
     padding-top: var(--spacing-12);
   }
 
-  .detail-header-group + .detail-header-group {
-    padding-left: 0;
-    border-left: none;
-  }
+  .detail-card .form-group { padding: 6px 0; }
 
-  .action-card {
-    grid-template-columns: 1fr;
+  /* errors + footer */
+  .detail-card-errors { padding: var(--spacing-8) var(--spacing-12); }
+
+  .detail-card-footer {
+    flex-direction: column-reverse;     /* primary action on top */
+    gap: var(--spacing-8);
+    padding: var(--spacing-12);
   }
-  .action-card > * + * {
-    border-left: none;
-    border-top: 1px solid var(--color-mist);
-  }
+  .detail-card-footer .btn { width: 100%; justify-content: center; }
+
+  /* action bar: stack the three sections */
+  .action-card { grid-template-columns: 1fr; }
+  .action-card > * { min-height: 0; justify-content: flex-start; }
+  .action-card > * + * { border-left: none; border-top: 1px solid #eef0f4; }
   .action-card > :nth-child(2),
-  .action-card-status {
-    justify-content: flex-start;
-  }
+  .action-card-status { justify-content: flex-start; }
 
+  .detail-lock-banner { flex-wrap: wrap; padding: var(--spacing-8) var(--spacing-12); }
 }
 
-
+/* ── Small phones ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .detail-card { margin: 0 0 var(--spacing-8); border-radius: 0; border-left: 0; border-right: 0; }
+  .detail-head__title,
+  .detail-card > .table-toolbar .table-toolbar-title { font-size: var(--text-subheading); }
+}
