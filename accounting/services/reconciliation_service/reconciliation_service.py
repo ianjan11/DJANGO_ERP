@@ -286,11 +286,6 @@ class ReconciliationService:
                 move__state="posted",
                 account__allow_reconciliation=True,
             )
-            .select_related(
-                "account",
-                "partner",
-                "move",
-            )
             .order_by(
                 "account_id",
                 "partner_id",

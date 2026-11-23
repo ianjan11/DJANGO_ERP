@@ -63,7 +63,7 @@ def sales_orders_list(request):
     if search_order:
         orders = orders.filter(
             Q(order_number__icontains=search_order) |
-            Q(customer__name__icontains=search_order)
+            Q(partner__name__icontains=search_order)
         )
 
     # — status

@@ -30,7 +30,7 @@ PAYMENT_TYPE_REDIRECTS = {
 
 def payment_details(request, payment_id):
 
-    payment = load_payment(payment_id, request, for_update=True)
+    payment = load_payment(payment_id, request)
 
     context = _build_context(request, payment)
 

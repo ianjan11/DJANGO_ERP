@@ -23,7 +23,6 @@ def post_invoice(invoice, user):
     items = list(
         invoice.lines
         .select_for_update()
-        .select_related('product', 'quant')
     )
 
     if not items:

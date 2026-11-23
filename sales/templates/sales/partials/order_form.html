@@ -1,8 +1,18 @@
 {% load humanize %}
 
 <div class="main-wrapper">
-  <div class="detail-card">
 
+    <div class="detail-card{% if flags.locked %} detail-card--locked{% endif %}">
+
+      {% if flags.locked %}
+    <div class="detail-lock-banner" role="status">
+      <i class="bi bi-lock-fill" aria-hidden="true"></i>
+      <div class="detail-lock-banner-text">
+        <span class="detail-lock-banner-title">This record is locked.</span>
+        <span class="detail-lock-banner-reason">{{ lock_reason }}</span>
+      </div>
+    </div>
+  {% endif %}
     {# ── Card title ── #}
     <div class="table-toolbar">
       <h5 class="table-toolbar-title">
@@ -81,8 +91,8 @@
             </div>
           {% endif %}
 
-          <div class="inv-table-wrap">
-            <table class="inv-table">
+          <div class="inv-table-wrap{% if flags.locked %} table-wrap{% endif %}">
+            <table class="inv-table{% if flags.locked %} data-table{% endif %}">
               <thead>
                 <tr>
                   <th style="display:none"></th>
@@ -104,6 +114,7 @@
               </tbody>
             </table>
 
+              {% if not flags.locked %}
             <button
                 id="row-btn"
                 style="display:none"
@@ -122,6 +133,7 @@
                 ">
                 <i class="bi bi-plus me-1"></i> Add Row
             </button>
+              {% endif %}
           </div>
 
           <div id="invoice-total-container" class="totals-container mt-4">

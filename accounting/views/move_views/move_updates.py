@@ -289,34 +289,34 @@ def invoice_update(request):
     if not invoice_id:
         return HttpResponseBadRequest("Missing invoice_id")
 
-    invoice = load_account_move(invoice_id, request, for_update=True)
+    with transaction.atomic():
+      invoice = load_account_move(invoice_id, request, for_update=True)
 
-    if invoice.move_type in ['out_invoice', 'out_refund']:
-        try:
-            payload, dropped_unsaved_rows = build_payload(request.POST, doc_type="sales_invoice")
+      if invoice.move_type in ['out_invoice', 'out_refund']:
+          try:
+              payload, dropped_unsaved_rows = build_payload(request.POST, doc_type="sales_invoice")
 
-        except ValidationError as e:
-            return htmx_error(
-                message=e.message,
-                request=request,
-            )
+          except ValidationError as e:
+              return htmx_error(
+                  message=e.message,
+                  request=request,
+              )
 
-    else:
-        payload, dropped_unsaved_rows = build_payload(request.POST, doc_type="supplier_invoice")
+      else:
+          payload, dropped_unsaved_rows = build_payload(request.POST, doc_type="supplier_invoice")
 
-
-    # 2. HAND OFF TO ORCHESTRATOR
-    try:
-        context = DocumentService().apply_state(
-            doc_instance=invoice,
-            payload=payload,
-            dropped_unsaved_rows=dropped_unsaved_rows,
-            request=request,
-            user=request.user,
-        )
-    except Exception:
-        logger.exception("apply_state failed for invoice_id=%s", invoice_id)
-        raise
+          # 2. HAND OFF TO ORCHESTRATOR
+      try:
+          context = DocumentService().apply_state(
+              doc_instance=invoice,
+              payload=payload,
+              dropped_unsaved_rows=dropped_unsaved_rows,
+              request=request,
+              user=request.user,
+          )
+      except Exception:
+          logger.exception("apply_state failed for invoice_id=%s", invoice_id)
+          raise
 
     return UIResponseService().render(request=request, payload=context)
 

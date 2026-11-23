@@ -177,12 +177,14 @@ def purchase_update(request):
     if not order_id:
         return HttpResponseBadRequest("Missing order_id")
 
-    order = load_purchase_order(
-        purchase_id=order_id, request=request,for_update=True
-    )
+
 
     try:
-        payload, dropped_unsaved_rows = build_payload(request.POST, doc_type="purchase_order")
+        with transaction.atomic():
+            order = load_purchase_order(
+                purchase_id=order_id, request=request, for_update=True
+            )
+            payload, dropped_unsaved_rows = build_payload(request.POST, doc_type="purchase_order")
 
     except ValidationError as e:
         return htmx_error(

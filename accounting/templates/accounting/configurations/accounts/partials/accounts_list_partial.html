@@ -1,282 +1,468 @@
 {% load humanize %}
+{% load querystring %}
 
 <div class="main-wrapper">
-  <div class="inv-card">
-    {# ── TABLE WRAPPER ────────────────────────────────────── #}
-    <div class="table-wrap">
 
-      <div class="table-toolbar">
-        <h5 class="table-toolbar-title">
+  <div class="doc-card">
+
+    {# ── HEADER: TITLE + SEARCH · FILTER · ACTIONS ── #}
+    <form
+      data-toolbar
+      id="account-filters"
+      class="doc-form"
+      hx-get="{% url 'accounting:accounts_list' %}?module={{ module }}"
+      hx-trigger="input changed delay:500ms from:.toolbar-search, change from:.toolbar-select, change from:[data-toolbar] "
+      hx-target="closest .module-display"
+      hx-replace-url="true"
+    >
+
+      <div class="doc-toolbar">
+
+        <h5 class="doc-toolbar__title">
           Accounts
-          <span class="badge badge--count">
-            {{ accounts.paginator.count }} Account{{ accounts.paginator.count|pluralize }}
-          </span>
         </h5>
-  
-        <div>
-         
-         <button class="btn btn-primary btn-sm"
-                    hx-get="{% url 'accounting:get_empty_account_form' %}?module={{ module }}"
-                    hx-disable-elt="this"
-                   hx-target="closest .module-display"
-                    hx-push-url="true"
-         >
-              <i class="bi bi-plus-lg"></i> New
-            </button>
-    
-          <button type="button"
-                  class="btn btn-danger btn-sm"
-                  hx-post="{% url 'accounting:delete_account' %}?module={{ module }}"
-                  hx-include="[name='account_ids']:checked"
-                  hx-confirm="Are you sure you want to delete the selected accounts?"
-                  hx-target="closest .module-display"
 
+
+                  <div class="doc-toolbar__actions">
+                         {# DELETE SELECTED #}
+          <button
+            type="button"
+            class="btn btn-danger btn-sm"
+            hx-post="{% url 'accounting:delete_account' %}?module={{ module }}"
+            hx-include="[name='account_ids']:checked"
+            hx-confirm="Are you sure you want to delete the selected accounts?"
+            hx-target="closest .module-display"
           >
-            <i class="ti ti-trash me-1"></i> Delete
+            <i class="ti ti-trash"></i>
+            Delete
           </button>
-        </div>
+                  </div>
 
-        <!-- Filter & Search Toolbar -->
-        <form data-toolbar
-              class="toolbar"
-              id="account-filters"
-              hx-get="{% url 'accounting:accounts_list' %}?module={{ module }}"
-              hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
-              hx-target="#accounting-display"
-              hx-replace-url="true">
+        <div class="doc-toolbar__actions">
 
-          <div class="form-check form-switch mb-0">
-            <input class="form-check-input"
-                   type="checkbox"
-                   role="switch"
-                   id="allow-reconciliation-toggle"
-                   name="allow_reconciliation"
-                   value="true"
-                   {% if request.GET.allow_reconciliation == 'true' %}checked{% endif %}
-                   hx-get="{% url 'accounting:accounts_list' %}?module={{ module }}"
-                   hx-trigger="change"
-                   hx-include="#toolbar-search-input"
-                   hx-target="closest .module-display"
-                   hx-push-url="true">
-            <label class="form-check-label fw-semibold" for="allow-reconciliation-toggle">
-              Allow Reconciliation
-            </label>
-          </div>
 
-          <div class="toolbar-search-wrap">
-            <i class="ti ti-search toolbar-search-icon"></i>
-            <input type="text"
-                   id="toolbar-search-input"
-                   class="toolbar-search"
-                   name="search_account"
-                   placeholder="Search account..."
-                   value="{{ request.GET.search_account }}">
-            <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+
+          <span class="doc-toolbar__sep"></span>
+
+          {# SEARCH #}
+          <div class="doc-search">
+
+            <i class="bi bi-search doc-search__icon"></i>
+
+            <input
+              type="text"
+              class="doc-search__input toolbar-search"
+              name="search_account"
+              placeholder="Search accounts…"
+              value="{{ request.GET.search_account }}"
+              autocomplete="off"
+            >
+
+            <button
+              type="button"
+              class="toolbar-search-clear"
+              aria-label="Clear search"
+            >
               <i class="ti ti-x"></i>
             </button>
+
           </div>
-  
-          <button type="button" class="toolbar-clear-btn">
-            <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
+
+          {# FILTERS #}
+          <details class="doc-filter">
+
+            <summary
+              class="doc-filter__btn"
+              aria-label="Filters"
+              title="Filters"
+            >
+              <i class="bi bi-funnel"></i>
+              <span class="doc-filter__count" hidden></span>
+            </summary>
+
+            <div class="doc-filter__panel">
+
+              <div class="doc-filter__head">
+                Filters
+              </div>
+
+              <div class="doc-filter__body">
+
+                <div class="doc-filter__group">
+
+                  <div class="form-check form-switch mb-0">
+
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      role="switch"
+                      id="f-reconcile"
+                      name="allow_reconciliation"
+                      value="true"
+                      {% if request.GET.allow_reconciliation == 'true' %}checked{% endif %}
+                    >
+
+                    <label
+                      class="form-check-label"
+                      for="f-reconcile"
+                    >
+                      Allow reconciliation only
+                    </label>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div class="doc-filter__foot">
+                <button
+                  type="button"
+                  class="doc-filter__reset"
+                >
+                  Clear all
+                </button>
+              </div>
+
+            </div>
+          </details>
+
+          {# NEW ACCOUNT #}
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            hx-get="{% url 'accounting:get_empty_account_form' %}?module={{ module }}"
+            hx-disable-elt="this"
+            hx-target="closest .module-display"
+            hx-push-url="true"
+          >
+            <i class="bi bi-plus-lg"></i>
+            New
           </button>
-        </form>
+
+        </div>
       </div>
+    </form>
 
 
-        
-        <!-- REQUIRED DJANGO FORMSET MANAGEMENT FORM -->
-        {% if formset %}
-            {{ formset.management_form }}
+    {# ── TABLE ── #}
+    <div class="doc-scroll">
+
+      <table class="doc-table" data-checkbox-table>
+
+        <thead>
+          <tr>
+
+            <th class="col-check">
+              <input type="checkbox" data-select-all>
+            </th>
+
+            <th><i class="bi bi-hash"></i> Code</th>
+
+            <th><i class="bi bi-journal-text"></i> Name</th>
+
+            <th>Description</th>
+
+            <th>Account Type</th>
+
+            <th>Currency</th>
+
+            <th>Parent</th>
+
+            <th>Internal Type</th>
+
+            <th class="col-center">Control</th>
+
+            <th class="col-center">Active</th>
+
+            <th class="col-center">Reconcile</th>
+
+            <th class="col-actions"></th>
+
+          </tr>
+        </thead>
+
+
+        <tbody id="table-body">
+
+          {% for account in accounts %}
+
+          <tr>
+
+            {# SELECT #}
+            <td class="col-check">
+
+              <input
+                type="checkbox"
+                name="account_ids"
+                value="{{ account.id }}"
+                data-select-row
+                data-row-id="{{ account.id }}"
+              >
+
+            </td>
+
+            {# CODE #}
+            <td class="td-mono">
+              {{ account.code }}
+            </td>
+
+            {# NAME #}
+            <td class="td-primary">
+              {{ account.name }}
+            </td>
+
+            {# DESCRIPTION #}
+            <td>
+              {{ account.description|default:"—" }}
+            </td>
+
+            {# ACCOUNT TYPE #}
+            <td>
+              {{ account.account_type.name|default:"—" }}
+            </td>
+
+            {# CURRENCY #}
+            <td>
+              {{ account.currency|default:"—" }}
+            </td>
+
+            {# PARENT #}
+            <td>
+              {{ account.parent|default:"—" }}
+            </td>
+
+            {# INTERNAL TYPE #}
+            <td>
+              {{ account.internal_type|default:"—" }}
+            </td>
+
+            {# CONTROL ACCOUNT #}
+            <td class="col-center">
+              {% if account.is_control_account %}
+                <span class="badge badge--paid">Yes</span>
+              {% else %}
+                <span class="td-muted">No</span>
+              {% endif %}
+            </td>
+
+            {# ACTIVE #}
+            <td class="col-center">
+
+              <div class="form-check form-switch d-inline-block mb-0">
+
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="account-active-{{ account.id }}"
+                  name="is_active"
+                  value="true"
+                  {% if account.is_active %}checked{% endif %}
+                  hx-post="{% url 'accounting:toggle_account' account.id %}?module={{ module }}"
+                  hx-trigger="change"
+                  hx-swap="none"
+                >
+
+              </div>
+
+            </td>
+
+            {# RECONCILIATION #}
+            <td class="col-center">
+
+              <div class="form-check form-switch d-inline-block mb-0">
+
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="account-reconciliation-{{ account.id }}"
+                  name="allow_reconciliation"
+                  value="true"
+                  {% if account.allow_reconciliation %}checked{% endif %}
+                  hx-post="{% url 'accounting:toggle_reconciliation' account.id %}?module={{ module }}"
+                  hx-trigger="change"
+                  hx-swap="none"
+                >
+
+              </div>
+
+            </td>
+
+            {# ACTIONS #}
+            <td class="col-actions">
+
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                hx-get="{% url 'accounting:account_detail' account.id %}?module={{ module }}"
+                hx-target="closest .module-display"
+                hx-push-url="true"
+                hx-disable-elt="this"
+              >
+                <i class="ti ti-eye"></i>
+                View
+              </button>
+
+            </td>
+
+          </tr>
+
+          {% empty %}
+
+          <tr>
+            <td colspan="12" class="doc-table__empty">
+
+              <div class="doc-table__empty-icon">
+                <i class="bi bi-journal-text"></i>
+              </div>
+
+              <div class="doc-table__empty-title">
+                No accounts found
+              </div>
+
+              <div class="doc-table__empty-desc">
+                There are no records matching your current filter criteria.
+              </div>
+
+            </td>
+          </tr>
+
+          {% endfor %}
+
+        </tbody>
+      </table>
+
+    </div>
+
+
+    {# ── FOOTER: COUNT + PAGINATION ── #}
+    <div class="doc-footer">
+
+      <small class="doc-footer__count">
+
+        {% if accounts.paginator.count %}
+
+          Showing {{ accounts.start_index }}–{{ accounts.end_index }}
+          of {{ accounts.paginator.count }}
+          account{{ accounts.paginator.count|pluralize }}
+
+        {% else %}
+
+          0 accounts
+
         {% endif %}
 
-   <div class="inv-table-wrap">
-        <table class="inv-table" data-checkbox-table>
-          <thead>
-            <tr>
-              <th>
-                <input type="checkbox" data-select-all>
-              </th>
-              <th>Code</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Account Type</th>
-              <th class="col-right">Currency</th>
-              <th class="col-center">Parent</th>
-              <th class="col-center">Internal Type</th>
-              <th class="col-center">Is Control</th>
-              <th>Is Active</th>
-              <th>Allow Reconciliation</th>
-              <th></th>
-            </tr>
-          </thead>
+      </small>
 
-          <tbody id="table-body">
-            {% for account in accounts %}
-              <tr>
-                <td style="text-align: center;">
-                  <input type="checkbox"
-                         name="account_ids"
-                         value="{{ account.id }}"
-                         data-select-row
-                         data-row-id="{{ account.id }}">
-                </td>
-                <td class="td-mono">{{ account.code }}</td>
-                <td class="td-primary">{{ account.name }}</td>
-                <td>{{ account.description|default:"-" }}</td>
-                <td class="col-right">{{ account.account_type.name }}</td>
-                <td>{{ account.currency }}</td>
-                <td class="col-center">{{ account.parent|default:"-" }}</td>
-                <td class="col-center">{{ account.internal_type }}</td>
-                <td class="col-center">{{ account.is_control_account }}</td>
-                
-                  <!-- Is Active -->
-                <td>
-                    <div class="form-check form-switch mb-0">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               role="switch"
-                               id="account-active-{{ account.id }}"
-                               name="is_active"
-                               value="true"
-                               {% if account.is_active %}checked{% endif %}
-                               hx-post="{% url 'accounting:toggle_account' account.id %}?module={{ module }}"
-                               hx-trigger="change"
-                               hx-swap="none">
-                    </div>
-                </td>
-                
-                <td>
-                    <div class="form-check form-switch mb-0">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               role="switch"
-                               id="account-reconciliation-{{ account.id }}"
-                               name="allow_reconciliation"
-                               value="true"
-                               {% if account.allow_reconciliation %}checked{% endif %}
-                               hx-post="{% url 'accounting:toggle_reconciliation' account.id %}?module={{ module }}"
-                               hx-trigger="change"
-                               hx-swap="none">
-                    </div>
-                </td>
-                <td>
-                  <button type="button"
-                          class="btn btn-secondary btn-sm"
-                          hx-get="{% url 'accounting:account_detail' account.id %}?module={{ module }}"
-                                             hx-target="closest .module-display"
 
-                          hx-push-url="true"
-                          hx-disable-elt="this"
-                  >
-                    <i class="ti ti-eye"></i> View
-                  </button>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="12" class="table-empty">
-                  <div class="table-empty-icon">
-                    <i class="bi bi-receipt"></i>
-                  </div>
-                  <div class="table-empty-title">No Accounts found</div>
-                  <div class="table-empty-desc">There are no records matching your current filter criteria.</div>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-   </div>
-
-      {# ── Pagination (only when more than one page) ────────────── #}
       {% if accounts.paginator.num_pages > 1 %}
-        <div class="table-footer">
-          <small class="table-footer-count">
-            Showing {{ accounts.start_index }}–{{ accounts.end_index }}
-            of {{ accounts.paginator.count }} Account{{ accounts.paginator.count|pluralize }}
-          </small>
 
-          <div class="table-pagination" hx-include="#account-filters">
-            {# First #}
-            {% if accounts.has_previous %}
-              <a class="page-btn page-btn--arrow"
-                 hx-get="?page=1&module={{ module }}"
-                                    hx-target="closest .module-display"
+      <div class="doc-pager">
 
-                 hx-swap="innerHTML"
-                 hx-push-url="true">
-                <i class="bi bi-chevron-double-left"></i>
-              </a>
-            {% else %}
-              <span class="page-btn page-btn--arrow" aria-disabled="true">
-                <i class="bi bi-chevron-double-left"></i>
-              </span>
-            {% endif %}
+        {# FIRST + PREVIOUS #}
+        {% if accounts.has_previous %}
 
-            {# Prev #}
-            {% if accounts.has_previous %}
-              <a class="page-btn page-btn--arrow"
-                 hx-get="?page={{ accounts.previous_page_number }}&module={{ module }}"
-                                    hx-target="closest .module-display"
+          <a
+            class="doc-pager__btn doc-pager__btn--arrow"
+            hx-get="?{% replace_query page=1 module=module %}"
+            hx-target="closest .module-display"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+          >
+            <i class="bi bi-chevron-double-left"></i>
+          </a>
 
-                 hx-swap="innerHTML"
-                 hx-push-url="true">
-                <i class="bi bi-chevron-left"></i>
-              </a>
-            {% else %}
-              <span class="page-btn page-btn--arrow" aria-disabled="true">
-                <i class="bi bi-chevron-left"></i>
-              </span>
-            {% endif %}
+          <a
+            class="doc-pager__btn doc-pager__btn--arrow"
+            hx-get="?{% replace_query page=accounts.previous_page_number module=module %}"
+            hx-target="closest .module-display"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+          >
+            <i class="bi bi-chevron-left"></i>
+          </a>
 
-            {# Page numbers #}
-            {% for num in accounts.paginator.page_range %}
-              {% if accounts.number == num %}
-                <span class="page-btn active">{{ num }}</span>
-              {% elif num > accounts.number|add:'-3' and num < accounts.number|add:'3' %}
-                <a class="page-btn"
-                   hx-get="?page={{ num }}&module={{ module }}"
-                                      hx-target="closest .module-display"
+        {% else %}
 
-                   hx-swap="innerHTML"
-                   hx-push-url="true">{{ num }}</a>
-              {% endif %}
-            {% endfor %}
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+            <i class="bi bi-chevron-double-left"></i>
+          </span>
 
-            {# Next #}
-            {% if accounts.has_next %}
-              <a class="page-btn page-btn--arrow"
-                 hx-get="?page={{ accounts.next_page_number }}&module={{ module }}"
-                                    hx-target="closest .module-display"
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+            <i class="bi bi-chevron-left"></i>
+          </span>
 
-                 hx-swap="innerHTML"
-                 hx-push-url="true">
-                <i class="bi bi-chevron-right"></i>
-              </a>
-            {% else %}
-              <span class="page-btn page-btn--arrow" aria-disabled="true">
-                <i class="bi bi-chevron-right"></i>
-              </span>
-            {% endif %}
+        {% endif %}
 
-            {# Last #}
-            {% if accounts.has_next %}
-              <a class="page-btn page-btn--arrow"
-                 hx-get="?page={{ accounts.paginator.num_pages }}&module={{ module }}"
-                                    hx-target="closest .module-display"
 
-                 hx-swap="innerHTML"
-                 hx-push-url="true">
-                <i class="bi bi-chevron-double-right"></i>
-              </a>
-            {% else %}
-              <span class="page-btn page-btn--arrow" aria-disabled="true">
-                <i class="bi bi-chevron-double-right"></i>
-              </span>
-            {% endif %}
-          </div>
-        </div>
+        {# PAGE NUMBERS #}
+        {% for num in accounts.paginator.page_range %}
+
+          {% if accounts.number == num %}
+
+            <span class="doc-pager__btn is-active">
+              {{ num }}
+            </span>
+
+          {% elif num > accounts.number|add:'-3' and num < accounts.number|add:'3' %}
+
+            <a
+              class="doc-pager__btn"
+              hx-get="?{% replace_query page=num module=module %}"
+              hx-target="closest .module-display"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+            >
+              {{ num }}
+            </a>
+
+          {% endif %}
+
+        {% endfor %}
+
+
+        {# NEXT + LAST #}
+        {% if accounts.has_next %}
+
+          <a
+            class="doc-pager__btn doc-pager__btn--arrow"
+            hx-get="?{% replace_query page=accounts.next_page_number module=module %}"
+            hx-target="closest .module-display"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+          >
+            <i class="bi bi-chevron-right"></i>
+          </a>
+
+          <a
+            class="doc-pager__btn doc-pager__btn--arrow"
+            hx-get="?{% replace_query page=accounts.paginator.num_pages module=module %}"
+            hx-target="closest .module-display"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+          >
+            <i class="bi bi-chevron-double-right"></i>
+          </a>
+
+        {% else %}
+
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+            <i class="bi bi-chevron-right"></i>
+          </span>
+
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+            <i class="bi bi-chevron-double-right"></i>
+          </span>
+
+        {% endif %}
+
+      </div>
+
       {% endif %}
 
     </div>
+
   </div>
 </div>

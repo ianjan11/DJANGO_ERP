@@ -1,8 +1,18 @@
 {% load humanize %}
 
 <div class="main-wrapper">
-  <div class="detail-card">
 
+    <div class="detail-card{% if flags.locked %} detail-card--locked{% endif %}">
+
+      {% if flags.locked %}
+    <div class="detail-lock-banner" role="status">
+      <i class="bi bi-lock-fill" aria-hidden="true"></i>
+      <div class="detail-lock-banner-text">
+        <span class="detail-lock-banner-title">This record is locked.</span>
+        <span class="detail-lock-banner-reason">{{ lock_reason }}</span>
+      </div>
+    </div>
+  {% endif %}
     {# ── Card title ── #}
     <div class="table-toolbar">
       <h5 class="table-toolbar-title">

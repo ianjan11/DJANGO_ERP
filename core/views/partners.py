@@ -232,10 +232,7 @@ def create_partner_view(request):
 
     try:
         with transaction.atomic():
-            partner = form.save()
-            detail_url = reverse("core:partner_detail", kwargs={"partner_id": partner.id})
-            # Keep the module in the pushed URL so a reload stays in it.
-            detail_url += f"?module={_module(request)}"
+            form.save()
 
     except IntegrityError:
         errors = {"__all__": ["A partner with this name or Tax ID already exists."]}
@@ -265,5 +262,4 @@ def create_partner_view(request):
         request,
         "Partner Created Successfully.",
         trigger={"PartnerCreatedSuccess": {"message": "Partner Created successfully"}},
-        redirect_url=detail_url,
     )

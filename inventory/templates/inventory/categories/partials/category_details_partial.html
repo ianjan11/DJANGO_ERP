@@ -17,7 +17,7 @@
           method="post"
           hx-post="{% if category and category.pk %}{% url 'inventory:edit_category' category.id %}?module={{ module }}{% else %}{% url 'inventory:create_category' %}?module={{ module }}{% endif %}"
           hx-target="closest .module-display"
-          hx-push-url="true">
+          >
 
       {% csrf_token %}
 

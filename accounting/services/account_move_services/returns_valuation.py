@@ -125,7 +125,6 @@ def _open_pair_entries(cfg, company, link, account):
             **side,
             **source_ref(link),
         )
-        .select_related("move")
         .order_by("move__issue_date", "id")
         .select_for_update(of=("self",))
     )

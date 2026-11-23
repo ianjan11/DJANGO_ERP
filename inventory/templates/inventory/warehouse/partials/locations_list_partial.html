@@ -1,41 +1,71 @@
 {% load humanize %}
+{% load querystring %}
 
 <div class="main-wrapper">
-  <div class="inv-card">
 
-       <div class="d-flex justify-content-between align-items-center mb-4">
-    <button class="btn btn-primary btn-sm"
-            hx-get="{% url 'inventory:get_empty_location_form' %}?module={{ module }}"
-            hx-target="closest .module-display"
-            hx-push-url="true">
-      <i class="bi bi-plus-lg"></i> New
-    </button>
-  </div>
-    
-    {# ── Table ── #}
-    <div class="table-wrap">
-      <table class="data-table">
+  <div class="doc-card">
+
+    {# ── Toolbar ── #}
+    <div class="doc-toolbar">
+
+      <h5 class="doc-toolbar__title">Locations</h5>
+
+      <div class="doc-toolbar__actions">
+
+        <button type="button"
+                class="btn btn-primary btn-sm"
+                hx-get="{% url 'inventory:get_empty_location_form' %}?module={{ module }}"
+                hx-target="closest .module-display"
+                hx-push-url="true">
+          <i class="bi bi-plus-lg"></i> New
+        </button>
+
+      </div>
+    </div>
+
+    {# ── Locations table ── #}
+    <div class="doc-scroll">
+
+      <table class="doc-table">
+
         <thead>
           <tr>
-            <th style="width:220px">Location Name</th>
-            <th style="width:200px">Full Path</th>
-            <th style="width:160px">Warehouse</th>
-            <th style="width:140px">Type</th>
-            <th style="width:140px">Barcode</th>
-            <th style="width:100px" class="col-center">Status</th>
+            <th>Location Name</th>
+            <th>Full Path</th>
+            <th>Warehouse</th>
+            <th>Type</th>
+            <th>Barcode</th>
+            <th class="col-center">Status</th>
           </tr>
         </thead>
+
         <tbody>
+
           {% for location in locations %}
           <tr hx-get="{% url 'inventory:location_detail' location.id %}?module={{ module }}"
               hx-target="closest .module-display"
               hx-push-url="true">
-            <td class="td-primary">{{ location.name }}</td>
-            <td><span class="td-mono">{{ location.complete_name }}</span></td>
-            <td class="td-primary">{{ location.warehouse.name|default:"—" }}</td>
-            <td>
-              <span class="badge badge--draft">{{ location.get_location_type_display }}</span>
+
+            <td class="td-primary">
+              {{ location.name }}
             </td>
+
+            <td>
+              <span class="td-mono">
+                {{ location.complete_name }}
+              </span>
+            </td>
+
+            <td>
+              {{ location.warehouse.name|default:"—" }}
+            </td>
+
+            <td>
+              <span class="badge badge--draft">
+                {{ location.get_location_type_display }}
+              </span>
+            </td>
+
             <td>
               {% if location.barcode %}
                 <span class="td-mono">{{ location.barcode }}</span>
@@ -43,100 +73,150 @@
                 <span class="td-dash">—</span>
               {% endif %}
             </td>
+
             <td class="col-center">
               {% if location.active %}
-                <span class="badge badge--paid"><i class="bi bi-check-circle-fill"></i> Active</span>
+                <span class="badge badge--paid">
+                  <i class="bi bi-check-circle-fill"></i> Active
+                </span>
               {% else %}
-                <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Inactive</span>
+                <span class="badge badge--cancelled">
+                  <i class="bi bi-x-circle-fill"></i> Inactive
+                </span>
               {% endif %}
             </td>
+
           </tr>
+
           {% empty %}
           <tr>
-            <td colspan="6" class="table-empty">
-              <div class="table-empty-icon"><i class="bi bi-geo-alt"></i></div>
-              <div class="table-empty-title">No locations found</div>
-              <div class="table-empty-desc">There are no location records matching your current criteria.</div>
+            <td colspan="6" class="doc-table__empty">
+
+              <div class="doc-table__empty-icon">
+                <i class="bi bi-geo-alt"></i>
+              </div>
+
+              <div class="doc-table__empty-title">
+                No locations found
+              </div>
+
+              <div class="doc-table__empty-desc">
+                There are no location records matching your current criteria.
+              </div>
+
             </td>
           </tr>
           {% endfor %}
+
         </tbody>
       </table>
+    </div>
 
-      {# ── Pagination ── #}
-      {% if locations.paginator.num_pages > 1 %}
-      <div class="table-footer">
-        <small class="table-footer-count">
+    {# ── Footer: count + pagination ── #}
+    <div class="doc-footer">
+
+      <small class="doc-footer__count">
+        {% if locations.paginator.count %}
           Showing {{ locations.start_index }}–{{ locations.end_index }}
-          of {{ locations.paginator.count }} location{{ locations.paginator.count|pluralize }}
-        </small>
+          of {{ locations.paginator.count }}
+          location{{ locations.paginator.count|pluralize }}
+        {% else %}
+          0 locations
+        {% endif %}
+      </small>
 
-        <div class="table-pagination" hx-include="#location-filters">
+      {% if locations.paginator.num_pages > 1 %}
+      <div class="doc-pager">
 
-          {% if locations.has_previous %}
-            <a class="page-btn page-btn--arrow"
-               hx-get="?page=1&module={{ module }}"
+        {# First and previous #}
+        {% if locations.has_previous %}
+
+          <a class="doc-pager__btn doc-pager__btn--arrow"
+             hx-get="?{% replace_query page=1 %}&module={{ module }}"
+             hx-target="closest .module-display"
+             hx-swap="innerHTML"
+             hx-push-url="true">
+            <i class="bi bi-chevron-double-left"></i>
+          </a>
+
+          <a class="doc-pager__btn doc-pager__btn--arrow"
+             hx-get="?{% replace_query page=locations.previous_page_number %}&module={{ module }}"
+             hx-target="closest .module-display"
+             hx-swap="innerHTML"
+             hx-push-url="true">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+
+        {% else %}
+
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+            <i class="bi bi-chevron-double-left"></i>
+          </span>
+
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+            <i class="bi bi-chevron-left"></i>
+          </span>
+
+        {% endif %}
+
+        {# Page numbers #}
+        {% for num in locations.paginator.page_range %}
+
+          {% if locations.number == num %}
+
+            <span class="doc-pager__btn is-active">
+              {{ num }}
+            </span>
+
+          {% elif num > locations.number|add:'-3' and num < locations.number|add:'3' %}
+
+            <a class="doc-pager__btn"
+               hx-get="?{% replace_query page=num %}&module={{ module }}"
                hx-target="closest .module-display"
                hx-swap="innerHTML"
                hx-push-url="true">
-              <i class="bi bi-chevron-double-left"></i>
+              {{ num }}
             </a>
-            <a class="page-btn page-btn--arrow"
-               hx-get="?page={{ locations.previous_page_number }}&module={{ module }}"
-               hx-target="closest .module-display"
-               hx-swap="innerHTML"
-               hx-push-url="true">
-              <i class="bi bi-chevron-left"></i>
-            </a>
-          {% else %}
-            <span class="page-btn page-btn--arrow" aria-disabled="true">
-              <i class="bi bi-chevron-double-left"></i>
-            </span>
-            <span class="page-btn page-btn--arrow" aria-disabled="true">
-              <i class="bi bi-chevron-left"></i>
-            </span>
+
           {% endif %}
 
-          {% for num in locations.paginator.page_range %}
-            {% if locations.number == num %}
-              <span class="page-btn active">{{ num }}</span>
-            {% elif num > locations.number|add:'-3' and num < locations.number|add:'3' %}
-              <a class="page-btn"
-                 hx-get="?page={{ num }}&module={{ module }}"
-                 hx-target="closest .module-display"
-                 hx-swap="innerHTML"
-                 hx-push-url="true">{{ num }}</a>
-            {% endif %}
-          {% endfor %}
+        {% endfor %}
 
-          {% if locations.has_next %}
-            <a class="page-btn page-btn--arrow"
-               hx-get="?page={{ locations.next_page_number }}&module={{ module }}"
-               hx-target="closest .module-display"
-               hx-swap="innerHTML"
-               hx-push-url="true">
-              <i class="bi bi-chevron-right"></i>
-            </a>
-            <a class="page-btn page-btn--arrow"
-               hx-get="?page={{ locations.paginator.num_pages }}&module={{ module }}"
-               hx-target="closest .module-display"
-               hx-swap="innerHTML"
-               hx-push-url="true">
-              <i class="bi bi-chevron-double-right"></i>
-            </a>
-          {% else %}
-            <span class="page-btn page-btn--arrow" aria-disabled="true">
-              <i class="bi bi-chevron-right"></i>
-            </span>
-            <span class="page-btn page-btn--arrow" aria-disabled="true">
-              <i class="bi bi-chevron-double-right"></i>
-            </span>
-          {% endif %}
+        {# Next and last #}
+        {% if locations.has_next %}
 
-        </div>
+          <a class="doc-pager__btn doc-pager__btn--arrow"
+             hx-get="?{% replace_query page=locations.next_page_number %}&module={{ module }}"
+             hx-target="closest .module-display"
+             hx-swap="innerHTML"
+             hx-push-url="true">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+
+          <a class="doc-pager__btn doc-pager__btn--arrow"
+             hx-get="?{% replace_query page=locations.paginator.num_pages %}&module={{ module }}"
+             hx-target="closest .module-display"
+             hx-swap="innerHTML"
+             hx-push-url="true">
+            <i class="bi bi-chevron-double-right"></i>
+          </a>
+
+        {% else %}
+
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+            <i class="bi bi-chevron-right"></i>
+          </span>
+
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+            <i class="bi bi-chevron-double-right"></i>
+          </span>
+
+        {% endif %}
+
       </div>
       {% endif %}
 
     </div>
+
   </div>
 </div>

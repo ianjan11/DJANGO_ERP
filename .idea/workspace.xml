@@ -5,7 +5,62 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45b7f3c0-8f21-4351-bbe9-0251d494e96a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/services/account_move_services/customer/sales_gdni_account_move.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/services/account_move_services/customer/sales_gdni_account_move.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/services/account_move_services/returns_valuation.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/services/account_move_services/returns_valuation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/services/account_move_services/vendor/purchase_grni_account_move.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/services/account_move_services/vendor/purchase_grni_account_move.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/services/invoice/invoice_post.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/services/invoice/invoice_post.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/services/invoice/order_to_invoice.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/services/invoice/order_to_invoice.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/services/reconciliation_service/reconciliation_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/services/reconciliation_service/reconciliation_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/templates/accounting/configurations/accounts/partials/accounts_list_partial.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/templates/accounting/configurations/accounts/partials/accounts_list_partial.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/templates/accounting/configurations/currency/currencies_partial.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/templates/accounting/configurations/currency/currencies_partial.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/templates/accounting/configurations/journals/partials/journals_list_partial.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/templates/accounting/configurations/journals/partials/journals_list_partial.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/templates/accounting/configurations/taxes/partials/taxes_list_partial.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/templates/accounting/configurations/taxes/partials/taxes_list_partial.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/templates/accounting/journals/partials/journal_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/templates/accounting/journals/partials/journal_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/templates/accounting/journals/partials/journals_table.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/templates/accounting/journals/partials/journals_table.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/templates/accounting/move_templates/partials/move_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/templates/accounting/move_templates/partials/move_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/templates/accounting/move_templates/partials/move_table.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/templates/accounting/move_templates/partials/move_table.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/templates/accounting/payments_templates/partials/payment_form_partial.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/templates/accounting/payments_templates/partials/payment_form_partial.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/templates/accounting/payments_templates/partials/table.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/templates/accounting/payments_templates/partials/table.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/templates/accounting/reconciliation/partials/reconciliation_page_partial.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/templates/accounting/reconciliation/partials/reconciliation_page_partial.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/views/move_views/move_updates.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/views/move_views/move_updates.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounting/views/payments/payments_actions.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounting/views/payments/payments_actions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/static/css/components/invoice.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/static/css/components/table.css" beforeDir="false" afterPath="$PROJECT_DIR$/core/static/css/components/table.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/static/css/detail_card.css" beforeDir="false" afterPath="$PROJECT_DIR$/core/static/css/detail_card.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/static/js/general/doc_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/core/static/js/general/doc_table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/templates/core/date_filters.html" beforeDir="false" afterPath="$PROJECT_DIR$/core/templates/core/date_filters.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/templates/core/settings/partners/partials/partners_table.html" beforeDir="false" afterPath="$PROJECT_DIR$/core/templates/core/settings/partners/partials/partners_table.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/templates/core/settings/tenants/partials/tenants_list_partial.html" beforeDir="false" afterPath="$PROJECT_DIR$/core/templates/core/settings/tenants/partials/tenants_list_partial.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/templates/layouts/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/core/templates/layouts/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/views/partners.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/views/partners.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/templates/inventory/categories/partials/categories_partial.html" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/templates/inventory/categories/partials/categories_partial.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/templates/inventory/categories/partials/category_details_partial.html" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/templates/inventory/categories/partials/category_details_partial.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/templates/inventory/physical_inventory/partials/physical_inventory_partial.html" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/templates/inventory/physical_inventory/partials/physical_inventory_partial.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/templates/inventory/pickings/partials/picking_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/templates/inventory/pickings/partials/picking_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/templates/inventory/pickings/partials/pickings_table.html" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/templates/inventory/pickings/partials/pickings_table.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/templates/inventory/stock/partials/product_table.html" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/templates/inventory/stock/partials/product_table.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/templates/inventory/warehouse/partials/locations_list_partial.html" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/templates/inventory/warehouse/partials/locations_list_partial.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/views/configurations/product_category.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/views/configurations/product_category.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory/views/pickings/picking_details.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/views/pickings/picking_details.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/core_events.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/core_events.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/core_handlers.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/core_handlers.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sales_invoice.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/sales_invoice.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/purchases/forms/purchase_order_form.py" beforeDir="false" afterPath="$PROJECT_DIR$/purchases/forms/purchase_order_form.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/purchases/templates/purchases/partials/purchase_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/purchases/templates/purchases/partials/purchase_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/purchases/templates/purchases/partials/purchases_table.html" beforeDir="false" afterPath="$PROJECT_DIR$/purchases/templates/purchases/partials/purchases_table.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/purchases/views/purchase_updates.py" beforeDir="false" afterPath="$PROJECT_DIR$/purchases/views/purchase_updates.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/purchases/views/purhase_order_to_invoice.py" beforeDir="false" afterPath="$PROJECT_DIR$/purchases/views/purhase_order_to_invoice.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sales/forms/sales_order_form.py" beforeDir="false" afterPath="$PROJECT_DIR$/sales/forms/sales_order_form.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sales/services/sales_order_service/sales_order_state_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/sales/services/sales_order_service/sales_order_state_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sales/templates/sales/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/sales/templates/sales/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sales/templates/sales/partials/order_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/sales/templates/sales/partials/order_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sales/templates/sales/partials/orders_table.html" beforeDir="false" afterPath="$PROJECT_DIR$/sales/templates/sales/partials/orders_table.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sales/views/orders.py" beforeDir="false" afterPath="$PROJECT_DIR$/sales/views/orders.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sales/views/orders_updates.py" beforeDir="false" afterPath="$PROJECT_DIR$/sales/views/orders_updates.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sales/views/sales_order_to_invoice.py" beforeDir="false" afterPath="$PROJECT_DIR$/sales/views/sales_order_to_invoice.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,20 +105,21 @@
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/kali11/PycharmProjects/DJANGO_ERP/sales/views&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/kali11/PycharmProjects/DJANGO_ERP/core/static/css/components&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.grazie&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/core/static/css/components" />
       <recent name="$PROJECT_DIR$/sales/views" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/core/static/css" />
       <recent name="$PROJECT_DIR$/core/static/js/general" />
       <recent name="$PROJECT_DIR$/purchases/static/js/purchase" />
       <recent name="$PROJECT_DIR$/core/utils" />
       <recent name="$PROJECT_DIR$/core/services" />
-      <recent name="$PROJECT_DIR$/core/static/css/components" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -135,6 +191,16 @@
           <url>file://$PROJECT_DIR$/purchases/views/purhase_order_to_invoice.py</url>
           <line>12</line>
           <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/sales/views/orders_updates.py</url>
+          <line>114</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/accounting/views/move_views/move_updates.py</url>
+          <line>284</line>
+          <option name="timeStamp" value="20" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

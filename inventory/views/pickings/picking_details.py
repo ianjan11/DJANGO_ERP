@@ -196,18 +196,21 @@ def picking_update(request):
     if not picking_id:
         return HttpResponseBadRequest("Missing picking_id")
 
-    picking = load_picking(picking_id, request, for_update=True)
 
     payload, dropped_unsaved_rows = build_payload(request.POST)
 
 
     # 2. HAND OFF TO ORCHESTRATOR
     try:
-        context = DocumentService().apply_state(
-            picking=picking,
-            payload=payload,
-            dropped_unsaved_rows=dropped_unsaved_rows,
-            request=request,
+        with transaction.atomic():
+
+            picking = load_picking(picking_id, request, for_update=True)
+
+            context = DocumentService().apply_state(
+              picking=picking,
+              payload=payload,
+              dropped_unsaved_rows=dropped_unsaved_rows,
+              request=request,
         )
     except Exception:
         logger.exception("apply_state failed for picking_id=%s", picking_id)

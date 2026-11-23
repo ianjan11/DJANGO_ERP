@@ -39,7 +39,6 @@ def create_valuation_for_picking(picking, user):
     """
     picking = (
         StockPicking.objects.select_for_update()
-        .select_related("company", "company__currency", "partner", "sales_order", "sales_order__partner")
         .get(pk=picking.pk)
     )
 

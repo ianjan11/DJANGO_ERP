@@ -61,8 +61,6 @@ def create_category_view(request):
     if not company:
         return htmx_error(request, "User has no company assigned.")
 
-
-
     form = ProductsCategoryForm(request.POST, company=company)
 
     if not form.is_valid():

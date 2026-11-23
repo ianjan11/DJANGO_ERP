@@ -35,7 +35,6 @@ def create_valuation_for_incoming_picking(picking, user):
     """
     picking = (
         StockPicking.objects.select_for_update()
-        .select_related("company", "company__currency", "partner")
         .get(pk=picking.pk)
     )
 
@@ -229,7 +228,6 @@ def create_valuation_for_incoming_picking(picking, user):
     picking.account_move = move
     picking.save(update_fields=["account_move"])
     return move
-
 
 
 def _get_inventory_account(product):

@@ -1,103 +1,130 @@
 {% load humanize %}
+{% load querystring %}
 
-<div id="tax-display"
-     hx-get="{% url 'accounting:taxes_list' %}?module={{ module }}"
-     hx-trigger="TaxSuccess from:body">
+<div
+  id="tax-display"
+  hx-get="{% url 'accounting:taxes_list' %}?module={{ module }}"
+  hx-trigger="TaxSuccess from:body"
+>
 
   <div class="main-wrapper">
-    <div class="inv-card">
 
-      {# ── TABLE WRAPPER ────────────────────────────────────── #}
-      <div class="table-wrap">
+    <div class="doc-card">
 
-        <div class="table-toolbar">
+      {# ── HEADER: TITLE + SEARCH · ACTIONS ── #}
+      <form
+        data-toolbar
+        id="tax-filters"
+        class="doc-form"
+        hx-get="{% url 'accounting:taxes_list' %}?module={{ module }}"
+        hx-trigger="input changed delay:500ms from:.toolbar-search"
+        hx-target="closest .module-display"
+        hx-replace-url="true"
+      >
 
-          <h5 class="table-toolbar-title">
+        <div class="doc-toolbar">
+
+          <h5 class="doc-toolbar__title">
             Taxes
-            <span class="badge badge--count">
-              {{ taxes.paginator.count }}
-              Tax{{ taxes.paginator.count|pluralize }}
-            </span>
           </h5>
 
-          <div>
-            <button class="btn btn-primary btn-sm"
-                    hx-get="{% url 'accounting:get_empty_tax_form' %}?module={{ module }}"
-                    hx-disable-elt="this"
-                   hx-target="closest .module-display"
-                    hx-push-url="true"
+
+             <div class="doc-toolbar__actions">
+
+            {# DELETE SELECTED #}
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              hx-post="{% url 'accounting:taxes_delete' %}?module={{ module }}"
+              hx-include="[name='tax_ids']:checked"
+              hx-confirm="Are you sure you want to delete the selected taxes?"
+              hx-target="closest .module-display"
             >
-              <i class="bi bi-plus-lg"></i> New
+              <i class="ti ti-trash"></i>
+              Delete
             </button>
+             </div>
 
-            <button type="button"
-                    class="btn btn-danger btn-sm"
-                    hx-post="{% url 'accounting:taxes_delete' %}?module={{ module }}"
-                    hx-include="[name='tax_ids']:checked"
-                    hx-confirm="Are you sure you want to delete the selected taxes?"
-                   hx-target="closest .module-display"
-            >
-              <i class="ti ti-trash me-1"></i> Delete
-            </button>
-          </div>
+          <div class="doc-toolbar__actions">
 
-          <!-- Filter & Search Toolbar -->
-          <form data-toolbar
-                class="toolbar"
-                id="tax-filters"
-                hx-get="{% url 'accounting:taxes_list' %}?module={{ module }}"
-                hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
-                   hx-target="closest .module-display"
-                hx-replace-url="true">
+            {# SEARCH #}
+            <div class="doc-search">
 
-            <div class="toolbar-search-wrap">
-              <i class="ti ti-search toolbar-search-icon"></i>
+              <i class="bi bi-search doc-search__icon"></i>
 
-              <input type="text"
-                     id="toolbar-search-input"
-                     class="toolbar-search"
-                     name="search_tax"
-                     placeholder="Search tax..."
-                     value="{{ request.GET.search_tax }}">
+              <input
+                type="text"
+                id="toolbar-search-input"
+                class="doc-search__input toolbar-search"
+                name="search_tax"
+                placeholder="Search taxes…"
+                value="{{ request.GET.search_tax }}"
+                autocomplete="off"
+              >
 
-              <button type="button"
-                      class="toolbar-search-clear"
-                      aria-label="Clear search">
+              <button
+                type="button"
+                class="toolbar-search-clear"
+                aria-label="Clear search"
+              >
                 <i class="ti ti-x"></i>
               </button>
+
             </div>
 
-            <button type="button"
-                    class="toolbar-clear-btn">
-              <i class="ti ti-x toolbar-clear-icon"
-                 aria-hidden="true"></i>
-              Clear
+            {# NEW TAX #}
+            <button
+              type="button"
+              class="btn btn-primary btn-sm"
+              hx-get="{% url 'accounting:get_empty_tax_form' %}?module={{ module }}"
+              hx-disable-elt="this"
+              hx-target="closest .module-display"
+              hx-push-url="true"
+            >
+              <i class="bi bi-plus-lg"></i>
+              New
             </button>
 
-          </form>
-
+          </div>
         </div>
 
+      </form>
 
-        <table class="data-table" data-checkbox-table>
+
+      {# ── TABLE ── #}
+      <div class="doc-scroll">
+
+        <table class="doc-table" data-checkbox-table>
 
           <thead>
             <tr>
-              <th style="text-align: center; padding: 8px 8px 8px 16px; width: 32px;">
+
+              <th class="col-check">
                 <input type="checkbox" data-select-all>
               </th>
 
-              <th>Name</th>
+              <th><i class="bi bi-receipt"></i> Name</th>
+
               <th>Type</th>
+
               <th>Computation</th>
+
               <th class="col-right">Rate</th>
-              <th class="col-center">Tax Account</th>
-              <th class="col-center">Refund Account</th>
-              <th class="col-center">Tax Group</th>
+
+              <th>Tax Account</th>
+
+              <th>Refund Account</th>
+
+              <th>Tax Group</th>
+
               <th class="col-center">Sequence</th>
+
               <th class="col-center">Included in Price</th>
-              <th>Active</th>
-              <th>Actions</th>
+
+              <th class="col-center">Active</th>
+
+              <th class="col-actions"></th>
+
             </tr>
           </thead>
 
@@ -106,108 +133,152 @@
 
             {% for tax in taxes %}
 
-              <tr>
+            <tr>
 
-                <td style="text-align: center;">
-                  <input type="checkbox"
-                         name="tax_ids"
-                         value="{{ tax.id }}"
-                         data-select-row
-                         data-row-id="{{ tax.id }}">
-                </td>
+              {# SELECT #}
+              <td class="col-check">
 
-                <td class="td-primary">
-                  {{ tax.name }}
-                </td>
+                <input
+                  type="checkbox"
+                  name="tax_ids"
+                  value="{{ tax.id }}"
+                  data-select-row
+                  data-row-id="{{ tax.id }}"
+                >
 
-                <td>
-                  {{ tax.get_type_tax_use_display }}
-                </td>
+              </td>
 
-                <td>
-                  {{ tax.get_computation_display }}
-                </td>
+              {# NAME #}
+              <td class="td-primary">
+                {{ tax.name }}
+              </td>
 
-                <td class="col-right">
+              {# TYPE #}
+              <td>
+                {{ tax.get_type_tax_use_display }}
+              </td>
+
+              {# COMPUTATION #}
+              <td>
+                {{ tax.get_computation_display }}
+              </td>
+
+              {# RATE #}
+              <td class="col-right">
+
+                <span class="td-amount">
+
                   {% if tax.computation == "PERCENT" %}
                     {{ tax.rate|floatformat:2 }}%
                   {% else %}
                     {{ tax.rate|floatformat:2 }}
                   {% endif %}
-                </td>
 
-                <td class="col-center">
-                  {{ tax.account|default:"-" }}
-                </td>
+                </span>
 
-                <td class="col-center">
-                  {{ tax.account_refund|default:"-" }}
-                </td>
+              </td>
 
-                <td class="col-center">
-                  {{ tax.tax_group|default:"-" }}
-                </td>
+              {# TAX ACCOUNT #}
+              <td>
+                {{ tax.account|default:"—" }}
+              </td>
 
-                <td class="col-center">
-                  {{ tax.sequence }}
-                </td>
+              {# REFUND ACCOUNT #}
+              <td>
+                {{ tax.account_refund|default:"—" }}
+              </td>
 
-                <td class="col-center">
-                  {% if tax.price_include %}
-                    <span class="badge bg-success">Yes</span>
-                  {% else %}
-                    <span class="badge bg-secondary">No</span>
-                  {% endif %}
-                </td>
+              {# TAX GROUP #}
+              <td>
+                {{ tax.tax_group|default:"—" }}
+              </td>
 
-                <td>
-                 <!-- Is Active -->
-                    <div class="form-check form-switch mb-0">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               role="switch"
-                               id="tax-active-{{ tax.id }}"
-                               name="is_active"
-                               value="true"
-                               {% if tax.is_active %}checked{% endif %}
-                               hx-post="{% url 'accounting:toggle_tax' tax.id %}?module={{ module }}"
-                               hx-trigger="change"
-                               hx-swap="none">
-                    </div>
-                </td>
+              {# SEQUENCE #}
+              <td class="col-center">
+                {{ tax.sequence }}
+              </td>
 
-                <td>
-                  <button type="button"
-                          class="btn btn-secondary btn-sm"
-                          hx-get="{% url 'accounting:tax_detail' tax.id %}?module={{ module }}"
-                   hx-target="closest .module-display"
-                          hx-push-url="true"
-                          hx-disable-elt="this">
-                    <i class="ti ti-eye"></i> View
-                  </button>
-                </td>
+              {# PRICE INCLUDED #}
+              <td class="col-center">
 
-              </tr>
+                {% if tax.price_include %}
+
+                  <span class="badge badge--paid">
+                    Yes
+                  </span>
+
+                {% else %}
+
+                  <span class="td-muted">
+                    No
+                  </span>
+
+                {% endif %}
+
+              </td>
+
+              {# ACTIVE #}
+              <td class="col-center">
+
+                <div class="form-check form-switch d-inline-block mb-0">
+
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    id="tax-active-{{ tax.id }}"
+                    name="is_active"
+                    value="true"
+                    {% if tax.is_active %}checked{% endif %}
+                    hx-post="{% url 'accounting:toggle_tax' tax.id %}?module={{ module }}"
+                    hx-trigger="change"
+                    hx-swap="none"
+                  >
+
+                </div>
+
+              </td>
+
+              {# ACTIONS #}
+              <td class="col-actions">
+
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-sm"
+                  hx-get="{% url 'accounting:tax_detail' tax.id %}?module={{ module }}"
+                  hx-target="closest .module-display"
+                  hx-push-url="true"
+                  hx-disable-elt="this"
+                >
+                  <i class="ti ti-eye"></i>
+                  View
+                </button>
+
+              </td>
+
+            </tr>
 
             {% empty %}
 
-              <tr>
-                <td colspan="12" class="table-empty">
+            <tr>
 
-                  <div class="table-empty-icon">
-                    <i class="bi bi-receipt"></i>
-                  </div>
+              <td colspan="12" class="doc-table__empty">
 
-                  <div class="table-empty-title">
-                    No Taxes found
-                  </div>
+                <div class="doc-table__empty-icon">
+                  <i class="bi bi-receipt"></i>
+                </div>
 
-                  <div class="table-empty-desc">
-                    There are no records matching your current filter criteria.
-                  </div>
+                <div class="doc-table__empty-title">
+                  No taxes found
+                </div>
 
-                </td>
-              </tr>
+                <div class="doc-table__empty-desc">
+                  There are no records matching your current filter criteria.
+                </div>
+
+              </td>
+
+            </tr>
 
             {% endfor %}
 
@@ -215,137 +286,139 @@
 
         </table>
 
+      </div>
 
-        {# ── Pagination ─────────────────────────────────────── #}
+
+      {# ── FOOTER: COUNT + PAGINATION ── #}
+      <div class="doc-footer">
+
+        <small class="doc-footer__count">
+
+          {% if taxes.paginator.count %}
+
+            Showing {{ taxes.start_index }}–{{ taxes.end_index }}
+            of {{ taxes.paginator.count }}
+            tax{{ taxes.paginator.count|pluralize }}
+
+          {% else %}
+
+            0 taxes
+
+          {% endif %}
+
+        </small>
+
+
         {% if taxes.paginator.num_pages > 1 %}
 
-          <div class="table-footer">
+        <div class="doc-pager">
 
-            <small class="table-footer-count">
-              Showing {{ taxes.start_index }}–{{ taxes.end_index }}
-              of {{ taxes.paginator.count }}
-              Tax{{ taxes.paginator.count|pluralize }}
-            </small>
+          {# FIRST + PREVIOUS #}
+          {% if taxes.has_previous %}
 
+            <a
+              class="doc-pager__btn doc-pager__btn--arrow"
+              hx-get="?{% replace_query page=1 module=module %}"
+              hx-target="closest .module-display"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+            >
+              <i class="bi bi-chevron-double-left"></i>
+            </a>
 
-            <div class="table-pagination"
-                 hx-include="#tax-filters">
+            <a
+              class="doc-pager__btn doc-pager__btn--arrow"
+              hx-get="?{% replace_query page=taxes.previous_page_number module=module %}"
+              hx-target="closest .module-display"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+            >
+              <i class="bi bi-chevron-left"></i>
+            </a>
 
-              {# First #}
-              {% if taxes.has_previous %}
+          {% else %}
 
-                <a class="page-btn page-btn--arrow"
-                   hx-get="?page=1&module={{ module }}"
-                   hx-target="closest .module-display"
-                   hx-swap="innerHTML"
-                   hx-push-url="true">
-                  <i class="bi bi-chevron-double-left"></i>
-                </a>
+            <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+              <i class="bi bi-chevron-double-left"></i>
+            </span>
 
-              {% else %}
+            <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+              <i class="bi bi-chevron-left"></i>
+            </span>
 
-                <span class="page-btn page-btn--arrow"
-                      aria-disabled="true">
-                  <i class="bi bi-chevron-double-left"></i>
-                </span>
-
-              {% endif %}
-
-
-              {# Previous #}
-              {% if taxes.has_previous %}
-
-                <a class="page-btn page-btn--arrow"
-                   hx-get="?page={{ taxes.previous_page_number}}&module={{ module }}}"
-                   hx-target="closest .module-display"
-                   hx-swap="innerHTML"
-                   hx-push-url="true">
-                  <i class="bi bi-chevron-left"></i>
-                </a>
-
-              {% else %}
-
-                <span class="page-btn page-btn--arrow"
-                      aria-disabled="true">
-                  <i class="bi bi-chevron-left"></i>
-                </span>
-
-              {% endif %}
+          {% endif %}
 
 
-              {# Page numbers #}
-              {% for num in taxes.paginator.page_range %}
+          {# PAGE NUMBERS #}
+          {% for num in taxes.paginator.page_range %}
 
-                {% if taxes.number == num %}
+            {% if taxes.number == num %}
 
-                  <span class="page-btn active">
-                    {{ num }}
-                  </span>
+              <span class="doc-pager__btn is-active">
+                {{ num }}
+              </span>
 
-                {% elif num > taxes.number|add:'-3' and num < taxes.number|add:'3' %}
+            {% elif num > taxes.number|add:'-3' and num < taxes.number|add:'3' %}
 
-                  <a class="page-btn"
-                     hx-get="?page={{ num }}&module={{ module }}"
-                   hx-target="closest .module-display"
-                     hx-swap="innerHTML"
-                     hx-push-url="true">
-                    {{ num }}
-                  </a>
+              <a
+                class="doc-pager__btn"
+                hx-get="?{% replace_query page=num module=module %}"
+                hx-target="closest .module-display"
+                hx-swap="innerHTML"
+                hx-push-url="true"
+              >
+                {{ num }}
+              </a>
 
-                {% endif %}
+            {% endif %}
 
-              {% endfor %}
-
-
-              {# Next #}
-              {% if taxes.has_next %}
-
-                <a class="page-btn page-btn--arrow"
-                   hx-get="?page={{ taxes.next_page_number }}&module={{ module }}"
-                   hx-target="closest .module-display"
-                   hx-swap="innerHTML"
-                   hx-push-url="true">
-                  <i class="bi bi-chevron-right"></i>
-                </a>
-
-              {% else %}
-
-                <span class="page-btn page-btn--arrow"
-                      aria-disabled="true">
-                  <i class="bi bi-chevron-right"></i>
-                </span>
-
-              {% endif %}
+          {% endfor %}
 
 
-              {# Last #}
-              {% if taxes.has_next %}
+          {# NEXT + LAST #}
+          {% if taxes.has_next %}
 
-                <a class="page-btn page-btn--arrow"
-                   hx-get="?page={{ taxes.paginator.num_pages }}&module={{ module }}"
-                   hx-target="closest .module-display"
-                   hx-swap="innerHTML"
-                   hx-push-url="true">
-                  <i class="bi bi-chevron-double-right"></i>
-                </a>
+            <a
+              class="doc-pager__btn doc-pager__btn--arrow"
+              hx-get="?{% replace_query page=taxes.next_page_number module=module %}"
+              hx-target="closest .module-display"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+            >
+              <i class="bi bi-chevron-right"></i>
+            </a>
 
-              {% else %}
+            <a
+              class="doc-pager__btn doc-pager__btn--arrow"
+              hx-get="?{% replace_query page=taxes.paginator.num_pages module=module %}"
+              hx-target="closest .module-display"
+              hx-swap="innerHTML"
+              hx-push-url="true"
+            >
+              <i class="bi bi-chevron-double-right"></i>
+            </a>
 
-                <span class="page-btn page-btn--arrow"
-                      aria-disabled="true">
-                  <i class="bi bi-chevron-double-right"></i>
-                </span>
+          {% else %}
 
-              {% endif %}
+            <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+              <i class="bi bi-chevron-right"></i>
+            </span>
 
-            </div>
+            <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+              <i class="bi bi-chevron-double-right"></i>
+            </span>
 
-          </div>
+          {% endif %}
+
+        </div>
 
         {% endif %}
 
       </div>
+
     </div>
+
   </div>
 
 </div>
+

@@ -122,21 +122,13 @@ def sales_order_update(request):
     if not order_id:
         return HttpResponseBadRequest("Missing order_id")
 
-    order = load_sales_order(
-        order_id=order_id, request=request,for_update=True
-    )
 
     try:
+      with transaction.atomic():
+        order = load_sales_order(
+              order_id=order_id, request=request, for_update=True
+          )
         payload, dropped_unsaved_rows = build_payload(request.POST, doc_type="sales_order")
-
-        warehouse = (
-            order.fulfillment_location
-            if isinstance(order.fulfillment_location, Warehouse)
-            else resolve_warehouse(order.fulfillment_location)
-        )
-
-        payload = pre_resolve(payload, warehouse)
-
 
     except ValidationError as e:
         return htmx_error(

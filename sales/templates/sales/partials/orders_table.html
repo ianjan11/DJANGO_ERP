@@ -1,238 +1,164 @@
 {% load humanize %}
 {% load querystring %}
 
-
-
-
-
-
 <div class="main-wrapper">
 
+  <div class="doc-card">
 
-    <div class="inv-card">
+    {# ── Header: title + count | search · filter · New ── #}
+    <form data-toolbar id="order-filters" class="doc-form"
+          hx-get="{% url 'sales:sales_orders_list' %}"
+          hx-trigger="input changed delay:500ms from:.toolbar-search, change from:.toolbar-select, filters:changed"
+          hx-target="#sales-display"
+          hx-replace-url="true">
 
-{# ── TABLE ────────────────────────────────────── #}
+      <div class="doc-toolbar">
+        <h5 class="doc-toolbar__title">Sales Orders </h5>
 
-
-<div class="table-wrap">
-
-
-
- <div class="table-toolbar">
-
-  <h5 class="table-toolbar-title">Orders
-   <span class="badge badge--count">
-    {{ orders.paginator.count }} sales order{{ orders.paginator.count|pluralize }}
-  </span>
-  </h5>
-
-
-      <button class="btn btn-primary btn-sm"
-             hx-get="{% url 'sales:sales_order_create' %}"
-             hx-target="#sales-display"
-             hx-push-url="true">
-            <i class="bi bi-plus-lg"></i> New
-        </button>
-
-<form data-toolbar
-      class="toolbar"
-      id="order-filters"
-      hx-get="{% url 'sales:sales_orders_list' %}"
-      hx-trigger="change from:[data-toolbar], keyup changed delay:500ms from:.toolbar-search"
-      hx-target="#sales-display"
-      hx-replace-url="true"
-
->
-
-
-    {% include "core/date_filters.html" %}
-
-  <div class="toolbar-search-wrap">
-    <i class="ti ti-search toolbar-search-icon"></i>
-    <input type="text" class="toolbar-search"
-           name="search_order" placeholder="Search orders..."
-           value="{{ request.GET.search_order }}">
-    <button type="button" class="toolbar-search-clear" aria-label="Clear search">
+        <div class="doc-toolbar__actions">
+          <div class="doc-search">
+            <i class="bi bi-search doc-search__icon"></i>
+            <input type="text" class="doc-search__input toolbar-search"
+                   name="search_order" placeholder="Search orders…"
+                   value="{{ request.GET.search_order }}" autocomplete="off">
+              <button type="button" class="toolbar-search-clear" aria-label="Clear search">
       <i class="ti ti-x"></i>
     </button>
-  </div>
+          </div>
 
-  <select class="toolbar-select" name="order_status">
-    <option value="">All Orders</option>
-    <option value="DRAFT"     {% if request.GET.order_status == "DRAFT"     %}selected{% endif %}>Draft</option>
-    <option value="CONFIRMED"    {% if request.GET.order_status == "CONFIRMED"    %}selected{% endif %}>Confirmed</option>
-    <option value="DONE" {% if request.GET.order_status == "DONE" %}selected{% endif %}>done</option>
-      <option value="SENT" {% if request.GET.order_status == "SENT" %}selected{% endif %}>Sent</option>
-    <option value="CANCELLED" {% if request.GET.order_status == "CANCELLED" %}selected{% endif %}>Cancelled</option>
-  </select>
+          <details class="doc-filter">
+            <summary class="doc-filter__btn" aria-label="Filters" title="Filters">
+              <i class="bi bi-funnel"></i>
+              <span class="doc-filter__count" hidden></span>
+            </summary>
+            <div class="doc-filter__panel">
+              <div class="doc-filter__head">Filters</div>
+              <div class="doc-filter__body">
+                <div class="doc-filter__group">
+                  <span class="doc-filter__label">Date</span>
+                  {% include "core/date_filters.html" %}
+                </div>
+                <div class="doc-filter__group">
+                  <label class="doc-filter__label" for="f-order-status">Status</label>
+                  <select id="f-order-status" name="order_status">
+                    <option value="">All orders</option>
+                    <option value="DRAFT"     {% if request.GET.order_status == "DRAFT" %}selected{% endif %}>Draft</option>
+                    <option value="SENT"      {% if request.GET.order_status == "SENT" %}selected{% endif %}>Sent</option>
+                    <option value="CONFIRMED" {% if request.GET.order_status == "CONFIRMED" %}selected{% endif %}>Confirmed</option>
+                    <option value="DONE"      {% if request.GET.order_status == "DONE" %}selected{% endif %}>Done</option>
+                    <option value="CANCELLED" {% if request.GET.order_status == "CANCELLED" %}selected{% endif %}>Cancelled</option>
+                  </select>
+                </div>
+              </div>
+              <div class="doc-filter__foot">
+                <button type="button" class="doc-filter__reset">Clear all</button>
+              </div>
+            </div>
+          </details>
 
-  <button type="button" class="toolbar-clear-btn">
-    <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
-  </button>
+          <button type="button" class="btn btn-primary btn-sm"
+                  hx-get="{% url 'sales:sales_order_create' %}" hx-target="#sales-display" hx-push-url="true">
+            <i class="bi bi-plus-lg"></i> New
+          </button>
+        </div>
+      </div>
+    </form>
 
-</form>
-    </div>
-
-
-
-    <table class="data-table">
+    {# ── Table ── #}
+    <div class="doc-scroll">
+      <table class="doc-table">
         <thead>
-            <tr>
-                <th>Order No</th>
-                <th>Customer</th>
-                <th>Date</th>
-                <th class="col-right">Amount</th>
-                <th class="col-center">Order Status</th>
-            </tr>
+          <tr>
+            <th><i class="bi bi-hash"></i>Order No</th>
+            <th><i class="bi bi-person"></i>Customer</th>
+            <th><i class="bi bi-calendar3"></i>Date</th>
+            <th class="col-right"><i class="bi bi-cash-stack"></i>Amount</th>
+            <th class="col-center"><i class="bi bi-circle-half"></i>Status</th>
+          </tr>
         </thead>
 
         <tbody>
-            {% for order in orders %}
-            <tr hx-get="{% url 'sales:sales_order_create_or_detail' order.id %}"
-                hx-target="#sales-display"
-                hx-push-url="true">
+          {% for order in orders %}
+          <tr hx-get="{% url 'sales:sales_order_create_or_detail' order.id %}"
+              hx-target="#sales-display"
+              hx-push-url="true">
 
-                <td class="td-mono">{{ order.order_number }}</td>
-
-                <td class="td-primary">{{ order.partner.name }}</td>
-
-                <td>{{ order.created_at|date:'M d, Y H:i:s' }}</td>
-
-                <td class="col-right">
-                 <span class="td-amount">
-                                         {{order.currency.symbol}}  {{ order.total_amount|floatformat:2|intcomma }}
-                 </span>
-                </td>
-
-                <td class="col-center">
-                    {% if order.status == "DRAFT" %}
-                        <span class="badge badge--draft"><i class="bi bi-pencil-square"></i> Draft</span>
-                    {% elif order.status == "POSTED" %}
-                        <span class="badge badge--pending"><i class="bi bi-send-fill"></i> Posted</span>
-                    {% elif order.status == "CONFIRMED" %}
-                        <span class="badge badge--paid"><i class="bi bi-check-circle-fill"></i> Confirmed</span>
-                    {% elif order.status == "CANCELLED" %}
-                        <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
-                    {% else %}
-                        <span class="badge">{{ order.status }}</span>
-                    {% endif %}
-                </td>
-
-
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="7" class="table-empty">
-                    <div class="table-empty-icon">
-                        <i class="bi bi-receipt"></i>
-                    </div>
-                    <div class="table-empty-title">No orders found</div>
-                    <div class="table-empty-desc">There are no records matching your current filter criteria.</div>
-                </td>
-            </tr>
-            {% endfor %}
+            <td class="td-mono">{{ order.order_number }}</td>
+            <td class="td-primary"><span class="td-person"><span class="doc-avatar">{{ order.partner.name|slice:":1"|upper }}</span>{{ order.partner.name }}</span></td>
+            <td>{{ order.created_at|date:'M d, Y H:i' }}</td>
+            <td class="col-right">
+              <span class="td-amount">{{ order.currency.symbol }} {{ order.total_amount|floatformat:2|intcomma }}</span>
+            </td>
+            <td class="col-center">
+              {% if order.status == "DRAFT" %}
+                <span class="badge badge--draft"><i class="bi bi-pencil-square"></i> Draft</span>
+              {% elif order.status == "POSTED" %}
+                <span class="badge badge--pending"><i class="bi bi-send-fill"></i> Posted</span>
+              {% elif order.status == "CONFIRMED" %}
+                <span class="badge badge--paid"><i class="bi bi-check-circle-fill"></i> Confirmed</span>
+              {% elif order.status == "CANCELLED" %}
+                <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
+              {% else %}
+                <span class="badge">{{ order.status }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="doc-table__empty">
+              <div class="doc-table__empty-icon"><i class="bi bi-receipt"></i></div>
+              <div class="doc-table__empty-title">No orders found</div>
+              <div class="doc-table__empty-desc">There are no records matching your current filter criteria.</div>
+            </td>
+          </tr>
+          {% endfor %}
         </tbody>
-    </table>
+      </table>
+    </div>
 
+    {# ── Footer: count + pager ── #}
+    <div class="doc-footer">
+      <small class="doc-footer__count">
+        {% if orders.paginator.count %}
+          Showing {{ orders.start_index }}–{{ orders.end_index }}
+          of {{ orders.paginator.count }} order{{ orders.paginator.count|pluralize }}
+        {% else %}0 orders{% endif %}
+      </small>
 
-{# ── Pagination (only when more than one page) ────────────── #}
-{% if orders.paginator.num_pages > 1 %}
-<div class="table-footer">
+      {% if orders.paginator.num_pages > 1 %}
+      <div class="doc-pager">
 
-  <small class="table-footer-count">
-    Showing {{ orders.start_index }}–{{ orders.end_index }}
-    of {{ orders.paginator.count }} order{{ orders.paginator.count|pluralize }}
-  </small>
+        {% if orders.has_previous %}
+          <a class="doc-pager__btn doc-pager__btn--arrow" hx-get="?{% replace_query page=1 %}"
+             hx-target="#sales-display" hx-swap="innerHTML" hx-push-url="true"><i class="bi bi-chevron-double-left"></i></a>
+          <a class="doc-pager__btn doc-pager__btn--arrow" hx-get="?{% replace_query page=orders.previous_page_number %}"
+             hx-target="#sales-display" hx-swap="innerHTML" hx-push-url="true"><i class="bi bi-chevron-left"></i></a>
+        {% else %}
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true"><i class="bi bi-chevron-double-left"></i></span>
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true"><i class="bi bi-chevron-left"></i></span>
+        {% endif %}
 
+        {% for num in orders.paginator.page_range %}
+          {% if orders.number == num %}
+            <span class="doc-pager__btn is-active">{{ num }}</span>
+          {% elif num > orders.number|add:'-3' and num < orders.number|add:'3' %}
+            <a class="doc-pager__btn" hx-get="?{% replace_query page=num %}"
+               hx-target="#sales-display" hx-swap="innerHTML" hx-push-url="true">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
 
+        {% if orders.has_next %}
+          <a class="doc-pager__btn doc-pager__btn--arrow" hx-get="?{% replace_query page=orders.next_page_number %}"
+             hx-target="#sales-display" hx-swap="innerHTML" hx-push-url="true"><i class="bi bi-chevron-right"></i></a>
+          <a class="doc-pager__btn doc-pager__btn--arrow" hx-get="?{% replace_query page=orders.paginator.num_pages %}"
+             hx-target="#sales-display" hx-swap="innerHTML" hx-push-url="true"><i class="bi bi-chevron-double-right"></i></a>
+        {% else %}
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true"><i class="bi bi-chevron-right"></i></span>
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true"><i class="bi bi-chevron-double-right"></i></span>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
 
-<div class="table-pagination">
-
-  {# First Page #}
-  {% if orders.has_previous %}
-    <a class="page-btn page-btn--arrow"
-       hx-get="?{% replace_query page=1 %}"
-       hx-target="#sales-display"
-       hx-swap="innerHTML"
-       hx-push-url="true">
-      <i class="bi bi-chevron-double-left"></i>
-    </a>
-  {% else %}
-    <span class="page-btn page-btn--arrow" aria-disabled="true">
-      <i class="bi bi-chevron-double-left"></i>
-    </span>
-  {% endif %}
-
-  {# Previous Page #}
-  {% if orders.has_previous %}
-    <a class="page-btn page-btn--arrow"
-       hx-get="?{% replace_query page=orders.previous_page_number %}"
-       hx-target="#sales-display"
-       hx-swap="innerHTML"
-       hx-push-url="true">
-      <i class="bi bi-chevron-left"></i>
-    </a>
-  {% else %}
-    <span class="page-btn page-btn--arrow" aria-disabled="true">
-      <i class="bi bi-chevron-left"></i>
-    </span>
-  {% endif %}
-
-  {# Page Numbers #}
-  {% for num in orders.paginator.page_range %}
-    {% if orders.number == num %}
-      <span class="page-btn active">{{ num }}</span>
-    {% elif num > orders.number|add:'-3' and num < orders.number|add:'3' %}
-      <a class="page-btn"
-         hx-get="?{% replace_query page=num %}"
-         hx-target="#sales-display"
-         hx-swap="innerHTML"
-         hx-push-url="true">{{ num }}</a>
-    {% endif %}
-  {% endfor %}
-
-  {# Next Page #}
-  {% if orders.has_next %}
-    <a class="page-btn page-btn--arrow"
-       hx-get="?{% replace_query page=orders.next_page_number %}"
-       hx-target="#sales-display"
-       hx-swap="innerHTML"
-       hx-push-url="true">
-      <i class="bi bi-chevron-right"></i>
-    </a>
-  {% else %}
-    <span class="page-btn page-btn--arrow" aria-disabled="true">
-      <i class="bi bi-chevron-right"></i>
-    </span>
-  {% endif %}
-
-  {# Last Page #}
-  {% if orders.has_next %}
-    <a class="page-btn page-btn--arrow"
-       hx-get="?{% replace_query page=orders.paginator.num_pages %}"
-       hx-target="#sales-display"
-       hx-swap="innerHTML"
-       hx-push-url="true">
-      <i class="bi bi-chevron-double-right"></i>
-    </a>
-  {% else %}
-    <span class="page-btn page-btn--arrow" aria-disabled="true">
-      <i class="bi bi-chevron-double-right"></i>
-    </span>
-  {% endif %}
-
+  </div>
 </div>
-</div>
-{% endif %}
-
-</div>
-
-    {# ── PAGINATION ───────────────────────────────── #}
-
-
-</div>
-
-
-</div>{# end po-wrapper #}
-
-

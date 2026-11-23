@@ -406,7 +406,7 @@ class SalesOrdersStateService:
             "can_mark_done": can(self.DONE),
             "can_cancel": can(self.CANCELLED),
             "can_reset_to_draft": can(self.DRAFT),
-            "locked": order.status in (self.DONE, self.CANCELLED),
+            "locked": order.status in (self.DONE, self.CANCELLED, self.CONFIRMED),
             "can_create_invoice": order.status == self.DONE,
         }
 

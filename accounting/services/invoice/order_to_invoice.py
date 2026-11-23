@@ -9,9 +9,12 @@ from accounting.events.types import AccountingEventType
 from accounting.services.invoice.to_invoice_service import to_invoice
 from core.events import dispatch
 from core.utils import htmx_success, htmx_error
+from purchases.services.purchase_order_loader import load_purchase_order
+from sales.services import load_sales_order
+
 logger = logging.getLogger('sales.invoice')
 
-def order_to_invoice(request, *, order, origin_type, detail_url, target):
+def order_to_invoice(request, *, order_id, origin_type, detail_url, target):
     """
     Shared create-invoice flow for both purchase orders and sales orders.
     """
@@ -19,6 +22,13 @@ def order_to_invoice(request, *, order, origin_type, detail_url, target):
 
     try:
         with transaction.atomic():
+
+            if origin_type == "sales_order":
+              order = load_sales_order(order_id, request=request, for_update=True)
+
+            elif origin_type == "purchase_order":
+               order = load_purchase_order(order_id, request, for_update=True)
+
             invoice = to_invoice(origin_type=origin_type, source=order, user=request.user)
             invoice_id = invoice.id
 

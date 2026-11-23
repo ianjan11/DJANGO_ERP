@@ -1,190 +1,322 @@
 {% load humanize %}
+{% load querystring %}
 
 <div class="main-wrapper">
-  <div class="invoice-card">
 
-    <div class="table-wrap">
+  <div class="doc-card">
 
+    {# ── Toolbar: title | filters | new product ── #}
+    <form data-toolbar
+          id="product-filters"
+          class="doc-form"
+          hx-get="{% url 'inventory:view_stock' %}"
+          hx-trigger="input changed delay:500ms from:.toolbar-search,
+                      change from:.toolbar-select,
+                      change from:.date-select-input,
+                      filters:changed"
+          hx-target="#inventory-display"
+          hx-replace-url="true">
 
-    <div class="table-toolbar">
-    
-        <div>
-              <button class="btn btn-primary btn-sm"
-                    hx-get="{% url 'inventory:new_product' %}"
-                    hx-disable-elt="this"
-                    hx-target="#inventory-display"
-                    hx-push-url="true"
-         >
-              <i class="bi bi-plus-lg"></i> New
+      <div class="doc-toolbar">
+
+        <h5 class="doc-toolbar__title">Products</h5>
+
+        <div class="doc-toolbar__actions">
+
+          <div class="doc-search">
+            <i class="bi bi-search doc-search__icon"></i>
+
+            <input type="text"
+                   class="doc-search__input toolbar-search"
+                   name="product_search"
+                   placeholder="Search products…"
+                   value="{{ request.GET.product_search }}"
+                   autocomplete="off">
+
+            <button type="button"
+                    class="toolbar-search-clear"
+                    aria-label="Clear search">
+              <i class="ti ti-x"></i>
             </button>
-        </div>
+          </div>
 
-        
-      <form data-toolbar
-            class="toolbar"
-            id="product-filters"
-            hx-get="{% url 'inventory:view_stock' %}"
-             hx-trigger="input changed delay:400ms from:.toolbar-search,
-                  change from:.toolbar-select,
-                  change from:.date-select-input,
-                  filters:changed"
-            hx-replace-url="true"
-            hx-target="#inventory-display">
+          {# ── Filters ── #}
+          <details class="doc-filter">
 
-          
-        <div class="toolbar-search-wrap">
-          <i class="ti ti-search toolbar-search-icon"></i>
-          <input type="text" class="toolbar-search"
-       name="product_search"
-       placeholder="Search product..."
-       value="{{ request.GET.product_search }}">
-          <button type="button" class="toolbar-search-clear" aria-label="Clear search">
-            <i class="ti ti-x"></i>
+              <summary class="doc-filter__btn"
+                     aria-label="Filters"
+                     title="Filters">
+               <i class="bi bi-funnel"></i>
+              <span class="doc-filter__count" hidden></span>
+            </summary>
+
+            <div class="doc-filter__panel">
+
+              <div class="doc-filter__head">
+                <span>Filter Products</span>
+              </div>
+
+              <div class="doc-filter__body">
+
+                <div class="doc-filter__group">
+                  <label class="doc-filter__label">Category</label>
+
+                  <select class="toolbar-select"
+                          name="product_category">
+                    <option value="">All Categories</option>
+
+                    {% for category in category_choices %}
+                      <option value="{{ category.name }}"
+                        {% if request.GET.product_category == category.name %}selected{% endif %}>
+                        {{ category.name }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="doc-filter__group">
+                  <label class="doc-filter__label">Stock Status</label>
+
+                  <select class="toolbar-select" name="stock_status">
+                    <option value="">All Stock Status</option>
+                    <option value="ok"
+                      {% if request.GET.stock_status == "ok" %}selected{% endif %}>
+                      In Stock
+                    </option>
+                    <option value="low"
+                      {% if request.GET.stock_status == "low" %}selected{% endif %}>
+                      Low Stock
+                    </option>
+                    <option value="out"
+                      {% if request.GET.stock_status == "out" %}selected{% endif %}>
+                      Out of Stock
+                    </option>
+                  </select>
+                </div>
+
+              </div>
+
+              <div class="doc-filter__foot">
+                <button type="button" class="doc-filter__reset toolbar-clear-btn">
+                  <i class="ti ti-x"></i> Clear filters
+                </button>
+              </div>
+
+            </div>
+          </details>
+
+          <button type="button"
+                  class="btn btn-primary btn-sm"
+                  hx-get="{% url 'inventory:new_product' %}"
+                  hx-disable-elt="this"
+                  hx-target="#inventory-display"
+                  hx-push-url="true">
+            <i class="bi bi-plus-lg"></i> New
           </button>
+
         </div>
+      </div>
+    </form>
 
+    {# ── Product table ── #}
+    <div class="doc-scroll">
 
-        <select class="toolbar-select" name="product_category">
-  <option value="">All Categories</option>
-  {% for category in category_choices %}
-    <option value="{{ category.name }}"
-      {% if request.GET.product_category == category.name %}selected{% endif %}>
-      {{ category.name }}
-    </option>
-  {% endfor %}
-</select>
+      <table class="doc-table">
 
-
-<select class="toolbar-select" name="stock_status">
-    <option value="">All Stock Status</option>
-    <option value="ok"  {% if request.GET.stock_status == "ok"  %}selected{% endif %}>In Stock</option>
-    <option value="low" {% if request.GET.stock_status == "low" %}selected{% endif %}>Low Stock</option>
-    <option value="out" {% if request.GET.stock_status == "out" %}selected{% endif %}>Out of Stock</option>
-</select>
-
-
-
-        <button type="button" class="toolbar-clear-btn">
-          <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
-        </button>
-
-      </form>
-
-    </div>
-
-
-
-
-      <table class="data-table">
         <thead>
           <tr>
-            <th style="width:260px">Name</th>
-            <th style="width:120px">Stock</th>
-            <th style="width:120px">Reserved</th>
-            <th style="width:140px" class="col-left">Price</th>
-            <th style="width:140px" class="col-left">Category</th>
-            <th style="width:120px" class="col-center">Status</th>
+            <th>Product Name</th>
+            <th class="col-center">Available Stock</th>
+            <th class="col-center">Reserved</th>
+            <th class="col-left">Price</th>
+            <th>Category</th>
+            <th class="col-center">Status</th>
           </tr>
         </thead>
+
         <tbody>
+
           {% for p in products %}
           <tr hx-get="{% url 'inventory:stock_detail' p.id %}"
-                hx-target="#inventory-display"
-                hx-push-url="true">
+              hx-target="#inventory-display"
+              hx-push-url="true">
 
-            <td class="td-primary">{{ p.name }}</td>
-            <td><span class="td-mono">{{ p.available_stock }}</span></td>
-            <td><span class="td-mono" style="color:var(--color-slate)">{{ p.reserved_stock }}</span></td>
-            <td class="col-left">
-              <span class="td-amount">{{ p.default_price|floatformat:2|intcomma }}</span>
+            <td class="td-primary">
+              {{ p.name }}
             </td>
-            <td>{{p.category}}</td>
+
+            <td class="col-center">
+              <span class="td-mono">
+                {{ p.available_stock|floatformat:2|intcomma }}
+              </span>
+            </td>
+
+            <td class="col-center">
+              <span class="td-mono" style="color:var(--color-slate)">
+                {{ p.reserved_stock|floatformat:2|intcomma }}
+              </span>
+            </td>
+
+            <td class="col-left">
+              <span class="td-amount">
+                {{ p.default_price|floatformat:2|intcomma }}
+              </span>
+            </td>
+
+            <td>
+              {{ p.category|default:"—" }}
+            </td>
+
             <td class="col-center">
               {% if p.available_stock <= 0 %}
-                <span class="badge badge--cancelled"><span class="badge-dot"></span>Out of Stock</span>
+                <span class="badge badge--cancelled">
+                  <span class="badge-dot"></span>
+                  Out of Stock
+                </span>
               {% elif p.available_stock <= 50 %}
-                <span class="badge badge--overdue"><span class="badge-dot"></span>Low</span>
+                <span class="badge badge--overdue">
+                  <span class="badge-dot"></span>
+                  Low Stock
+                </span>
               {% else %}
-                <span class="badge badge--paid"><span class="badge-dot"></span>In Stock</span>
+                <span class="badge badge--paid">
+                  <span class="badge-dot"></span>
+                  In Stock
+                </span>
               {% endif %}
             </td>
+
           </tr>
+
           {% empty %}
           <tr>
-            <td colspan="6" class="table-empty">
-              <div class="table-empty-icon"><i class="bi bi-inbox"></i></div>
-              <div class="table-empty-title">No products found</div>
-              <div class="table-empty-desc">No products match your current filter criteria.</div>
+            <td colspan="6" class="doc-table__empty">
+
+              <div class="doc-table__empty-icon">
+                <i class="bi bi-box-seam"></i>
+              </div>
+
+              <div class="doc-table__empty-title">
+                No products found
+              </div>
+
+              <div class="doc-table__empty-desc">
+                No products match your current filter criteria.
+              </div>
+
             </td>
           </tr>
           {% endfor %}
+
         </tbody>
       </table>
     </div>
 
-    {% if products.paginator.num_pages > 1 %}
-    <div class="table-footer">
-      <small class="table-footer-count">
-        Showing {{ products.start_index }}–{{ products.end_index }}
-        of {{ products.paginator.count }} product{{ products.paginator.count|pluralize }}
+    {# ── Footer: count + pagination ── #}
+    <div class="doc-footer">
+
+      <small class="doc-footer__count">
+        {% if products.paginator.count %}
+          Showing {{ products.start_index }}–{{ products.end_index }}
+          of {{ products.paginator.count }}
+          product{{ products.paginator.count|pluralize }}
+        {% else %}
+          0 products
+        {% endif %}
       </small>
 
+      {% if products.paginator.num_pages > 1 %}
+      <div class="doc-pager">
 
-          <div class="table-pagination" hx-include="#product-filters">
-
+        {# First and previous #}
         {% if products.has_previous %}
-          <a class="page-btn page-btn--arrow"
-             hx-get="?page=1"
+
+          <a class="doc-pager__btn doc-pager__btn--arrow"
+             hx-get="?{% replace_query page=1 %}"
              hx-target="#inventory-display"
+             hx-swap="innerHTML"
              hx-push-url="true">
             <i class="bi bi-chevron-double-left"></i>
           </a>
-          <a class="page-btn page-btn--arrow"
-             hx-get="?page={{ products.previous_page_number }}"
+
+          <a class="doc-pager__btn doc-pager__btn--arrow"
+             hx-get="?{% replace_query page=products.previous_page_number %}"
              hx-target="#inventory-display"
+             hx-swap="innerHTML"
              hx-push-url="true">
             <i class="bi bi-chevron-left"></i>
           </a>
+
         {% else %}
-          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-double-left"></i></span>
-          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-left"></i></span>
+
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+            <i class="bi bi-chevron-double-left"></i>
+          </span>
+
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+            <i class="bi bi-chevron-left"></i>
+          </span>
+
         {% endif %}
 
+        {# Page numbers #}
         {% for num in products.paginator.page_range %}
+
           {% if products.number == num %}
-            <span class="page-btn active">{{ num }}</span>
+
+            <span class="doc-pager__btn is-active">
+              {{ num }}
+            </span>
+
           {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
-            <a class="page-btn"
-               hx-get="?page={{ num }}"
+
+            <a class="doc-pager__btn"
+               hx-get="?{% replace_query page=num %}"
                hx-target="#inventory-display"
-               hx-push-url="true">{{ num }}</a>
+               hx-swap="innerHTML"
+               hx-push-url="true">
+              {{ num }}
+            </a>
+
           {% endif %}
+
         {% endfor %}
 
+        {# Next and last #}
         {% if products.has_next %}
-          <a class="page-btn page-btn--arrow"
-             hx-get="?page={{ products.next_page_number }}"
+
+          <a class="doc-pager__btn doc-pager__btn--arrow"
+             hx-get="?{% replace_query page=products.next_page_number %}"
              hx-target="#inventory-display"
+             hx-swap="innerHTML"
              hx-push-url="true">
             <i class="bi bi-chevron-right"></i>
           </a>
-          <a class="page-btn page-btn--arrow"
-             hx-get="?page={{ products.paginator.num_pages }}"
+
+          <a class="doc-pager__btn doc-pager__btn--arrow"
+             hx-get="?{% replace_query page=products.paginator.num_pages %}"
              hx-target="#inventory-display"
+             hx-swap="innerHTML"
              hx-push-url="true">
             <i class="bi bi-chevron-double-right"></i>
           </a>
+
         {% else %}
-          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-right"></i></span>
-          <span class="page-btn page-btn--arrow" aria-disabled="true"><i class="bi bi-chevron-double-right"></i></span>
+
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+            <i class="bi bi-chevron-right"></i>
+          </span>
+
+          <span class="doc-pager__btn doc-pager__btn--arrow" aria-disabled="true">
+            <i class="bi bi-chevron-double-right"></i>
+          </span>
+
         {% endif %}
 
       </div>
+      {% endif %}
+
     </div>
-    {% endif %}
 
   </div>
-
 </div>
-
-

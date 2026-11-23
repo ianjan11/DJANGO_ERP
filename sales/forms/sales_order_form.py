@@ -68,7 +68,8 @@ class SalesOrderForm(forms.ModelForm):
             )
 
             self.fields["partner"].queryset = Partner.objects.filter(
-                company=self.company,
+                company=self.company,partner_type__in=("CUSTOMER","BOTH")
+
             )
 
             self.fields["payment_term"].queryset = PaymentTerm.objects.filter(

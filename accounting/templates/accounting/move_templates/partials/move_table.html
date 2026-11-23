@@ -1,254 +1,413 @@
 {% load humanize %}
-
-
-
-
+{% load querystring %}
 
 <div class="main-wrapper">
 
+  <div class="doc-card">
 
-    <div class="inv-card">
+    {# ── Toolbar ─────────────────────────────────── #}
+    <form data-toolbar
+          id="invoice-filters"
+          class="doc-form"
+          hx-get="{% if invoice_type == 'out_invoice' %}{% url 'accounting:customer_invoices' %}{% elif invoice_type == 'out_refund' %}{% url 'accounting:customers_credit_notes' %}{% elif invoice_type == 'in_refund' %}{% url 'accounting:vendors_credit_notes' %}{% else %}{% url 'accounting:vendor_invoices' %}{% endif %}"
+          hx-trigger="input changed delay:500ms from:.toolbar-search, change from:.toolbar-select, filters:changed"
+          hx-target="#accounting-display"
+          hx-replace-url="true">
 
-{# ── TABLE ────────────────────────────────────── #}
+      <input type="hidden"
+             name="invoice_type"
+             id="invoice_type"
+             value="{{ invoice_type }}">
 
+      <div class="doc-toolbar">
 
-<div class="table-wrap">
- 
+        <h5 class="doc-toolbar__title">
+          {% if invoice_type == 'out_invoice' %}
+            Customer Invoices
+          {% elif invoice_type == 'out_refund' %}
+            Customer Credit Notes
+          {% elif invoice_type == 'in_refund' %}
+            Vendor Credit Notes
+          {% else %}
+            Vendor Bills
+          {% endif %}
 
- <div class="table-toolbar">
+        </h5>
 
-  <h5 class="table-toolbar-title">
-      {% if invoice_type == 'out_invoice' %} Customer Invoices
-      {% elif invoice_type == 'out_refund' %} Customer Credit Notes
-      {% elif invoice_type == 'in_refund' %}
-      Vendor Credit Notes {% else %} Vendor Bills
-      {% endif %}
+        <div class="doc-toolbar__actions">
 
-   <span class="badge badge--count">
-    {{ invoices.paginator.count }} Invoice{{ invoices.paginator.count|pluralize }}
-  </span>
-  </h5>
+          {# Search #}
+          <div class="doc-search">
+            <i class="bi bi-search doc-search__icon"></i>
 
+            <input type="text"
+                   class="doc-search__input toolbar-search"
+                   name="search_invoice"
+                   placeholder="Search invoices…"
+                   value="{{ request.GET.search_invoice }}"
+                   autocomplete="off">
 
-      <button class="btn btn-primary btn-sm"
-             hx-get="{% url 'accounting:invoice_create' %}"
-             hx-target="#accounting-display"
-             hx-include="#invoice_type"
-             hx-push-url="true">
+            <button type="button"
+                    class="toolbar-search-clear"
+                    aria-label="Clear search">
+              <i class="ti ti-x"></i>
+            </button>
+          </div>
+
+          {# Filters #}
+          <details class="doc-filter">
+
+            <summary class="doc-filter__btn"
+                     aria-label="Filters"
+                     title="Filters">
+              <i class="bi bi-funnel"></i>
+              <span class="doc-filter__count" hidden></span>
+            </summary>
+
+            <div class="doc-filter__panel">
+
+              <div class="doc-filter__head">Filters</div>
+
+              <div class="doc-filter__body">
+
+                <div class="doc-filter__group">
+                  <span class="doc-filter__label">Date</span>
+                  {% include "core/date_filters.html" %}
+                </div>
+
+                <div class="doc-filter__group">
+                  <label class="doc-filter__label"
+                         for="f-invoice-status">
+                    Status
+                  </label>
+
+                  <select id="f-invoice-status"
+                          name="invoice_status"
+                          class="toolbar-select">
+
+                    <option value="">All invoices</option>
+
+                    <option value="DRAFT"
+                      {% if request.GET.invoice_status == "DRAFT" %}selected{% endif %}>
+                      Draft
+                    </option>
+
+                    <option value="POSTED"
+                      {% if request.GET.invoice_status == "POSTED" %}selected{% endif %}>
+                      Posted
+                    </option>
+
+                    <option value="CANCELLED"
+                      {% if request.GET.invoice_status == "CANCELLED" %}selected{% endif %}>
+                      Cancelled
+                    </option>
+
+                  </select>
+                </div>
+
+              </div>
+
+              <div class="doc-filter__foot">
+                <button type="button" class="doc-filter__reset">
+                  Clear all
+                </button>
+              </div>
+
+            </div>
+          </details>
+
+          {# New invoice #}
+          <button type="button"
+                  class="btn btn-primary btn-sm"
+                  hx-get="{% url 'accounting:invoice_create' %}"
+                  hx-target="#accounting-display"
+                  hx-include="#invoice_type"
+                  hx-push-url="true">
+
             <i class="bi bi-plus-lg"></i> New
-        </button>
+          </button>
 
-<form data-toolbar
-      class="toolbar"
-      id="invoice-filters"
-      hx-get="{% if invoice_type == 'out_invoice' %}{% url 'accounting:customer_invoices' %}{% elif invoice_type == 'out_refund' %}{% url 'accounting:customers_credit_notes' %}{% elif invoice_type == 'in_refund' %}{% url 'accounting:vendors_credit_notes' %}{% else %}{% url 'accounting:vendor_invoices' %}{% endif %}"
-       hx-trigger="input changed delay:400ms from:.toolbar-search,
-                  change from:.toolbar-select,
-                  change from:.date-select-input,
-                  filters:changed"
-      hx-target="#accounting-display"
-      hx-replace-url="true"
->
-    {% include "core/date_filters.html" %}
-
-     <input type="hidden"
-           name="invoice_type"
-            id="invoice_type"
-            value="{{ invoice_type }}">
-
-  <div class="toolbar-search-wrap">
-    <i class="ti ti-search toolbar-search-icon"></i>
-    <input type="text" class="toolbar-search"
-           name="search_invoice" placeholder="Search invoice..."
-           value="{{ request.GET.search_invoice }}">
-    <button type="button" class="toolbar-search-clear" aria-label="Clear search">
-      <i class="ti ti-x"></i>
-    </button>
-  </div>
-
-  <select class="toolbar-select" name="invoice_status">
-    <option value="">All Orders</option>
-    <option value="DRAFT"     {% if request.GET.invoice_status == "DRAFT"     %}selected{% endif %}>Draft</option>
-    <option value="POSTED"    {% if request.GET.invoice_status == "POSTED"    %}selected{% endif %}>Posted</option>
-    <option value="CANCELLED" {% if request.GET.invoice_status == "CANCELLED" %}selected{% endif %}>Cancelled</option>
-  </select>
-
-  <button type="button" class="toolbar-clear-btn">
-    <i class="ti ti-x toolbar-clear-icon" aria-hidden="true"></i> Clear
-  </button>
-
-</form>
-    </div>
+        </div>
+      </div>
+    </form>
 
 
+    {# ── Table ───────────────────────────────────── #}
+    <div class="doc-scroll">
 
-    <table class="data-table">
+      <table class="doc-table">
+
         <thead>
-            <tr>
-                <th>Invoice No</th>
-                <th>Partner</th>
-                <th>Date</th>
-                <th class="col-right">Amount</th>
-                <th class="col-center">State</th>
-                <th class="col-center">Payment Status</th>
-            </tr>
+          <tr>
+            <th><i class="bi bi-hash"></i> Invoice No</th>
+            <th><i class="bi bi-person"></i> Partner</th>
+            <th><i class="bi bi-calendar3"></i> Date</th>
+            <th class="col-right">
+              <i class="bi bi-cash-stack"></i> Amount
+            </th>
+            <th class="col-center">
+              <i class="bi bi-circle-half"></i> State
+            </th>
+            <th class="col-center">
+              <i class="bi bi-credit-card"></i> Payment
+            </th>
+          </tr>
         </thead>
 
         <tbody>
-            {% for invoice in invoices %}
-            <tr hx-get="{% url 'accounting:invoice_create_or_detail' invoice.id %}"
-                hx-target="#accounting-display"
-                hx-push-url="true">
 
-                <td class="td-mono">{{ invoice.name }}</td>
+          {% for invoice in invoices %}
 
-                <td class="td-primary">{{ invoice.partner }}</td>
+          <tr hx-get="{% url 'accounting:invoice_create_or_detail' invoice.id %}"
+              hx-target="#accounting-display"
+              hx-push-url="true">
 
-                <td>{{ invoice.created_at|date:'M d, Y H:i:s' }}</td>
+            <td class="td-mono">
+              {{ invoice.name }}
+            </td>
 
-                <td class="col-right">
-                 <span class="td-amount">
-                                         {{invoice.currency.symbol}}  {{ invoice.total_amount|floatformat:2|intcomma }}
-                 </span>
-                </td>
+            <td class="td-primary">
+              <span class="td-person">
 
-                <td class="col-center">
-                     {% if invoice.state == "draft" %}
-           <span class="badge badge--draft"><i class="bi bi-pencil"></i> Draft</span>
-        {% elif invoice.state == "posted" %}
-          <span class="badge badge--posted"><i class="bi bi-send-fill"></i> Posted</span>
-        {% elif invoice.state == "cancelled" %}
-          <span class="badge badge--cancelled"><i class="bi bi-x-circle-fill"></i> Cancelled</span>
-        {% else %}
-          <span class="badge">{{ invoice.state }}</span>
-        {% endif %}
-                </td>
+                <span class="doc-avatar">
+                  {{ invoice.partner.name|slice:":1"|upper }}
+                </span>
 
-                <td class="col-center">
-                    {% if invoice.payment_state == "paid" %}
-                        <span class="badge badge--paid"><i class="bi bi-shield-check"></i> Reconciled</span>
-                    {% elif invoice.payment_state == "not_paid" %}
-                        <span class="badge badge--overdue"><i class="bi bi-clock"></i> Awaiting Payment</span>
-                    {% elif invoice.payment_state == "partial" %}
-                        <span class="badge badge--partial"><i class="bi bi-circle-half"></i> Partial</span>
-                    {% else %}
-                        <span style="color:var(--color-fog);">—</span>
-                    {% endif %}
-                </td>
+                {{ invoice.partner.name }}
 
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="7" class="table-empty">
-                    <div class="table-empty-icon">
-                        <i class="bi bi-receipt"></i>
-                    </div>
-                    <div class="table-empty-title">No invoices found</div>
-                    <div class="table-empty-desc">There are no records matching your current filter criteria.</div>
-                </td>
-            </tr>
-            {% endfor %}
+              </span>
+            </td>
+
+            <td>
+              {{ invoice.created_at|date:'M d, Y H:i' }}
+            </td>
+
+            <td class="col-right">
+              <span class="td-amount">
+                {{ invoice.currency.symbol }}
+                {{ invoice.total_amount|floatformat:2|intcomma }}
+              </span>
+            </td>
+
+            {# Invoice state #}
+            <td class="col-center">
+
+              {% if invoice.state == "draft" %}
+
+                <span class="badge badge--draft">
+                  <i class="bi bi-pencil-square"></i>
+                  Draft
+                </span>
+
+              {% elif invoice.state == "posted" %}
+
+                <span class="badge badge--pending">
+                  <i class="bi bi-send-fill"></i>
+                  Posted
+                </span>
+
+              {% elif invoice.state == "cancelled" %}
+
+                <span class="badge badge--cancelled">
+                  <i class="bi bi-x-circle-fill"></i>
+                  Cancelled
+                </span>
+
+              {% else %}
+
+                <span class="badge">
+                  {{ invoice.state }}
+                </span>
+
+              {% endif %}
+
+            </td>
+
+            {# Payment status #}
+            <td class="col-center">
+
+              {% if invoice.payment_state == "paid" %}
+
+                <span class="badge badge--paid">
+                  <i class="bi bi-shield-check"></i>
+                  Paid
+                </span>
+
+              {% elif invoice.payment_state == "not_paid" %}
+
+                <span class="badge badge--overdue">
+                  <i class="bi bi-clock"></i>
+                  Not Paid
+                </span>
+
+              {% elif invoice.payment_state == "partial" %}
+
+                <span class="badge badge--partial">
+                  <i class="bi bi-circle-half"></i>
+                  Partial
+                </span>
+
+              {% else %}
+
+                <span class="badge">
+                  —
+                </span>
+
+              {% endif %}
+
+            </td>
+
+          </tr>
+
+          {% empty %}
+
+          <tr>
+            <td colspan="6" class="doc-table__empty">
+
+              <div class="doc-table__empty-icon">
+                <i class="bi bi-receipt"></i>
+              </div>
+
+              <div class="doc-table__empty-title">
+                No invoices found
+              </div>
+
+              <div class="doc-table__empty-desc">
+                There are no records matching your current filter criteria.
+              </div>
+
+            </td>
+          </tr>
+
+          {% endfor %}
+
         </tbody>
-    </table>
+      </table>
+
+    </div>
 
 
-{# ── Pagination (only when more than one page) ────────────── #}
-{% if invoices.paginator.num_pages > 1 %}
-<div class="table-footer">
+    {# ── Footer: count + pagination ──────────────── #}
+    <div class="doc-footer">
 
-  <small class="table-footer-count">
-    Showing {{ invoices.start_index }}–{{ invoices.end_index }}
-    of {{ invoices.paginator.count }} invoice{{ invoices.paginator.count|pluralize }}
-  </small>
+      <small class="doc-footer__count">
+
+        {% if invoices.paginator.count %}
+
+          Showing {{ invoices.start_index }}–{{ invoices.end_index }}
+          of {{ invoices.paginator.count }}
+          invoice{{ invoices.paginator.count|pluralize }}
+
+        {% else %}
+
+          0 invoices
+
+        {% endif %}
+
+      </small>
 
 
-    <div class="table-pagination" hx-include="#invoice-filters">
+      {% if invoices.paginator.num_pages > 1 %}
 
-    {# First #}
-    {% if invoices.has_previous %}
-      <a class="page-btn page-btn--arrow"
-         hx-get="?page=1"
-         hx-target="#accounting-display"
-         hx-swap="innerHTML"
-         hx-push-url="true">
-        <i class="bi bi-chevron-double-left"></i>
-      </a>
-    {% else %}
-      <span class="page-btn page-btn--arrow" aria-disabled="true">
-        <i class="bi bi-chevron-double-left"></i>
-      </span>
-    {% endif %}
+      <div class="doc-pager">
 
-    {# Prev #}
-    {% if invoices.has_previous %}
-      <a class="page-btn page-btn--arrow"
-         hx-get="?page={{ invoices.previous_page_number }}"
-         hx-target="#accounting-display"
-         hx-swap="innerHTML"
-         hx-push-url="true">
-        <i class="bi bi-chevron-left"></i>
-      </a>
-    {% else %}
-      <span class="page-btn page-btn--arrow" aria-disabled="true">
-        <i class="bi bi-chevron-left"></i>
-      </span>
-    {% endif %}
+        {# First + Previous #}
+        {% if invoices.has_previous %}
 
-    {# Page numbers #}
-    {% for num in invoices.paginator.page_range %}
-      {% if invoices.number == num %}
-        <span class="page-btn active">{{ num }}</span>
-      {% elif num > invoices.number|add:'-3' and num < invoices.number|add:'3' %}
-        <a class="page-btn"
-           hx-get="?page={{ num }}"
-           hx-target="#accounting-display"
-           hx-swap="innerHTML"
-           hx-push-url="true">{{ num }}</a>
+          <a class="doc-pager__btn doc-pager__btn--arrow"
+             hx-get="?{% replace_query page=1 %}"
+             hx-target="#accounting-display"
+             hx-swap="innerHTML"
+             hx-push-url="true">
+            <i class="bi bi-chevron-double-left"></i>
+          </a>
+
+          <a class="doc-pager__btn doc-pager__btn--arrow"
+             hx-get="?{% replace_query page=invoices.previous_page_number %}"
+             hx-target="#accounting-display"
+             hx-swap="innerHTML"
+             hx-push-url="true">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+
+        {% else %}
+
+          <span class="doc-pager__btn doc-pager__btn--arrow"
+                aria-disabled="true">
+            <i class="bi bi-chevron-double-left"></i>
+          </span>
+
+          <span class="doc-pager__btn doc-pager__btn--arrow"
+                aria-disabled="true">
+            <i class="bi bi-chevron-left"></i>
+          </span>
+
+        {% endif %}
+
+
+        {# Page numbers #}
+        {% for num in invoices.paginator.page_range %}
+
+          {% if invoices.number == num %}
+
+            <span class="doc-pager__btn is-active">
+              {{ num }}
+            </span>
+
+          {% elif num > invoices.number|add:'-3' and num < invoices.number|add:'3' %}
+
+            <a class="doc-pager__btn"
+               hx-get="?{% replace_query page=num %}"
+               hx-target="#accounting-display"
+               hx-swap="innerHTML"
+               hx-push-url="true">
+              {{ num }}
+            </a>
+
+          {% endif %}
+
+        {% endfor %}
+
+
+        {# Next + Last #}
+        {% if invoices.has_next %}
+
+          <a class="doc-pager__btn doc-pager__btn--arrow"
+             hx-get="?{% replace_query page=invoices.next_page_number %}"
+             hx-target="#accounting-display"
+             hx-swap="innerHTML"
+             hx-push-url="true">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+
+          <a class="doc-pager__btn doc-pager__btn--arrow"
+             hx-get="?{% replace_query page=invoices.paginator.num_pages %}"
+             hx-target="#accounting-display"
+             hx-swap="innerHTML"
+             hx-push-url="true">
+            <i class="bi bi-chevron-double-right"></i>
+          </a>
+
+        {% else %}
+
+          <span class="doc-pager__btn doc-pager__btn--arrow"
+                aria-disabled="true">
+            <i class="bi bi-chevron-right"></i>
+          </span>
+
+          <span class="doc-pager__btn doc-pager__btn--arrow"
+                aria-disabled="true">
+            <i class="bi bi-chevron-double-right"></i>
+          </span>
+
+        {% endif %}
+
+      </div>
+
       {% endif %}
-    {% endfor %}
 
-    {# Next #}
-    {% if invoices.has_next %}
-      <a class="page-btn page-btn--arrow"
-         hx-get="?page={{ invoices.next_page_number }}"
-         hx-target="#sales-display"
-         hx-swap="innerHTML"
-         hx-push-url="true">
-        <i class="bi bi-chevron-right"></i>
-      </a>
-    {% else %}
-      <span class="page-btn page-btn--arrow" aria-disabled="true">
-        <i class="bi bi-chevron-right"></i>
-      </span>
-    {% endif %}
-
-    {# Last #}
-    {% if invoices.has_next %}
-      <a class="page-btn page-btn--arrow"
-         hx-get="?page={{ invoices.paginator.num_pages }}"
-         hx-target="#sales-display"
-         hx-swap="innerHTML"
-         hx-push-url="true">
-        <i class="bi bi-chevron-double-right"></i>
-      </a>
-    {% else %}
-      <span class="page-btn page-btn--arrow" aria-disabled="true">
-        <i class="bi bi-chevron-double-right"></i>
-      </span>
-    {% endif %}
+    </div>
 
   </div>
-</div>
-{% endif %}
 
 </div>
-
-    {# ── PAGINATION ───────────────────────────────── #}
-
-
-</div>
-
-
-</div>{# end po-wrapper #}
-
-

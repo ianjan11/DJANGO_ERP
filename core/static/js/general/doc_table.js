@@ -1,64 +1,78 @@
-/* doc-table.js: behaviour for the toolbar search dropdown.
-   Load once in your base template (after htmx). Safe across HTMX swaps. */
+/* doc-table.js: Filters dropdown + search behaviour for list toolbars.
+   Load once in the base template (after htmx). Safe across HTMX swaps. */
 (function () {
   'use strict';
   if (window.__docTableInit) return;
   window.__docTableInit = true;
 
-  var refocus = false;
+  var restore = { search: false, filters: false };
 
-  function input(d) { return d.querySelector('.doc-search__input'); }
+  // ── active-filter count on the Filters button ──────────────
+  function updateCounts() {
+    document.querySelectorAll('.doc-filter').forEach(function (d) {
+      var n = 0, seen = {};
+      d.querySelectorAll('.doc-filter__panel [name]').forEach(function (el) {
+        if (el.name === 'page' || el.disabled) return;
+        if (el.type === 'checkbox' || el.type === 'radio') { if (el.checked) n++; return; }
+        if (el.value && !seen[el.name + el.value]) { seen[el.name + el.value] = 1; n++; }
+      });
+      var badge = d.querySelector('.doc-filter__count');
+      if (badge) { badge.textContent = n; badge.hidden = n === 0; }
+      var bar = d.closest('.doc-filterbar');
+      var clr = bar && bar.querySelector('.doc-filterbar__clear');
+      if (clr) clr.hidden = n === 0;
+    });
+  }
 
-  // Focus the input when the dropdown opens
-  document.addEventListener('toggle', function (e) {
-    var d = e.target;
-    if (d.classList && d.classList.contains('doc-search') && d.open) {
-      var i = input(d);
-      if (i) i.focus();
-    }
-  }, true);
-
-  // Close on outside click (only if empty, so an applied search stays visible)
+  // ── close on outside click / Escape ────────────────────────
   document.addEventListener('click', function (e) {
-    document.querySelectorAll('.doc-search[open]').forEach(function (d) {
-      var i = input(d);
-      if (!d.contains(e.target) && !(i && i.value)) d.removeAttribute('open');
+    document.querySelectorAll('.doc-filter[open]').forEach(function (d) {
+      if (!d.contains(e.target)) d.removeAttribute('open');
     });
   });
-
-  // Escape closes
   document.addEventListener('keydown', function (e) {
-    if (e.key !== 'Escape') return;
-    document.querySelectorAll('.doc-search[open]').forEach(function (d) { d.removeAttribute('open'); });
+    if (e.key === 'Escape')
+      document.querySelectorAll('.doc-filter[open]').forEach(function (d) { d.removeAttribute('open'); });
   });
 
-  // Clear button: empty the field and re-trigger the form's change
+  // ── Clear all: reset every field in the form, then re-query ─
   document.addEventListener('click', function (e) {
-    var btn = e.target.closest('.doc-search__clear');
+    var btn = e.target.closest('.doc-filter__reset');
     if (!btn) return;
-    var d = btn.closest('.doc-search');
-    var i = d && input(d);
-    if (i) {
-      i.value = '';
-      i.dispatchEvent(new Event('change', { bubbles: true }));
-    }
+    var form = btn.closest('form');
+    if (!form) return;
+    form.querySelectorAll('[name]').forEach(function (el) {
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+      else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+      else el.value = '';
+    });
+    updateCounts();
+    form.dispatchEvent(new Event('change', { bubbles: true }));
   });
 
-  // The list is re-rendered on every keystroke: remember focus and restore it
+  document.addEventListener('change', updateCounts);
+
+  // ── the list re-renders on every change: keep UI state ─────
   document.body.addEventListener('htmx:beforeRequest', function () {
     var a = document.activeElement;
-    refocus = !!(a && a.classList && a.classList.contains('doc-search__input'));
+    restore.search = !!(a && a.classList && a.classList.contains('doc-search__input'));
+    restore.filters = !!document.querySelector('.doc-filter[open]');
   });
 
-  function restore() {
-    if (!refocus) return;
-    refocus = false;
-    var i = document.querySelector('.doc-search__input');
-    if (!i) return;
-    var d = i.closest('.doc-search');
-    d.setAttribute('open', '');
-    i.focus();
-    i.setSelectionRange(i.value.length, i.value.length);
+  function afterSwap() {
+    updateCounts();
+    if (restore.filters) {
+      var d = document.querySelector('.doc-filter');
+      if (d) d.setAttribute('open', '');
+    }
+    if (restore.search) {
+      var i = document.querySelector('.doc-search__input');
+      if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
+    }
+    restore.search = restore.filters = false;
   }
-  document.body.addEventListener('htmx:afterSettle', restore);
+  ['htmx:afterSettle', 'htmx:after:settle'].forEach(function (n) {
+    document.body.addEventListener(n, afterSwap);
+  });
+  document.addEventListener('DOMContentLoaded', updateCounts);
 })();
