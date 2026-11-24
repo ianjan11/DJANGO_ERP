@@ -146,7 +146,7 @@ def tax_detail(request, tax_id):
 @login_required
 @require_POST
 def edit_tax(request, tax_id):
-    company = getattr(request.user, "company", None)
+    company = getattr(request, "company", None)
 
     if not company:
         return htmx_error(
